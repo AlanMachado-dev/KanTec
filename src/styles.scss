@@ -1,1 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
+@use "bootstrap/scss/bootstrap" with (
+    $primary: #555555
+);
+
+.carousel-item {
+  img {
+    filter: brightness(50%);
+    transition: filter 0.3s ease;
+  }
+}

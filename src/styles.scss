@@ -1,7 +1,10 @@
-@use "bootstrap/scss/bootstrap" with (
-    $primary: #555555
-);
-
+@use "bootstrap/scss/bootstrap" 
+/*
+with (
+    
+)
+*/
+;
 .carousel-item {
   img {
     filter: brightness(50%);

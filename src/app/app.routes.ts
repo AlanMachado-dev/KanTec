@@ -5,7 +5,7 @@ import { Registro } from './componentes/registro/registro';
 
 export const routes: Routes = [
     {path : '', component: Carrusel},
-    {path : 'ingresar', component: Ingresar},
+    {path : 'ingreso', component: Ingresar},
     {path : 'registro', component: Registro}
     
     

@@ -32,13 +32,15 @@ class usuarioAPI {
         $body = json_decode(file_get_contents("php://input"), true);
 
         if (empty($body['alias']) || empty($body['nombre']) || empty($body['password']) || empty($body['email']) || empty($body['imagen'])) {
-            respond(400, ["error" => "todos los campos son requeridos"]);
+            respond(400, ["error" => "Todos los campos son requeridos"]);
         }
+
+        $passhash = password_hash($body['password'], PASSWORD_DEFAULT);
 
         $stmt = $this->db->prepare(
             "INSERT INTO usuario (alias, nombre, password, email, imagen) VALUES (?, ?, ?, ?, ?)"
         );
-        $stmt->execute([$body['alias'], $body['nombre'], $body['password'], $body['email'], $body['imagen']]);
+        $stmt->execute([$body['alias'], $body['nombre'], $passhash, $body['email'], $body['imagen']]);
 
         respond(201, [
             "mensaje" => "Usuario creado",

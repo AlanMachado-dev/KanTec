@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { RouterLink } from "@angular/router";
 
 @Component({
@@ -7,4 +7,8 @@ import { RouterLink } from "@angular/router";
   templateUrl: './navbar.html',
   styles: ``,
 })
-export class Navbar {}
+export class Navbar {
+
+  @Input() mostrarBotones: boolean = true;
+
+}

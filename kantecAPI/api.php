@@ -1,6 +1,10 @@
 <?php
+require_once 'vendor/autoload.php';
+require_once 'config/db.php';
+require_once 'config/jwt.php';
 require_once 'api/usuarioAPI.php'; //se incluye el controlador de cada tabla a usar
 require_once 'api/tableroAPI.php';
+
 
 
 $method = $_SERVER['REQUEST_METHOD'];

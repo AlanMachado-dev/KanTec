@@ -1,0 +1,17 @@
+{
+    "name": "mafiu/kantec-api",
+    "autoload": {
+        "psr-4": {
+            "Mafiu\\KantecApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "itsmafiu",
+            "email": "matthewfreire2005@gmail.com"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^7.0"
+    }
+}

@@ -20,7 +20,7 @@ export class Registro {
     alias: ['', {
       validators: [
         Validators.required,
-        Validators.minLength(5),
+        Validators.minLength(3),
         Validators.maxLength(30)
       ]
     }],
@@ -48,14 +48,14 @@ export class Registro {
   onSubmit(){
     if(this.registroForm.valid){
       this.http.registrarUsuario(this.registroForm.value as any).subscribe({
-        next: () => {
-          this.http.inicioSesion(this.registroForm.value as any).subscribe({
-            next: (response) => {
-              console.log(response);
-              console.log("Registro funciona!");
-              this.router.navigate(['/home']);
-            }
-          })
+        next: (response) => {
+          console.log(response);
+          this.http.guardarToken(response.token);
+          console.log("Registro funciona!");
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          console.log(err);
         }
       })
     }

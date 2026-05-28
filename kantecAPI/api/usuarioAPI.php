@@ -1,30 +1,12 @@
 <?php
-require_once 'config/db.php';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class usuarioAPI {
     private PDO $db;
 
     public function __construct() {
         $this->db = (new Database())->getConnection();
-    }
-
-    // GET http://localhost/kantecAPI/api/usuarios
-    public function getAll(): void {
-        $stmt = $this->db->query("SELECT * FROM usuario");
-        respond(200, $stmt->fetchAll());
-    }
-
-    // GET http://localhost/kantecAPI/api/usuarios/itsmafiu
-    public function getOne(string $alias): void {
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
-        $stmt->execute([$alias]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user === false || empty($user)) {
-            respond(404, ["error" => "Usuario no encontrado"]);
-        }
-
-        respond(200, $user);
     }
 
     // POST http://localhost/kantecAPI/api/usuarios/login
@@ -39,11 +21,43 @@ class usuarioAPI {
             respond(404, ["error" => "Usuario no encontrado"]);
         }
 
-        if(!password_verify($body['password'],$user['password'])){
+        if(!password_verify($body['password'], $user['password'])){
             respond(401, ["error" => "Contraseña incorrecta"]);
         }
 
-        respond(200, ["mensaje" => "Login correcto", "usuario" => $user]);
+        $payload = [
+            'alias' => $user['alias'],
+            'nombre' => $user['nombre'],
+            'exp' => time() + (60 * 60) //tiempo que dura el token (1h)
+        ];
+
+        $token = JWT::encode($payload, JWT_SECRET, 'HS256');
+
+        respond(200, [
+            "mensaje" => "Login correcto",
+            "token" => $token
+            ]);
+    }
+
+    // GET http://localhost/kantecAPI/api/usuarios
+    public function getAll(): void {
+        $stmt = $this->db->query("SELECT * FROM usuario");
+        respond(200, $stmt->fetchAll());
+    }
+
+    // GET http://localhost/kantecAPI/api/usuarios/itsmafiu
+    public function getOne(string $alias): void {
+        $tokenData = verificarToken();
+
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt->execute([$alias]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user === false || empty($user)) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+        }
+
+        respond(200, $user);
     }
 
     // POST http://localhost/kantecAPI/api/usuarios

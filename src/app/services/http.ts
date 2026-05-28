@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, switchMap } from 'rxjs';
 import { Usuario } from '../interfaces/usuario';
@@ -12,16 +12,35 @@ export class Http {
 
   constructor(private http: HttpClient){}
 
+  inicioSesion(credentials: any): Observable<any>{
+    return this.http.post<Usuario>("http://localhost/kantecAPI/api/usuarios/login", credentials);
+  }
+
+  cerrarSesion(): void{
+    localStorage.removeItem('token');
+  }
+
+  //token//
+  guardarToken(token: string): void{
+    localStorage.setItem('token', token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  //usuarios//
   getUsuario(alias: string): Observable<Usuario>{
-    return this.http.get<Usuario>("http://localhost/kantecAPI/api/usuarios/"+alias);
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.get<Usuario>("http://localhost/kantecAPI/api/usuarios/"+alias, {headers});
   }
 
-  registrarUsuario(usuario: Usuario): Observable<Usuario>{
+  registrarUsuario(usuario: Usuario): Observable<any>{
     return this.http.post<Usuario>("http://localhost/kantecAPI/api/usuarios", usuario).pipe(
-      switchMap(() => this.getUsuario(usuario.alias)));
+      switchMap(() => this.inicioSesion(usuario)));
   }
 
-  inicioSesion(usuario: Usuario): Observable<Usuario>{
-    return this.http.post<Usuario>("http://localhost/kantecAPI/api/usuarios/login", usuario);
-  }
+  
 }

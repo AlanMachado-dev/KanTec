@@ -42,7 +42,7 @@
                 @if(registroForm.get('email')?.invalid && registroForm.get('email')?.touched){
                 <div class="invalid-feedback">
                     @if(registroForm.get('email')?.errors?.['required']) {
-                        La contraseña es obligatoria.
+                        El email es obligatorio.
                     }
                     @if(registroForm.get('email')?.errors?.['maxLength']) {
                         Máximo de caracteres debe ser 60.
@@ -57,7 +57,7 @@
                 @if(registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched){
                 <div class="invalid-feedback">
                     @if(registroForm.get('nombre')?.errors?.['required']) {
-                        El alias es obligatorio.
+                        El nombre es obligatorio.
                     }
                     @if(registroForm.get('nombre')?.errors?.['maxLength']) {
                         Máximo de caracteres debe ser 50.

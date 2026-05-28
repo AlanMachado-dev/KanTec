@@ -1,7 +1,7 @@
 <div class="row row-cols-1 row-cols-md-3 g-4 mt-4 ms-4">
     <div class="col">
         <div class="card">
-            <a href="home"><img src="/image1.png" class="card-img-top" alt="..."></a>
+            <a routerLink=""><img src="/image1.png" class="card-img-top" alt="..."></a>
             <!--la ruta al tablero en este a-->
             <div class="card-body">
                 <p class="card-title"><b>[Tablero]</b> by [Usuario]</p>
@@ -11,7 +11,7 @@
     </div>
     <div class="col">
         <div class="card">
-            <a href="home"><img src="/image2.png" class="card-img-top" alt="..."></a>
+            <a routerLink="/home"><img src="/image2.png" class="card-img-top" alt="..."></a>
             <!--la ruta al tablero en este a-->
             <!--aca deberia de hacer de moverse entre componentes porque con el href como esta recarga la pagina-->
             <div class="card-body">
@@ -24,9 +24,9 @@
 <div class="d-flex mt-5">
     <nav aria-label="..." class="m-auto">
         <ul class="pagination">
-            <li class="page-item"><a href="home" class="page-link">Previous</a></li>
-            <li class="page-item active"><a class="page-link" href="home" aria-current="page">1</a></li>
-            <li class="page-item"><a class="page-link" href="home">Next</a></li>
+            <li class="page-item"><a routerLink="/" class="page-link">Previous</a></li>
+            <li class="page-item active"><a class="page-link" routerLink="/home" aria-current="page">1</a></li>
+            <li class="page-item"><a class="page-link" routerLink="/home">Next</a></li>
         </ul>
     </nav>
 </div>

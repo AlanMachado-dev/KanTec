@@ -30,6 +30,7 @@ export class Ingresar {
       this.http.inicioSesion(this.usuarioForm.value as any).subscribe({
         next: (response) => {
           console.log(response);
+          this.http.guardarToken(response.token);
           this.router.navigate(['/home']);
           this.usuarioForm.reset();
           this.mostrarError = false;

@@ -10,14 +10,26 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <!--@if (mostrarBotones) {-->
+        @if (!estaLogueado) {
         <li>
           <a class="btn btn-light text-primary mx-1 fw-bold" routerLink="/ingreso">Iniciar Sesion</a>
         </li>
         <li>
           <a class="btn btn-outline-light mx-1 fw-bold" routerLink="/registro">Registrarse</a>
         </li>
-      <!--}-->
+      }@else {
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="" alt="img" class="rounded-circle" style="object-fit: cover;">
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink="">Editar Perfil</a></li>
+            <li><a class="dropdown-item" routerLink="">Crear Tablero</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" routerLink="/" (click)="cerrarSesion()">Cerrar Sesion</a></li>
+          </ul>
+        </li>
+      }
       </ul>
     </div>
   </div>

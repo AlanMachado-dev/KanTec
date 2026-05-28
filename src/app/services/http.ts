@@ -26,7 +26,12 @@ export class Http {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    const data = localStorage.getItem('token');
+    return data ? data : null;
+  }
+
+  estaLogueado(): boolean {
+    return this.getToken() !== null;
   }
 
   //usuarios//

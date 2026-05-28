@@ -42,8 +42,8 @@ class Database{
             CREATE TABLE IF NOT EXISTS usuario (
                 alias    VARCHAR(30)  NOT NULL PRIMARY KEY,
                 nombre   VARCHAR(50)  NOT NULL,
-                password VARCHAR(30)  NOT NULL,
-                email    VARCHAR(40)  NOT NULL,
+                password VARCHAR(100)  NOT NULL,
+                email    VARCHAR(60)  NOT NULL,
                 imagen   VARCHAR(40)  NULL
             )
         ");

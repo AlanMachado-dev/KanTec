@@ -1,15 +1,22 @@
 <div class="bg-primary min-vh-100 d-flex justify-content-center align-items-center p-4">
     <div class="w-100 bg-light rounded p-4 " style="max-width: 300px; min-width: 300px;">
-        <form>
+        <form [formGroup]="usuarioForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Alias de usuario</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <input type="text" formControlName="alias" class="form-control" id="alias" aria-describedby="emailHelp"
+                [class.is-invalid]="usuarioForm.get('alias')?.invalid && usuarioForm.get('alias')?.touched">
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
+                <input type="password" formControlName="password" class="form-control" id="password"
+                [class.is-invalid]="usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched">
             </div>
-            <button type="submit" class="btn btn-primary mt-3 w-100 h-25 fw-bold">Iniciar Sesion</button>
+            <button type="submit" [disabled]="!usuarioForm.valid" class="btn btn-primary mt-3 w-100 h-25 fw-bold">Iniciar Sesion</button>
+            @if(mostrarError){
+            <div class="alert alert-danger m-2 p-2 text-center" role="alert">
+                Alias o contraseña incorrectas.
+            </div>
+            }
             <hr>
             <div class="form-text p-2">¿Aún no tienes cuenta?</div>
             <a routerLink="/registro" class="btn btn-outline-primary w-100 h-25 fw-bold">Registrate</a>

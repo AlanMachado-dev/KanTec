@@ -1,5 +1,5 @@
 <?php
-require_once 'db.php';
+require_once 'config/db.php';
 
 class usuarioAPI {
     private PDO $db;
@@ -27,11 +27,30 @@ class usuarioAPI {
         respond(200, $user);
     }
 
+    // POST http://localhost/kantecAPI/api/usuarios/login
+    public function inicioSesion(): void{
+        $body = json_decode(file_get_contents("php://input"), true);
+    
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt->execute([$body['alias']]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user === false || empty($user)) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+        }
+
+        if(!password_verify($body['password'],$user['password'])){
+            respond(401, ["error" => "Contraseña incorrecta"]);
+        }
+
+        respond(200, ["mensaje" => "Login correcto", "usuario" => $user]);
+    }
+
     // POST http://localhost/kantecAPI/api/usuarios
     public function create(): void {
         $body = json_decode(file_get_contents("php://input"), true);
 
-        if (empty($body['alias']) || empty($body['nombre']) || empty($body['password']) || empty($body['email']) || empty($body['imagen'])) {
+        if (empty($body['alias']) || empty($body['nombre']) || empty($body['password']) || empty($body['email']) ) { //|| empty($body['imagen'])
             respond(400, ["error" => "Todos los campos son requeridos"]);
         }
 
@@ -43,8 +62,7 @@ class usuarioAPI {
         $stmt->execute([$body['alias'], $body['nombre'], $passhash, $body['email'], $body['imagen']]);
 
         respond(201, [
-            "mensaje" => "Usuario creado",
-            "id"      => $this->db->lastInsertId()
+            "mensaje" => "Usuario creado"
         ]);
     }
 

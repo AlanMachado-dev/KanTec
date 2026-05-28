@@ -21,6 +21,7 @@ match(true) {
     $id !== null && $method === 'DELETE' => $usuario->delete($id),
     $uri === '/api/usuarios' && $method === 'GET' => $usuario->getAll(),
     $uri === '/api/usuarios' && $method === 'POST' => $usuario->create(),
+    $uri === '/api/usuarios/login' && $method === 'POST' => $usuario->inicioSesion(),
 
     //rutas extras
 

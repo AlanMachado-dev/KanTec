@@ -47,6 +47,17 @@ class Database{
                 imagen   VARCHAR(40)  NULL
             )
         ");
+        $this->conn->exec("
+            CREATE TABLE IF NOT EXISTS tablero (
+            id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            titulo VARCHAR(50) NOT NULL,
+            descripcion VARCHAR(100),
+            fechaCreacion DATE NOT NULL ,
+            imagen VARCHAR(40) NULL,
+            aliasCreador VARCHAR(30), FOREIGN KEY (aliasCreador) REFERENCES usuario(alias)
+            )
+        ");
+
     }
 }
 

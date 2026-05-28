@@ -53,7 +53,7 @@ export class Registro {
             next: (response) => {
               console.log(response);
               console.log("Registro funciona!");
-              this.router.navigate(['/ingreso']); //esto debe redireccionar a /home cuando exista
+              this.router.navigate(['/home']);
             }
           })
         }

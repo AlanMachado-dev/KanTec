@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { Http } from '../../services/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -17,6 +17,8 @@ export class Ingresar {
 
   formBuilder = inject(FormBuilder);
 
+  private router = inject(Router);
+
   usuarioForm = this.formBuilder.group({
     alias: ['', Validators.required],
     password: ['', Validators.required]
@@ -28,7 +30,7 @@ export class Ingresar {
       this.http.inicioSesion(this.usuarioForm.value as any).subscribe({
         next: (response) => {
           console.log(response);
-          console.log("Inicio sesion funciona!"); //debe reemplazarse por this.router.navigate(['/home']);
+          this.router.navigate(['/home']);
           this.usuarioForm.reset();
           this.mostrarError = false;
           this._cdr.detectChanges();

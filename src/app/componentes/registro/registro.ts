@@ -13,6 +13,7 @@ export class Registro {
 
   constructor(private http: Http){}
 
+  imagenSeleccionada!: File;
   formBuilder = inject(FormBuilder);
   private router = inject(Router);
 
@@ -45,18 +46,35 @@ export class Registro {
     imagen: ['', ]
   })
 
+  onFileSelected(event: any) {
+    this.imagenSeleccionada = event.target.files[0];
+  }
+
   onSubmit(){
     if(this.registroForm.valid){
-      this.http.registrarUsuario(this.registroForm.value as any).subscribe({
-        next: (response) => {
-          console.log(response);
-          this.http.guardarToken(response.token);
-          console.log("Registro funciona!");
-          this.router.navigate(['/home']);
+      const usuario = this.registroForm.value as any;
+      this.http.subirImgUsuario(this.imagenSeleccionada).subscribe({
+        next: (respuestaImg) => {
+          usuario.imagen = respuestaImg.ruta;
+          this.http.registrarUsuario(usuario).subscribe({
+            next: (response) => {
+              console.log(response);
+
+              this.http.guardarToken(response.token);
+
+              console.log("Registro funciona!");
+
+              this.router.navigate(['/home']);
+            },
+            error: (err) => {
+                console.log(err);
+              }
+
+          })
         },
         error: (err) => {
-          console.log(err);
-        }
+            console.log(err);
+          }
       })
     }
   }

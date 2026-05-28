@@ -67,7 +67,7 @@
             </div>
             <div class="mb-3">
                 <label for="imagen" class="form-label">Imagen de Perfil</label>
-                <input type="file" formControlName="imagen" class="btn btn-secondary form-control" id="imagen" accept="image/*">
+                <input type="file" (change)="onFileSelected($event)" formControlName="imagen" class="btn btn-secondary form-control" id="imagen" accept="image/*">
             </div>
 
             <button type="submit" [disabled]="!registroForm.valid" class="btn btn-outline-primary mt-3 w-100 h-25 fw-bold">Registrate</button>

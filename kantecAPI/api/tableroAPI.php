@@ -77,15 +77,30 @@ class tableroAPI
             respond(400, ["error" => "Body inválido o vacío"]);
         }
 
+        $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
+        $stmt->execute([$id]);
+
+        $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+        // Si se intenta actualizar el tablero y los datos son iguales el $stmt->rowCount() === 0 va a tirar error de tablero no encontrado
+        // y eso esta mal deberia simplemente decir que esta actualizado aunque no haya cambios supongo
+        if(!$tablero) {
+            respond (404, ["error" => "Tablero no encontrado"]);
+        }
+
+
+        //Cambio para que se pueda actualizar el tablero sin necesidad de actualizar todas las cosas del tablero
+        $titulo = $body['titulo'] ?? $tablero['titulo'];
+        $descripcion = $body['descripcion'] ?? $tablero['descripcion'];
+        $imagen = $body['imagen'] ?? $tablero['imagen'];
+
         $stmt = $this->db->prepare(
             "UPDATE tablero SET titulo = ?, descripcion = ?, imagen = ? WHERE id = ?"
         );
-        $stmt->execute([$body['titulo'], $body['descripcion'], $body['imagen'], $id]);
+        $stmt->execute([$titulo, $descripcion, $imagen, $id]);
 
-        if ($stmt->rowCount() === 0) {
-            respond(404, ["error" => "Tablero no encontrado"]);
-        }
-
+        
         respond(200, ["mensaje" => "Tablero actualizado"]);
     }
 

@@ -47,5 +47,17 @@ export class Http {
       switchMap(() => this.inicioSesion(usuario)));
   }
 
-  
+
+  //imagenes//
+  subirImgUsuario(archivo: File): Observable<any> {
+    const formData = new FormData();
+
+    formData.append('archivo', archivo);
+
+    return this.http.post<any>("http://localhost/kantecAPI/api/imagenes/usuarios",formData);
+  }
+
+  public getRutaBaseImg(): String{
+    return "http://localhost/kantecAPI/imagenes/";
+  }
 }

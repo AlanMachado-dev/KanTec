@@ -4,6 +4,7 @@ require_once 'config/db.php';
 require_once 'config/jwt.php';
 require_once 'api/usuarioAPI.php'; //se incluye el controlador de cada tabla a usar
 require_once 'api/tableroAPI.php';
+require_once 'api/imagenesAPI.php';
 
 
 
@@ -27,6 +28,8 @@ $usuario = new usuarioAPI(); //se crea el controlador por cada tabla
 
 $tablero = new tableroAPI();
 
+$imagenes = new imagenesAPI();
+
 match(true) {
     //ruta usuarios
     $idUsuario !== null && $method === 'GET' => $usuario->getOne($idUsuario),
@@ -44,6 +47,10 @@ match(true) {
     $idTablero !== null && $method === 'DELETE' => $tablero->delete($idTablero),
     $uri === '/api/tableros' && $method === 'GET' => $tablero->getAll(),
     $uri === '/api/tableros' && $method === 'POST' => $tablero->create(),
+    
+    //ruta imagenes
+    $uri === '/api/imagenes/usuarios' && $method === 'POST' => $imagenes->subirImgUsuario(),
+    $uri === '/api/imagenes/tableros' && $method === 'POST' => $imagenes->subirImgTablero(),
     
 
     default => respond(404, ["error" => "Ruta no encontrada"])

@@ -20,13 +20,16 @@
       }@else {
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="" alt="img" class="rounded-circle" style="object-fit: cover;">
+            <img src="{{imagenUsu}}" alt="img" height="30px" width="30px" class="rounded-circle" style="object-fit: cover;">
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink=""><b>{{usuario?.alias}}</b></a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" routerLink="/home">Inicio</a></li>
             <li><a class="dropdown-item" routerLink="">Editar Perfil</a></li>
             <li><a class="dropdown-item" routerLink="">Crear Tablero</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" routerLink="/" (click)="cerrarSesion()">Cerrar Sesion</a></li>
+            <li><a class="dropdown-item text-danger" href="" (click)="cerrarSesion()">Cerrar Sesion</a></li>
           </ul>
         </li>
       }

@@ -31,10 +31,13 @@ export class Ingresar {
         next: (response) => {
           console.log(response);
           this.http.guardarToken(response.token);
-          this.router.navigate(['/home']);
-          this.usuarioForm.reset();
-          this.mostrarError = false;
-          this._cdr.detectChanges();
+          setTimeout(() => { //deberia agregar un sweetAlert (#sponsor) mientras carga y no un timeout
+            this.router.navigate(['/home']);
+          }, 1000);
+          
+          // this.usuarioForm.reset();
+          // this.mostrarError = false;
+          // this._cdr.detectChanges();
         },
 
         error: (err) => {

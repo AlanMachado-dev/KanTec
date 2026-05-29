@@ -88,14 +88,23 @@ class usuarioAPI {
             respond(400, ["error" => "Body inválido o vacío"]);
         }
 
-        $stmt = $this->db->prepare(
-            "UPDATE usuario SET nombre = ?, email = ?, imagen = ? WHERE alias = ?"
-        );
-        $stmt->execute([$body['nombre'], $body['email'], $body['imagen'], $id]);
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE id = ?");
+        $stmt->execute([$id]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($stmt->rowCount() === 0) {
-            respond(404, ["error" => "Usuario no encontrado"]);
+        if(!$usuario) {
+            respond (404, ["error" => "Usuario no encontrado"]);
         }
+
+        $nombre = $body['nombre'] ?? $usuario['nombre'];
+        $password = $body['password'] ?? $usuario['password'];
+        $email = $body['email'] ?? $usuario['email'];
+        $imagen = $body['imagen'] ?? $usuario['imagen'];
+
+        $stmt = $this->db->prepare(
+            "UPDATE usuario SET nombre = ?, password = ?, email = ?, imagen = ? WHERE alias = ?"
+        );
+        $stmt->execute([$nombre, $password, $email, $imagen, $id]);
 
         respond(200, ["mensaje" => "Usuario actualizado"]);
     }

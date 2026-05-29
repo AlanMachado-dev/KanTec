@@ -69,8 +69,7 @@ class tableroAPI
     }
 
     // PUT http://localhost/kantecAPI/api/tableros/1
-    public function update(string $id): void
-    {
+    public function update(string $id): void {
         $body = json_decode(file_get_contents("php://input"), true);
 
         if (!$body) {
@@ -89,7 +88,6 @@ class tableroAPI
             respond (404, ["error" => "Tablero no encontrado"]);
         }
 
-
         //Cambio para que se pueda actualizar el tablero sin necesidad de actualizar todas las cosas del tablero
         $titulo = $body['titulo'] ?? $tablero['titulo'];
         $descripcion = $body['descripcion'] ?? $tablero['descripcion'];
@@ -99,7 +97,6 @@ class tableroAPI
             "UPDATE tablero SET titulo = ?, descripcion = ?, imagen = ? WHERE id = ?"
         );
         $stmt->execute([$titulo, $descripcion, $imagen, $id]);
-
         
         respond(200, ["mensaje" => "Tablero actualizado"]);
     }

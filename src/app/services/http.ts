@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { Usuario } from '../interfaces/usuario';
 
 @Injectable({
@@ -8,21 +8,28 @@ import { Usuario } from '../interfaces/usuario';
 })
 export class Http {
 
-  private apiUrl = "";
-
   constructor(private http: HttpClient){}
 
+  private sesionActiva = new BehaviorSubject<boolean>(this.estaLogueado());
+      //BehaviorSubject es una variable que avisa a los que estes suscritos cuando cambia de valor
+  sesionActiva$ = this.sesionActiva.asObservable();
+      //asObservable() expone la variable como un observable de solo lectura. el $ es convencion de que es un observable
+      //los suscriptores pueden escucharlo pero no cambiarlo, solo el servicio
+
+  //sesion//
   inicioSesion(credentials: any): Observable<any>{
     return this.http.post<Usuario>("http://localhost/kantecAPI/api/usuarios/login", credentials);
   }
 
   cerrarSesion(): void{
     localStorage.removeItem('token');
+    this.sesionActiva.next(false); //next(bool) emite el valor de la sesion, en este caso que se cerró
   }
 
   //token//
   guardarToken(token: string): void{
     localStorage.setItem('token', token);
+    this.sesionActiva.next(true); //le dice a los suscriptores que se inició sesion
   }
 
   getToken(): string | null {
@@ -32,6 +39,22 @@ export class Http {
 
   estaLogueado(): boolean {
     return this.getToken() !== null;
+  }
+
+  getPayload(): any {
+    const token = this.getToken();
+    if (!token) return null;
+
+    // El payload es la segunda parte del token, separada por "."
+    const payload = token.split('.')[1];
+
+    // Está en base64, hay que decodificarlo
+    return JSON.parse(atob(payload));
+  }
+
+  getAliasDelToken(): string | null {
+    const payload = this.getPayload();
+    return payload ? payload.alias : null;
   }
 
   //usuarios//
@@ -57,7 +80,7 @@ export class Http {
     return this.http.post<any>("http://localhost/kantecAPI/api/imagenes/usuarios",formData);
   }
 
-  public getRutaBaseImg(): String{
+  public getRutaBaseImg(): string{
     return "http://localhost/kantecAPI/imagenes/";
   }
 }

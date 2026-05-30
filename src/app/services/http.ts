@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { Usuario } from '../interfaces/usuario';
+import { Tablero } from '../interfaces/tablero';
 
 @Injectable({
   providedIn: 'root',
@@ -86,5 +87,10 @@ export class Http {
 
   public getRutaBaseImg(): string{
     return "http://localhost/kantecAPI/imagenes/";
+  }
+
+  //tableros//
+  getTablerosAlias(alias: string): Observable<Tablero[]>{
+    return this.http.get<Tablero[]>("http://localhost/kantecAPI/api/tableros/usuario/" + alias);
   }
 }

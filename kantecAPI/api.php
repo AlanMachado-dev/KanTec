@@ -52,9 +52,9 @@ match(true) {
     $partes[1] === 'tableros' && !isset($partes[2]) 
         && $method === 'GET' => $tablero->getAll(),
     $partes[1] === 'tableros' && !isset($partes[2]) 
-        && $method === 'POST' => $usuario->create(),
+        && $method === 'POST' => $tablero->create(),
     $partes[1] === 'tableros' && $partes[2] === 'usuario' && isset($partes[3]) && !isset($partes[4]) 
-        && $method === 'GET' => $tablero->getTableros($partes[2]),
+        && $method === 'GET' => $tablero->getTableros($partes[3]),
     
     //ruta imagenes
     $partes[1] === 'imagenes' && $partes[2] === 'usuarios' && !isset($partes[3]) 

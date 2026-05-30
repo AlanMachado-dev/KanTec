@@ -1,32 +1,53 @@
 <div class="row row-cols-1 row-cols-md-3 g-4 mt-4 ms-4">
-    <div class="col">
+    @for(tablero of tablerosPaginados; track tablero.id){
+    <div class="col" >
         <div class="card">
-            <a routerLink=""><img src="/image1.png" class="card-img-top" alt="..."></a>
+            <a routerLink=""><img [src]="rutaImagenes + tablero.imagen" class="card-img-top" alt="..." style="height: 200px; object-fit: cover;"></a>
             <!--la ruta al tablero en este a-->
             <div class="card-body">
-                <p class="card-title"><b>[Tablero]</b> by [Usuario]</p>
-                <p class="card-text">[usuario1] [usuario2] [usuario3]</p>
+                <p class="card-title"><b>{{tablero.titulo}}</b> by {{tablero.aliasCreador}}</p>
+                <!-- <p class="card-text">[usuario1] [usuario2] [usuario3]</p> -->
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="card">
-            <a routerLink="/home"><img src="/image2.png" class="card-img-top" alt="..."></a>
+    }
+    <!-- <div class="col">
+        <div class="card"> -->
+            <!-- <a routerLink="/home"><img src="/image2.png" class="card-img-top" alt="..."></a> -->
             <!--la ruta al tablero en este a-->
             <!--aca deberia de hacer de moverse entre componentes porque con el href como esta recarga la pagina-->
-            <div class="card-body">
+            <!-- <div class="card-body">
                 <p class="card-title"><b>[Tablero]</b> by [Usuario]</p>
                 <p class="card-text">[usuario1] [usuario2]</p>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 <div class="d-flex mt-5">
     <nav aria-label="..." class="m-auto">
         <ul class="pagination">
-            <li class="page-item"><a routerLink="/" class="page-link">Previous</a></li>
-            <li class="page-item active"><a class="page-link" routerLink="/home" aria-current="page">1</a></li>
-            <li class="page-item"><a class="page-link" routerLink="/home">Next</a></li>
+            <li class="page-item">
+                <button class="page-link" (click)="anterior()">
+                    Previous
+                </button>
+            </li>
+            @for(pagina of paginas; track pagina) {
+
+            <li class="page-item" [class.active]="pagina === paginaActual">
+
+                <button class="page-link" (click)="cambiarPagina(pagina)">
+                    {{pagina}}
+                </button>
+            </li>
+
+            }
+
+            <li class="page-item">
+                <button class="page-link" (click)="siguiente()">
+                    Next
+                </button>
+            </li>
+            
         </ul>
     </nav>
 </div>

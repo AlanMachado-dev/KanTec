@@ -1,0 +1,172 @@
+<style>
+    .postit {
+        min-height: 100px;
+        padding: 10px;
+        margin: 10px auto;
+        font-size: 14px;
+        cursor: grab;
+        box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+        transform: rotate(calc(-3deg + 6deg * var(--random)));
+        position: relative;
+        overflow: visible;
+    }
+
+    .postit-usuarios {
+        position: absolute;
+        top: -12px;
+        left: 12px;
+
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+
+        z-index: 2;
+    }
+
+    .postit-usuario {
+        background: white;
+        padding: 0 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0d6efd;
+        border-radius: 4px;
+    }
+
+    .postit::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 0 20px 20px;
+        border-color: transparent transparent rgba(255, 255, 255, 0.8) transparent;
+    }
+
+    .postit::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.2);
+        clip-path: polygon(100% 0, 0 100%, 100% 100%);
+    }
+
+    .postit legend {
+        width: auto;
+        padding: 0 8px;
+        font-size: 14px;
+        color: #0d6efd;
+    }
+
+    .column h5 {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="w-100 bg-black p-3 d-flex">
+    <h5 class="text-white">Tablero by Usuario</h5>
+    <span class="text-white ms-auto">[+]</span>
+    <span class="text-info mx-1">[usuario1]</span>
+    <span class="text-info mx-1">[usuario2]</span>
+    <span class="text-info mx-1">[usuario3]</span>
+    <span class="text-info mx-1">[usuario4]</span>
+    <span class="text-info mx-1">[usuario5]</span>
+</div>
+
+<div class="container mt-4">
+    <div class="row text-center">
+        <div class="col-md-3 column">
+            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start">+ Pendiente</h5>
+            <div class="postit mb-5 bg-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+
+                <div class="postit-usuarios">
+                    <span class="postit-usuario">[usuario1]</span>
+                    <span class="postit-usuario">[usuario2]</span>
+                </div>
+
+            </div>
+            <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info"></div>
+        </div>
+
+        <div class="col-md-3 column">
+            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start">+ Analisis</h5>
+            <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+                <div class="postit-usuarios">
+                    <span class="postit-usuario">[usuario1]</span>
+                    <span class="postit-usuario">[usuario2]</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 column">
+            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start">+ Desarrollo</h5>
+            <div class="postit mb-5 bg-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+
+                <div class="postit-usuarios">
+                    <span class="postit-usuario">[usuario1]</span>
+                    <span class="postit-usuario">[usuario2]</span>
+                    <span class="postit-usuario">[usuario3]</span>
+                </div>
+            </div>
+            <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+                <div class="postit-usuarios">
+                    <span class="postit-usuario">[usuario1]</span>
+                    <span class="postit-usuario">[usuario2]</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 column">
+            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start">+ Hecho</h5>
+            <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+                <div class="postit-usuarios">
+                    <span class="postit-usuario">[usuario1]</span>
+                </div>
+            </div>
+            <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+                <div class="postit-usuarios">
+                    <span class="postit-usuario">[usuario1]</span>
+                    <span class="postit-usuario">[usuario2]</span>
+                    <span class="postit-usuario">[usuario3]</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="post-it-info" aria-labelledby="[id Tarea]"
+    style="--bs-offcanvas-width: 600px;">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="[id Tarea]">[Nombre Tarea]</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <hr>
+    <div class="offcanvas-body">
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripcion:</label>
+            <input type="text" id="descripcion" class="form-control">
+        </div>
+        <p>Prioridad:</p>
+        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <button type="button" class="btn btn-danger px-3">1</button>
+            <button type="button" class="btn btn-warning text-white px-3">2</button>
+            <button type="button" class="btn btn-success px-3">3</button>
+            <button type="button" class="btn btn-primary px-3">4</button>
+        </div>
+        <!--div>
+            <input type="date" name="" id="">
+        </div-->
+    </div>
+</div>

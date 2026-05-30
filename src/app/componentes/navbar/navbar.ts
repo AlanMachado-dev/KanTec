@@ -45,15 +45,15 @@ export class Navbar implements OnInit, OnDestroy{
     this.http.getUsuario(alias).subscribe({
       next: (response) => {
         this.usuario = response;
-        this.imagenUsu = this.http.getRutaBaseImg() + this.usuario.imagen;
+        if(!this.usuario.imagen){ //no tiene imagen
+          this.imagenUsu = this.http.getRutaBaseImg() + "usuarios/default.jpg";
+        }else{
+          this.imagenUsu = this.http.getRutaBaseImg() + this.usuario.imagen;
+        }
       },
       error: (err) => console.log(err)
     })
   }
-
-  // get estaLogueado(): boolean{
-  //   return this.http.estaLogueado();
-  // }
 
   cerrarSesion(){
     this.http.cerrarSesion();

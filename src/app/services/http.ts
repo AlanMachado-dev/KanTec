@@ -70,6 +70,10 @@ export class Http {
       switchMap(() => this.inicioSesion(usuario)));
   }
 
+  existeUsuario(alias: string): Observable<any>{
+    return this.http.get<Usuario>("http://localhost/kantecAPI/api/usuarios/existe/"+alias);
+  }
+
 
   //imagenes//
   subirImgUsuario(archivo: File): Observable<any> {

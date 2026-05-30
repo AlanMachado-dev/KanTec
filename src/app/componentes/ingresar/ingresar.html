@@ -11,7 +11,14 @@
                 <input type="password" formControlName="password" class="form-control" id="password"
                 [class.is-invalid]="usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched">
             </div>
-            <button type="submit" [disabled]="!usuarioForm.valid" class="btn btn-primary mt-3 w-100 h-25 fw-bold">Iniciar Sesion</button>
+            <div>
+                @if(!loading){
+                    <button type="submit" [disabled]="!usuarioForm.valid" class="btn btn-primary mt-3 w-100 h-25 fw-bold">Iniciar Sesion</button>
+                }@else{
+                    <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" disabled>Cargando...</button>
+                }
+            </div>
+            
             @if(mostrarError){
             <div class="alert alert-danger m-2 p-2 text-center" role="alert">
                 Alias o contraseña incorrectas.

@@ -14,17 +14,11 @@ $method = $_SERVER['REQUEST_METHOD'];
 $basePath = '/kantecAPI';
 $uri = str_replace($basePath, '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
-// agarra el alias si viene en la URL, ej: /api/usuarios/itsmafiu (ACA SE HACE UNO POR CADA TABLA A USAR)
-preg_match('/\/api\/usuarios\/([^\/]+)/', $uri, $matches);
-$idUsuario = $matches[1] ?? null; //el alias o null si no viene
+//separa las partes del url en un array, para asi comparar abajo
+$partes = explode('/', trim($uri, '/')); 
 
-preg_match('/\/api\/tableros\/([^\/]+)/', $uri, $matches2);
-$idTablero = $matches2[1] ?? null; //el id del tablero o null si no viene
-
-preg_match('/\/api\/tableros\/usuario\/([^\/]+)/', $uri, $matchesAlias);
-$aliasTablero = $matchesAlias[1] ?? null;
-
-$usuario = new usuarioAPI(); //se crea el controlador por cada tabla
+//se crea el controlador por cada tabla
+$usuario = new usuarioAPI(); 
 
 $tablero = new tableroAPI();
 
@@ -32,25 +26,41 @@ $imagenes = new imagenesAPI();
 
 match(true) {
     //ruta usuarios
-    $idUsuario !== null && $method === 'GET' => $usuario->getOne($idUsuario),
-    $idUsuario !== null && $method === 'PUT' => $usuario->update($idUsuario),
-    $idUsuario !== null && $method === 'DELETE' => $usuario->delete($idUsuario),
-    $uri === '/api/usuarios' && $method === 'GET' => $usuario->getAll(),
-    $uri === '/api/usuarios' && $method === 'POST' => $usuario->create(),
-    $uri === '/api/usuarios/login' && $method === 'POST' => $usuario->inicioSesion(),
+    $partes[1] === 'usuarios' && isset($partes[2]) && !isset($partes[3]) 
+        && $method === 'GET' => $usuario->getOne($partes[2]), 
+    $partes[1] === 'usuarios' && isset($partes[2]) && !isset($partes[3]) 
+        && $method === 'PUT' => $usuario->update($partes[2]), 
+    $partes[1] === 'usuarios' && isset($partes[2]) && !isset($partes[3]) 
+        && $method === 'DELETE' => $usuario->delete($partes[2]), 
+    $partes[1] === 'usuarios' && !isset($partes[2]) 
+        && $method === 'GET' => $usuario->getAll(),
+    $partes[1] === 'usuarios' && !isset($partes[2]) 
+        && $method === 'POST' => $usuario->create(),
+    $partes[1] === 'usuarios' && $partes[2] === 'login' && !isset($partes[3]) 
+        && $method === 'POST' => $usuario->inicioSesion(),
+    $partes[1] === 'usuarios' && $partes[2] === 'existe' && isset($partes[3]) && !isset($partes[4]) 
+        && $method === 'GET' => $usuario->existe($partes[3]),
 
     //ruta tableros
-    str_contains($uri, "/api/tableros/usuario/") && $idTablero !== null && $method === 'GET'
-    => $tablero->getTableros($aliasTablero),
-    $idTablero !== null && $method === 'PUT' => $tablero->update($idTablero),
-    $idTablero !== null && $method === 'GET' => $tablero->getOne($idTablero),
-    $idTablero !== null && $method === 'DELETE' => $tablero->delete($idTablero),
-    $uri === '/api/tableros' && $method === 'GET' => $tablero->getAll(),
-    $uri === '/api/tableros' && $method === 'POST' => $tablero->create(),
+    
+    $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
+        && $method === 'PUT' => $tablero->update($partes[2]),
+    $partes[1] === 'tableros' && isset($partes[2]) && is_numeric($partes[2]) && !isset($partes[3]) 
+        && $method === 'GET' => $tablero->getOne($partes[2]),
+    $partes[1] === 'tableros' && isset($partes[2]) && is_numeric($partes[2]) && !isset($partes[3])
+        && $method === 'DELETE' => $tablero->delete($partes[2]),
+    $partes[1] === 'tableros' && !isset($partes[2]) 
+        && $method === 'GET' => $tablero->getAll(),
+    $partes[1] === 'tableros' && !isset($partes[2]) 
+        && $method === 'POST' => $usuario->create(),
+    $partes[1] === 'tableros' && $partes[2] === 'usuario' && isset($partes[3]) && !isset($partes[4]) 
+        && $method === 'GET' => $tablero->getTableros($partes[2]),
     
     //ruta imagenes
-    $uri === '/api/imagenes/usuarios' && $method === 'POST' => $imagenes->subirImgUsuario(),
-    $uri === '/api/imagenes/tableros' && $method === 'POST' => $imagenes->subirImgTablero(),
+    $partes[1] === 'imagenes' && $partes[2] === 'usuarios' && !isset($partes[3]) 
+        && $method === 'POST' => $imagenes->subirImgUsuario(),
+    $partes[1] === 'imagenes' && $partes[2] === 'tableros' && !isset($partes[3]) 
+        && $method === 'POST' => $imagenes->subirImgTablero(),
     
 
     default => respond(404, ["error" => "Ruta no encontrada"])

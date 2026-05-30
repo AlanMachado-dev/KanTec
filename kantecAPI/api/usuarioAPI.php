@@ -120,6 +120,19 @@ class usuarioAPI {
 
         respond(200, ["mensaje" => "Usuario eliminado"]);
     }
+
+    // GET http://localhost/kantecAPI/api/usuarios/existe/alias
+    public function existe(string $alias): void{
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt->execute([$alias]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user === false || empty($user)) {
+            respond(200, ["existe" => "false"]);
+        }else{
+            respond(200, ["existe" => "true"]);            
+        }
+    }
 }
 
 ?>

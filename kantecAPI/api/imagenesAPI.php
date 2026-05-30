@@ -25,7 +25,7 @@ class imagenesAPI
 
     private function subirImagen(string $carpeta): string {
         if (!isset($_FILES['archivo'])) {
-            respond(400, ['error' => 'No se recibió archivo']);
+            return $carpeta . "/" . "default.jpg";
         }
 
         $archivo = $_FILES['archivo'];

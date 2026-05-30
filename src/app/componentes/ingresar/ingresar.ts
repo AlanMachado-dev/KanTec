@@ -14,6 +14,7 @@ export class Ingresar {
   constructor(private http: Http, private _cdr: ChangeDetectorRef){}
 
   mostrarError = false;
+  loading = false;
 
   formBuilder = inject(FormBuilder);
 
@@ -26,6 +27,7 @@ export class Ingresar {
 
   onSubmit(){
     this.mostrarError = false;
+    this.loading = true;
     if(this.usuarioForm.valid){
       this.http.inicioSesion(this.usuarioForm.value as any).subscribe({
         next: (response) => {
@@ -34,16 +36,14 @@ export class Ingresar {
           setTimeout(() => { //deberia agregar un sweetAlert (#sponsor) mientras carga y no un timeout
             this.router.navigate(['/home']);
           }, 1000);
-          
-          // this.usuarioForm.reset();
-          // this.mostrarError = false;
-          // this._cdr.detectChanges();
+          this.loading = false;
         },
 
         error: (err) => {
           console.log(err);
           console.log("Usuario o contraseña incorrecta!");
           this.mostrarError = true;
+          this.loading = false;
           this._cdr.detectChanges();
         }
       })

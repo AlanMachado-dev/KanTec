@@ -17,7 +17,7 @@ class tableroAPI
         respond(200, $stmt->fetchAll());
     }
 
-    // GET http://localhost/kantecAPI/api/tablerosUsuario/Luqui86
+    // GET http://localhost/kantecAPI/api/tableros/usuario/Luqui86
     public function getTableros(string $alias): void
     {   
         $stmt = $this->db->prepare("SELECT * FROM tablero WHERE aliasCreador = ?");

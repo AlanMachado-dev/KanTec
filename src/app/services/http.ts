@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, switchMap } from 'rxjs';
 import { Usuario } from '../interfaces/usuario';
 import { Tablero } from '../interfaces/tablero';
 
@@ -93,4 +93,17 @@ export class Http {
   getTablerosAlias(alias: string): Observable<Tablero[]>{
     return this.http.get<Tablero[]>("http://localhost/kantecAPI/api/tableros/usuario/" + alias);
   }
+
+  crearTablero(alias: string): Observable<any>{
+    return this.http.post<any>("http://localhost/kantecAPI/api/tableros", {alias: alias});
+  }
+
+  private tableroCreado = new Subject<void>();
+
+  tableroCreado$ = this.tableroCreado.asObservable();
+
+  notificarTableroCreado(): void {
+    this.tableroCreado.next();
+  }
+
 }

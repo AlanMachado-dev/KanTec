@@ -54,6 +54,7 @@ class Database{
             descripcion VARCHAR(100),
             fechaCreacion DATE NOT NULL ,
             imagen VARCHAR(40) NULL,
+            color VARCHAR(7),
             aliasCreador VARCHAR(30), FOREIGN KEY (aliasCreador) REFERENCES usuario(alias)
             )
         ");

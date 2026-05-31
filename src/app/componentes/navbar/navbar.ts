@@ -59,5 +59,13 @@ export class Navbar implements OnInit, OnDestroy{
     this.http.cerrarSesion();
     this.router.navigate(['']);
   }
-
+  crearTablero(): void {
+    const aliasUsuario = this.http.getAliasDelToken() || "";
+    this.http.crearTablero(aliasUsuario).subscribe({
+      next: () => {
+          this.http.notificarTableroCreado();
+          this.router.navigate(['/home']); //Lo mando a home o lo mando dentro del componente tablero con ese id?
+      }
+    });
+  }
 }

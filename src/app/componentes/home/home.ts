@@ -20,33 +20,46 @@ export class Home {
       this.rutaImagenes = this.http.getRutaBaseImg();
     }
   }
-  usuario : Usuario | null = null;
+  aliasUsuario !: string;
   estaLogueado = false;
 
   private sub: Subscription = new Subscription();
+  private subTableros: Subscription = new Subscription();
   ngOnInit(): void {
     this.sub = this.http.sesionActiva$.subscribe(logueado => {
       this.estaLogueado = logueado;
-
+      this.aliasUsuario = this.http.getAliasDelToken() || "";
       if(logueado){
-        this.http.getTablerosAlias(this.http.getAliasDelToken() || "")
-        .subscribe(tableros => {
-          this.tableros = tableros;
-          this.cdr.detectChanges();
-        });
+        this.cargarTableros();
       }else{
         this.tableros = [];
+        this.aliasUsuario = "";
         this.router.navigate(['/']);
+      }
+    });
+
+    this.subTableros = this.http.tableroCreado$.subscribe(() => {
+      if(this.aliasUsuario){
+        this.cargarTableros();
       }
     })
   }
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
+    this.subTableros.unsubscribe();
   }
   tableros: Tablero[] = [];
   paginaActual = 1;
   private tablerosPorPagina = 3;
+
+  private cargarTableros(): void {
+    this.http.getTablerosAlias(this.aliasUsuario)
+      .subscribe(tableros => {
+        this.tableros = tableros;
+        this.cdr.detectChanges();
+      });
+  }
 
   get tablerosPaginados(): Tablero[] {
     const inicio = (this.paginaActual - 1) * this.tablerosPorPagina;
@@ -57,7 +70,8 @@ export class Home {
 
   get totalPaginas(): number {
     return Math.max(1,
-      Math.ceil(this.tableros.length / this.tablerosPorPagina)
+      Math.ceil((this.tableros.length + 1) / this.tablerosPorPagina) // El + 1 es para que la tarjeta de crear Tablero quede en
+      // una pagina separada
     );
   }
 
@@ -81,5 +95,20 @@ export class Home {
       (_, i) => i + 1
     );
   }
-  
+  crearTablero(): void{
+    this.http.crearTablero(this.aliasUsuario).subscribe({
+      next: () => {
+        
+
+        this.http.getTablerosAlias(this.aliasUsuario)
+          .subscribe(tableros => {
+           
+            this.tableros = tableros;
+            this.cdr.detectChanges();
+          });
+      }
+    });
+  }
+
+
 }

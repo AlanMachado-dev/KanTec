@@ -59,9 +59,19 @@ class tableroAPI
         $fechaActual = date('Y-m-d');
 
         $stmt = $this->db->prepare(
-            "INSERT INTO tablero (titulo,aliasCreador, fechaCreacion) VALUES (?,?,?)"
+            "INSERT INTO tablero (titulo,aliasCreador, fechaCreacion,color) VALUES (?,?,?,?)"
         );
-        $stmt->execute(['Titulo',$body['alias'],$fechaActual]);
+
+        $colores = [
+            "#3498DB",
+            "#E74C3C",
+            "#2ECC71",
+            "#F1C40F",
+            "#9B59B6"
+        ];
+        $color = $colores[array_rand($colores)];
+
+        $stmt->execute(['Titulo',$body['alias'],$fechaActual, $color]);
 
         respond(201, [
             "mensaje" => "Tablero creado"

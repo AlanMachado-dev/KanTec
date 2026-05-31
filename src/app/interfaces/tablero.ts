@@ -4,4 +4,5 @@ export interface Tablero {
     descripcion: string;
     aliasCreador: string
     imagen: string;
+    color: string;
 }

@@ -10,7 +10,7 @@ export const routes: Routes = [
     {path : 'ingreso', component: Ingresar},
     {path : 'registro', component: Registro},
     {path : 'home', component: Home},
-    {path : 'tablero', component: Tablero}
+    {path : 'tablero/:id', component: Tablero}
     
     
 ];

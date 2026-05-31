@@ -59,7 +59,7 @@ class tableroAPI
         $fechaActual = date('Y-m-d');
 
         $stmt = $this->db->prepare(
-            "INSERT INTO tablero (titulo,aliasCreador, fechaCreacion,color) VALUES (?,?,?,?)"
+            "INSERT INTO tablero (id,titulo,aliasCreador, fechaCreacion,color) VALUES (?,?,?,?,?)"
         );
 
         $colores = [
@@ -71,7 +71,11 @@ class tableroAPI
         ];
         $color = $colores[array_rand($colores)];
 
-        $stmt->execute(['Titulo',$body['alias'],$fechaActual, $color]);
+        $uuid = $this->db->query(
+            "SELECT uuid()"
+        )->fetchColumn();
+
+        $stmt->execute([$uuid,'Titulo',$body['alias'],$fechaActual, $color]);
 
         respond(201, [
             "mensaje" => "Tablero creado"

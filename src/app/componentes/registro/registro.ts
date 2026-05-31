@@ -95,7 +95,7 @@ export class Registro {
             this.loading = false;
             this._cdr.detectChanges();
           } else {
-            if(!this.extPermitidas.includes(this.imagenSeleccionada.type)){
+            if(this.imagenSeleccionada && !this.extPermitidas.includes(this.imagenSeleccionada.type)){
               this.errorMessage = "Tipo de imagen no permitida!"
               this.mostrarError = true;
               this.loading = false;

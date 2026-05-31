@@ -49,9 +49,9 @@ class Database{
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS tablero (
-            id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            id BINARY(16) PRIMARY KEY,
             titulo VARCHAR(50) NOT NULL,
-            descripcion VARCHAR(100),
+            descripcion VARCHAR(300),
             fechaCreacion DATE NOT NULL ,
             imagen VARCHAR(40) NULL,
             color VARCHAR(7),

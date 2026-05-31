@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Http } from '../../services/http';
 
 @Component({
   selector: 'app-tablero',
@@ -9,13 +10,20 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class Tablero {
   constructor(
-    private route: ActivatedRoute
+    private ruta: ActivatedRoute, private http: Http, private router: Router
   ) { }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-
-    console.log(id);
-  }
+    this.http.sesionActiva$.subscribe(logueado => {
+      if (logueado) {
+        const id = this.ruta.snapshot.paramMap.get('id');
+        
+        console.log(id);
+      } else {
+        this.router.navigate(['/']);
+      }
+  });
+}
+ 
 }
 

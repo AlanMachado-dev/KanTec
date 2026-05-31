@@ -92,7 +92,7 @@ export class Home {
   get paginas(): number[] {
     return Array.from(
       { length: this.totalPaginas },
-      (_, i) => i + 1
+      (valor, i) => i + 1
     );
   }
   crearTablero(): void{
@@ -105,7 +105,7 @@ export class Home {
            
             this.tableros = tableros;
             this.cdr.detectChanges();
-          });
+          }); 
       }
     });
   }

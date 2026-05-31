@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
 import { Http } from '../../services/http';
 import { Usuario } from '../../interfaces/usuario';
@@ -18,7 +18,7 @@ export class Navbar implements OnInit, OnDestroy{
   private sub: Subscription = new Subscription(); 
   private router = inject(Router);
 
-  constructor(private http: Http) {}
+  constructor(private http: Http, private _cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void { //el codigo dentro corre cuando se crea el componente
     this.sub = this.http.sesionActiva$.subscribe(logueado => { 
@@ -45,11 +45,8 @@ export class Navbar implements OnInit, OnDestroy{
     this.http.getUsuario(alias).subscribe({
       next: (response) => {
         this.usuario = response;
-        if(!this.usuario.imagen){ //no tiene imagen
-          this.imagenUsu = this.http.getRutaBaseImg() + "usuarios/default.jpg";
-        }else{
-          this.imagenUsu = this.http.getRutaBaseImg() + this.usuario.imagen;
-        }
+        this.imagenUsu = this.http.getRutaBaseImg() + this.usuario.imagen;
+        this._cdr.detectChanges();
       },
       error: (err) => console.log(err)
     })
@@ -68,4 +65,9 @@ export class Navbar implements OnInit, OnDestroy{
       }
     });
   }
+
+  verPerfil(){
+    this.router.navigate(['/perfil', this.usuario?.alias]);
+  }
+
 }

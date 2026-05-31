@@ -15,7 +15,11 @@
                 @if(!loading){
                     <button type="submit" [disabled]="!usuarioForm.valid" class="btn btn-primary mt-3 w-100 h-25 fw-bold">Iniciar Sesion</button>
                 }@else{
-                    <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" disabled>Cargando...</button>
+                    <!-- <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" disabled>Cargando...</button> -->
+                    <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        <span role="status">Cargando...</span>
+                    </button>
                 }
             </div>
             

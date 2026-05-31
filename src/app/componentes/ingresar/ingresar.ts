@@ -33,9 +33,9 @@ export class Ingresar {
         next: (response) => {
           console.log(response);
           this.http.guardarToken(response.token);
-          setTimeout(() => { //deberia agregar un sweetAlert (#sponsor) mientras carga y no un timeout
+          // setTimeout(() => { //deberia agregar un sweetAlert (#sponsor) mientras carga y no un timeout
             this.router.navigate(['/home']);
-          }, 1000);
+          // }, 500);
           this.loading = false;
         },
 

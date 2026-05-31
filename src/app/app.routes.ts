@@ -4,6 +4,7 @@ import { Ingresar } from './componentes/ingresar/ingresar';
 import { Registro } from './componentes/registro/registro';
 import { Home } from './componentes/home/home';
 import { Tablero } from './componentes/tablero/tablero';
+import { Perfil } from './componentes/perfil/perfil';
 
 export const routes: Routes = [
     {path : '', component: Carrusel},
@@ -11,6 +12,7 @@ export const routes: Routes = [
     {path : 'registro', component: Registro},
     {path : 'home', component: Home},
     {path : 'tablero/:id', component: Tablero}
+    {path : 'perfil/:alias', component: Perfil}
     
     
 ];

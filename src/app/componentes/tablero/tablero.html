@@ -148,25 +148,52 @@
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="post-it-info" aria-labelledby="[id Tarea]"
     style="--bs-offcanvas-width: 600px;">
+
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="[id Tarea]">[Nombre Tarea]</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <hr>
+    <hr class="m-0">
+
     <div class="offcanvas-body">
         <div class="mb-3">
             <label for="descripcion" class="form-label">Descripcion:</label>
             <input type="text" id="descripcion" class="form-control">
         </div>
-        <p>Prioridad:</p>
-        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-            <button type="button" class="btn btn-danger px-3">1</button>
-            <button type="button" class="btn btn-warning text-white px-3">2</button>
-            <button type="button" class="btn btn-success px-3">3</button>
-            <button type="button" class="btn btn-primary px-3">4</button>
+
+        <div class="float-start">
+            <p>Prioridad:</p>
+            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                <button type="button" class="btn btn-danger px-3">1</button>
+                <button type="button" class="btn btn-warning text-white px-3">2</button>
+                <button type="button" class="btn btn-success px-3">3</button>
+                <button type="button" class="btn btn-primary px-3">4</button>
+            </div>
         </div>
-        <!--div>
-            <input type="date" name="" id="">
-        </div-->
+
+        <div class="float-end me-5">
+            <p>Fecha Limite:</p>
+            <input class="me-5" type="date" name="" id="">
+        </div>
+
+        <br style="clear: both;">
+
+        <div class="float-start mt-5">
+            <p class="mb-4">Miembros Asignados:</p>
+            <p class="text-info">[usuario1] [usuario2] [+]</p>
+        </div>
+
+        <br style="clear: both;">
     </div>
+    <div class="p-3 border-top">
+        <div class="row">
+            <div class="col-4">
+                <button type="button" class="btn btn-outline-danger w-100">Borrar Tarea</button>
+            </div>
+            <div class="col-8">
+                <button type="button" class="btn btn-primary w-100">Guardar</button>
+            </div>
+        </div>
+    </div>
+
 </div>

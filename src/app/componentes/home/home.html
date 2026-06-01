@@ -1,7 +1,7 @@
 <style>
     .crear-tablero {
         height: 100%;
-        min-height: 400px;
+        min-height: 470px;
         border: 3px dashed #999;
         cursor: pointer;
     }
@@ -17,7 +17,7 @@
         object-fit: cover;
     }
     .tamanioTarjeta{
-        height: 400px;
+        height: 470px;
     }
     .descripcionTarjeta{
         display: -webkit-box;
@@ -46,13 +46,23 @@
                 }
             </a>
             <div class="card-body">
-                <p class="card-title "><b>{{tablero.titulo}}</b> by {{tablero.aliasCreador}}</p>
+                <p class="card-title "><b>{{tablero.titulo}}</b> by {{tablero.aliasCreador}} <span class="float-end"> {{tablero.fechaCreacion}} </span> </p>
                 @if(tablero.descripcion){
                     <p class="card-text descripcionTarjeta">{{tablero.descripcion}}</p>
                 }
                 
-
                 <!-- <p class="card-text">[usuario1] [usuario2] [usuario3]</p> -->
+            </div>
+            <div class="card-footer">
+                <div class="row ">
+                    <div class="col-12 d-flex">
+                        <button class="btn btn-primary border-top w-75 m-auto" data-bs-toggle="offcanvas" data-bs-target="#post-it-info" 
+                aria-controls="post-it-info">Editar</button>
+                    </div>
+                </div>
+                
+                
+
             </div>
         </div>
     </div>
@@ -96,5 +106,49 @@
         </ul>
     </nav>
 </div>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="post-it-info" aria-labelledby="[id Tablero]"
+    style="--bs-offcanvas-width: 600px;">
+
+    <div class="offcanvas-header">
+        <input type="text" placeholder="[Nombre Tablero]">
+        <!-- <h5 class="offcanvas-title" id="[id Tablero]">[Nombre Tarea]</h5> -->
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <hr class="m-0">
+
+    <div class="offcanvas-body">
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripcion:</label>
+            <input type="text" id="descripcion" class="form-control">
+        </div>
+
+        <div class="float-start border-bottom">
+            <label for="imagen" class="form-label">Imagen del Tablero</label>
+            <input type="file"  formControlName="imagen" class="form-control bg-secondary"
+                id="imagen" accept="image/*">
+        </div>
+
+        <br style="clear: both;">
+        <div class=" me-5">
+            <p>Color de Fondo:</p>
+            <input class="me-5" type="color" name="" id="">
+        </div>
+
+        <br style="clear: both;">
+    </div>
+    <div class="p-3 border-top">
+        <div class="row">
+            <div class="col-4">
+                <button type="button" class="btn btn-outline-danger w-100">Borrar Tablero</button>
+            </div>
+            <div class="col-8">
+                <button type="button" class="btn btn-primary w-100">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 
 <h1>Compartidos contigo</h1>

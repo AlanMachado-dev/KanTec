@@ -5,4 +5,5 @@ export interface Tablero {
     aliasCreador: string
     imagen: string;
     color: string;
+    fechaCreacion: string;
 }

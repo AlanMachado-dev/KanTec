@@ -20,7 +20,7 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/tableros/usuario/Luqui86
     public function getTableros(string $alias): void
     {   
-        $stmt = $this->db->prepare("SELECT * FROM tablero WHERE aliasCreador = ?");
+        $stmt = $this->db->prepare("SELECT * FROM tablero WHERE aliasCreador = ? ORDER BY fechaCreacion");
         $stmt->execute([$alias]);
         respond(200, $stmt->fetchAll());
     }
@@ -56,7 +56,7 @@ class tableroAPI
         }
 
         date_default_timezone_set('America/Montevideo');
-        $fechaActual = date('Y-m-d');
+        $fechaActual = date('Y-m-d H:i:s');
 
         $stmt = $this->db->prepare(
             "INSERT INTO tablero (id,titulo,aliasCreador, fechaCreacion,color) VALUES (?,?,?,?,?)"
@@ -106,11 +106,12 @@ class tableroAPI
         $titulo = $body['titulo'] ?? $tablero['titulo'];
         $descripcion = $body['descripcion'] ?? $tablero['descripcion'];
         $imagen = $body['imagen'] ?? $tablero['imagen'];
+        $color = $body['color'] ?? $tablero['color'];
 
         $stmt = $this->db->prepare(
-            "UPDATE tablero SET titulo = ?, descripcion = ?, imagen = ? WHERE id = ?"
+            "UPDATE tablero SET titulo = ?, descripcion = ?, imagen = ?, color = ? WHERE id = ?"
         );
-        $stmt->execute([$titulo, $descripcion, $imagen, $id]);
+        $stmt->execute([$titulo, $descripcion, $imagen, $color ,$id]);
         
         respond(200, ["mensaje" => "Tablero actualizado"]);
     }

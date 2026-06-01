@@ -52,7 +52,7 @@ class Database{
             id BINARY(16) PRIMARY KEY,
             titulo VARCHAR(50) NOT NULL,
             descripcion VARCHAR(300),
-            fechaCreacion DATE NOT NULL ,
+            fechaCreacion DATETIME NOT NULL ,
             imagen VARCHAR(40) NULL,
             color VARCHAR(7),
             aliasCreador VARCHAR(30), FOREIGN KEY (aliasCreador) REFERENCES usuario(alias)

@@ -85,6 +85,14 @@ export class Http {
     return this.http.post<any>("http://localhost/kantecAPI/api/imagenes/usuarios",formData);
   }
 
+  subirImgTablero(archivo: File): Observable<any> {
+    const formData = new FormData();
+
+    formData.append('archivo', archivo);
+
+    return this.http.post<any>("http://localhost/kantecAPI/api/imagenes/tableros", formData);
+  }
+
   public getRutaBaseImg(): string{
     return "http://localhost/kantecAPI/imagenes/";
   }
@@ -106,4 +114,14 @@ export class Http {
     this.tableroCreado.next();
   }
 
+  actualizarTablero(idTablero: number, body: any): Observable<any> { 
+    return this.http.put<any>("http://localhost/kantecAPI/api/tableros/" + idTablero ,
+      body
+    );
+  }
+
+  borrarTablero(idTablero: number): Observable<any> {
+    return this.http.delete<any>("http://localhost/kantecAPI/api/tableros/" + idTablero);
+  }
+  
 }

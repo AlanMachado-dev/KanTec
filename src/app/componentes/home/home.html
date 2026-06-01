@@ -8,10 +8,7 @@
     .crear-tablero:hover {
         transform: scale(1.02);
     }
-    .imagenTablero{
-        height: 300px; 
-        object-fit: cover;
-    }
+    .imagenTablero,
     .colorFondoTablero{
         height: 300px;
         object-fit: cover;
@@ -27,6 +24,10 @@
         text-overflow: ellipsis; 
         height: 50px;
     }
+    .descripcionModal{
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+    }
 </style>
 
 <h1>Tus Tableros</h1>
@@ -36,16 +37,17 @@
     @for(tablero of tablerosPaginados; track tablero.id){
     <div class="col" >
         <div class="card tamanioTarjeta">
-            <a [routerLink]="['/tablero',tablero.id]">
+            <a [routerLink]="['/tablero',tablero.id]" class="imagenTablero">
                 @if(tablero.imagen){
-                    <img [src]="rutaImagenes + tablero.imagen" class="card-img-top imagenTablero" alt="..." >
+                    <img [src]="rutaImagenes + tablero.imagen" class="card-img-top imagenTablero" alt="..." (error)="tablero.imagen = null">
                 }@else {
                     <div [style.background-color]="tablero.color" class="colorFondoTablero">
                         <!-- {{tablero.titulo}} -->
                     </div>
                 }
             </a>
-            <div class="card-body">
+            <div class="card-body" type="button" (click)="seleccionarTablero(tablero)" data-bs-toggle="modal"
+  data-bs-target="#detalleTablero">
                 <p class="card-title "><b>{{tablero.titulo}}</b> by {{tablero.aliasCreador}} <span class="float-end"> {{tablero.fechaCreacion}} </span> </p>
                 @if(tablero.descripcion){
                     <p class="card-text descripcionTarjeta">{{tablero.descripcion}}</p>
@@ -56,7 +58,7 @@
             <div class="card-footer">
                 <div class="row ">
                     <div class="col-12 d-flex">
-                        <button class="btn btn-primary border-top w-75 m-auto" data-bs-toggle="offcanvas" data-bs-target="#post-it-info" 
+                        <button class="btn btn-primary border-top w-75 m-auto" (click)="seleccionarTablero(tablero)" data-bs-toggle="offcanvas" data-bs-target="#post-it-info" 
                 aria-controls="post-it-info">Editar</button>
                     </div>
                 </div>
@@ -110,42 +112,77 @@
 <div class="offcanvas offcanvas-start" tabindex="-1" id="post-it-info" aria-labelledby="[id Tablero]"
     style="--bs-offcanvas-width: 600px;">
 
-    <div class="offcanvas-header">
-        <input type="text" placeholder="[Nombre Tablero]">
-        <!-- <h5 class="offcanvas-title" id="[id Tablero]">[Nombre Tarea]</h5> -->
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <hr class="m-0">
-
-    <div class="offcanvas-body">
-        <div class="mb-3">
-            <label for="descripcion" class="form-label">Descripcion:</label>
-            <input type="text" id="descripcion" class="form-control">
+    <form [formGroup]="formularioTablero" class="d-flex flex-column h-100">
+        <div class="offcanvas-header">
+            <input type="text" placeholder="{{tableroSeleccionado?.titulo}}" formControlName="titulo" class="form-control">
+            <!-- <h5 class="offcanvas-title" id="[id Tablero]">[Nombre Tarea]</h5> -->
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" id="btnCerrarOffcanvas"></button>
         </div>
+        <hr class="m-0">
 
-        <div class="float-start border-bottom">
-            <label for="imagen" class="form-label">Imagen del Tablero</label>
-            <input type="file"  formControlName="imagen" class="form-control bg-secondary"
-                id="imagen" accept="image/*">
-        </div>
-
-        <br style="clear: both;">
-        <div class=" me-5">
-            <p>Color de Fondo:</p>
-            <input class="me-5" type="color" name="" id="">
-        </div>
-
-        <br style="clear: both;">
-    </div>
-    <div class="p-3 border-top">
-        <div class="row">
-            <div class="col-4">
-                <button type="button" class="btn btn-outline-danger w-100">Borrar Tablero</button>
+        <div class="offcanvas-body flex-grow-1">
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripcion:</label>
+                <textarea class="form-control" rows="5" formControlName="descripcion"></textarea>
             </div>
-            <div class="col-8">
-                <button type="button" class="btn btn-primary w-100">Guardar</button>
+
+            <div class="float-start border-bottom">
+                <label for="imagen" class="form-label">Imagen del Tablero</label>
+                <input type="file"  class="form-control bg-secondary" (change)="onImagenSeleccionada($event)"
+                accept="image/*">
+            </div>
+
+            <br style="clear: both;">
+            <div class=" me-5">
+                <p>Color de Fondo:</p>
+                <input class="me-5" type="color" formControlName="color">
+            </div>
+
+            <br style="clear: both;">
+        </div>
+        <div class="p-3 border-top mt-auto">
+            <div class="row">
+                <div class="col-4">
+                    <button type="button" class="btn btn-outline-danger w-100" (click)="borrarTablero()">Borrar Tablero</button>
+                </div>
+                <div class="col-8">
+                    <button type="button" class="btn btn-primary w-100" (click)="guardarCambiosTablero()">Guardar</button>
+                </div>
             </div>
         </div>
+    </form>
+</div>
+
+<div class="modal fade" id="detalleTablero" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+    
+        <div class="modal-content">
+    
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{tableroSeleccionado?.titulo}}
+                </h5>
+    
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                </button>
+            </div>
+    
+            <div class="modal-body">
+    
+                @if(tableroSeleccionado?.imagen){
+    
+                <img [src]="rutaImagenes + tableroSeleccionado?.imagen" class="img-fluid">
+    
+                }
+    
+                <p class="descripcionModal">
+                    {{tableroSeleccionado?.descripcion}}
+                </p>
+    
+            </div>
+    
+        </div>
+    
     </div>
 
 </div>

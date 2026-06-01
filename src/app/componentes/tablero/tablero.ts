@@ -18,7 +18,7 @@ export class Tablero {
       if (logueado) {
         const id = this.ruta.snapshot.paramMap.get('id');
         
-        console.log(id);
+        //console.log(id);
       } else {
         this.router.navigate(['/']);
       }

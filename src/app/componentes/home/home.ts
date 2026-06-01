@@ -2,22 +2,32 @@ import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Http } from '../../services/http';
 import { Router, RouterLink } from '@angular/router';
 import { Tablero } from '../../interfaces/tablero';
-import { Usuario } from '../../interfaces/usuario';
 import { Subscription } from 'rxjs';
+import { FormBuilder, FormGroup, ɵInternalFormsSharedModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [RouterLink, ɵInternalFormsSharedModule, ReactiveFormsModule],
   templateUrl: './home.html',
   styles: ``,
 })
 export class Home {
+
+  private fb = inject(FormBuilder);
+
+  formularioTablero: FormGroup = this.fb.group({
+    titulo: [''],
+    descripcion: [''],
+    color: ['']
+  });;
+
   rutaImagenes !: string;
   constructor(private http: Http, private router: Router, private cdr: ChangeDetectorRef){
     if(!http.estaLogueado){
       router.navigate(['/']);
     }else{
       this.rutaImagenes = this.http.getRutaBaseImg();
+      
     }
   }
   aliasUsuario !: string;
@@ -109,6 +119,80 @@ export class Home {
       }
     });
   }
+  tableroSeleccionado: Tablero | null = null;
 
+  seleccionarTablero(tablero: Tablero): void{
+    this.tableroSeleccionado = tablero;
 
+    this.formularioTablero.patchValue({
+      titulo: tablero.titulo,
+      descripcion: tablero.descripcion,
+      color: tablero.color
+    });
+  }
+
+  archivoSeleccionado: File | null = null;
+
+  onImagenSeleccionada(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if(input.files?.length){
+      this.archivoSeleccionado = input.files[0];
+    }
+  }
+
+  guardarCambiosTablero(): void {
+    
+    if(!this.tableroSeleccionado){
+      return;
+    }
+
+    const body = this.formularioTablero.value;
+
+    if(this.archivoSeleccionado) {
+      this.http.subirImgTablero(this.archivoSeleccionado)
+        .subscribe(response => {
+
+          body.imagen = response.ruta;
+
+          this.http.actualizarTablero(
+            this.tableroSeleccionado!.id,
+            body
+          ).subscribe({
+            next: () => {
+              this.cargarTableros();
+              const btnCerrar = document.getElementById('btnCerrarOffcanvas');
+              btnCerrar?.click();
+            }
+          });
+        })
+    } else{
+      this.http.actualizarTablero(
+        this.tableroSeleccionado.id,
+        body
+      ).subscribe({
+        next: () => {
+          this.cargarTableros();
+          const btnCerrar = document.getElementById('btnCerrarOffcanvas');
+          btnCerrar?.click();
+        }
+      });
+    }
+
+    //console.log(body);
+    
+  }
+
+  borrarTablero(){
+    if(!this.tableroSeleccionado){
+      return;
+    }
+    this.http.borrarTablero(this.tableroSeleccionado.id).subscribe({
+      next: () => {
+        this.cargarTableros();
+        const btnCerrar = document.getElementById('btnCerrarOffcanvas');
+        btnCerrar?.click();
+      }
+    });
+  }
 }

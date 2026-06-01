@@ -1,9 +1,9 @@
 export interface Tablero {
     id: number;
     titulo: string;
-    descripcion: string;
+    descripcion: string | null;
     aliasCreador: string
-    imagen: string;
+    imagen: string | null;
     color: string;
     fechaCreacion: string;
 }

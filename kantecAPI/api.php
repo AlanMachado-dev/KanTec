@@ -45,7 +45,7 @@ match(true) {
     
     $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
         && $method === 'PUT' => $tablero->update($partes[2]),
-    $partes[1] === 'tableros' && isset($partes[2]) && is_numeric($partes[2]) && !isset($partes[3]) 
+    $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
         && $method === 'GET' => $tablero->getOne($partes[2]),
     $partes[1] === 'tableros' && isset($partes[2])  && !isset($partes[3])
         && $method === 'DELETE' => $tablero->delete($partes[2]),

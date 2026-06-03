@@ -64,7 +64,7 @@
             </a>
             <div class="card-body" type="button" (click)="seleccionarTablero(tablero)" data-bs-toggle="modal"
   data-bs-target="#detalleTablero">
-                <p class="card-title "><b>{{tablero.titulo}}</b> by {{tablero.aliasCreador}} <span class="float-end"> {{tablero.fechaCreacion}} </span> </p>
+                <p class="card-title "><b>{{tablero.titulo}}</b> by {{tablero.aliasCreador}} <span class="float-end"> {{tablero.fechaCreacion.slice(0,10)}} </span> </p>
                 @if(tablero.descripcion){
                 <p class="card-text descripcionTarjeta">{{tablero.descripcion}}</p>
                 }
@@ -104,14 +104,25 @@
                     Previous
                 </button>
             </li>
-            @for(pagina of paginas; track pagina) {
+            @for(pagina of paginasVisibles; track $index) {
 
-            <li class="page-item" [class.active]="pagina === paginaActual">
+                @if(pagina === "...") {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                } @else {
+                    <li class="page-item" [class.active]="pagina === paginaActual">
+                        <button class="page-link" (click)="cambiarPagina(+pagina, $event)">
+                            {{pagina}}
+                        </button>
+                    </li>
+                }
+            <!-- <li class="page-item" [class.active]="pagina === paginaActual">
 
                 <button class="page-link" (click)="cambiarPagina(pagina)">
                     {{pagina}}
                 </button>
-            </li>
+            </li> -->
 
             }
 

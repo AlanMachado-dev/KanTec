@@ -85,8 +85,10 @@ export class Home {
     );
   }
 
-  cambiarPagina(numero: number): void {
+  cambiarPagina(numero: number, event?: Event): void {
     this.paginaActual = numero;
+
+    (event?.target as HTMLElement)?.blur();
   }
 
   siguiente() : void {
@@ -99,12 +101,36 @@ export class Home {
       this.paginaActual--;
     }
   }
-  get paginas(): number[] {
-    return Array.from(
-      { length: this.totalPaginas },
-      (valor, i) => i + 1
-    );
+  get paginasVisibles(): (number | string)[] {
+    const paginas: (number | string)[] = [];
+
+    if(this.totalPaginas <= 10) {
+      return Array.from(
+        { length: this.totalPaginas },
+        (valor,i) => i + 1
+      );
+    }
+
+    paginas.push(1);
+
+    const inicio = Math.max(2, this.paginaActual - 3);
+    const fin = Math.min(this.totalPaginas - 1, this.paginaActual + 3);
+
+    if(inicio > 2) {
+      paginas.push("...");
+    }
+    for (let i = inicio; i <= fin; i++){
+      paginas.push(i);
+    }
+    if(fin < this.totalPaginas - 1){
+      paginas.push("...");
+    }
+
+    paginas.push(this.totalPaginas);
+
+    return paginas;
   }
+
   crearTablero(): void{
     this.http.crearTablero(this.aliasUsuario).subscribe({
       next: () => {

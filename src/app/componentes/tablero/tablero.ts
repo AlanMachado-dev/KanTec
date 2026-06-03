@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Http } from '../../services/http';
+import flatpickr from "flatpickr";
+import { Spanish } from "flatpickr/dist/l10n/es.js";
 
 @Component({
   selector: 'app-tablero',
@@ -8,7 +10,7 @@ import { Http } from '../../services/http';
   templateUrl: './tablero.html',
   styles: ``,
 })
-export class Tablero {
+export class Tablero implements OnInit, AfterViewInit {
   constructor(
     private ruta: ActivatedRoute, private http: Http, private router: Router
   ) { }
@@ -22,8 +24,20 @@ export class Tablero {
       } else {
         this.router.navigate(['/']);
       }
-  });
-}
+    });
+  }
+  
+ngAfterViewInit(): void {
+    flatpickr("#calendario-siempre-abierto", {
+      inline: true, 
+      locale: Spanish,
+      altInput: true,
+      altFormat: "j \\d\\e F Y",
+      dateFormat: "Y-m-d", 
+      mode: "range", 
+      minDate: "today",
+    });
+  }
  
 }
 

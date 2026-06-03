@@ -31,10 +31,13 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/flatpickr/dist/flatpickr.min.css"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/flatpickr/dist/flatpickr.min.js",
+              "node_modules/flatpickr/dist/l10n/es.js"
             ]
           },
           "configurations": {

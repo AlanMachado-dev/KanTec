@@ -68,14 +68,17 @@ class Database{
             PRIMARY KEY (idTablero,aliasUsuario)
             )
         ");
-        // $this->conn->exec("
-        // DROP TRIGGER IF EXISTS evitarTablerosEliminados
-        //     CREATE TRIGGER evitarTablerosEliminados BEFORE DELETE
-        //     ON tablero FOR EACH ROW
-        //     BEGIN
-        //         DELETE FROM pertenece WHERE idTablero = OLD.id;
-        //     END
-        // ");
+        $this->conn->exec("
+            DROP TRIGGER IF EXISTS evitarTablerosEliminados
+        ");
+
+        $this->conn->exec("
+            CREATE TRIGGER evitarTablerosEliminados BEFORE DELETE
+            ON tablero FOR EACH ROW
+            BEGIN
+                DELETE FROM pertenece WHERE idTablero = OLD.id;
+            END
+        ");
 
     }
 }

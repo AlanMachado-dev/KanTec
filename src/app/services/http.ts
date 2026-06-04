@@ -124,4 +124,7 @@ export class Http {
     return this.http.delete<any>("http://localhost/kantecAPI/api/tableros/" + idTablero);
   }
   
+  getTablerosColaborados(alias: string): Observable<Tablero[]>{
+    return this.http.get<Tablero[]>("http://localhost/kantecAPI/api/tableros/colaborador/" + alias);
+  }
 }

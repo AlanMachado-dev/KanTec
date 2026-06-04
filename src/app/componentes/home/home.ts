@@ -19,7 +19,7 @@ export class Home {
     titulo: [''],
     descripcion: [''],
     color: ['']
-  });;
+  });
 
   rutaImagenes !: string;
   constructor(private http: Http, private router: Router, private cdr: ChangeDetectorRef){
@@ -41,6 +41,7 @@ export class Home {
       this.aliasUsuario = this.http.getAliasDelToken() || "";
       if(logueado){
         this.cargarTableros();
+        this.cargarTablerosColaboraciones();
       }else{
         this.tableros = [];
         this.aliasUsuario = "";
@@ -60,7 +61,9 @@ export class Home {
     this.subTableros.unsubscribe();
   }
   tableros: Tablero[] = [];
+  tablerosColaborados: Tablero[] = [];
   paginaActual = 1;
+  paginaActualColaborador = 1;
   private tablerosPorPagina = 3;
 
   private cargarTableros(): void {
@@ -70,51 +73,78 @@ export class Home {
         this.cdr.detectChanges();
       });
   }
-
-  get tablerosPaginados(): Tablero[] {
-    const inicio = (this.paginaActual - 1) * this.tablerosPorPagina;
+  private cargarTablerosColaboraciones(): void{
+    this.http.getTablerosColaborados(this.aliasUsuario)
+      .subscribe(tableros => {
+        this.tablerosColaborados = tableros;
+        this.cdr.detectChanges();
+      })
+  }
+  getTablerosPaginados(lista: Tablero[], pagina: number): Tablero[] {
+    const inicio = (pagina - 1) * this.tablerosPorPagina;
     const fin = inicio + this.tablerosPorPagina;
 
-    return this.tableros.slice(inicio,fin);
+    return lista.slice(inicio,fin);
   }
 
-  get totalPaginas(): number {
+  getTotalPaginas(lista: Tablero[], incluirCrear: boolean): number {
+
+    const extras = incluirCrear ? 1 : 0;
+
     return Math.max(1,
-      Math.ceil((this.tableros.length + 1) / this.tablerosPorPagina) // El + 1 es para que la tarjeta de crear Tablero quede en
-      // una pagina separada
+      Math.ceil((lista.length + extras) / this.tablerosPorPagina)
     );
   }
 
-  cambiarPagina(numero: number, event?: Event): void {
-    this.paginaActual = numero;
-
+  cambiarPagina(numero: number, tipo: string, event?: Event): void {
+    
+    if (tipo === 'propios') {
+      this.paginaActual = numero
+    } else {
+      this.paginaActualColaborador = numero;
+    }
     (event?.target as HTMLElement)?.blur();
   }
 
-  siguiente() : void {
-    if(this.paginaActual < this.totalPaginas){
-      this.paginaActual++;
+  siguiente(tipo: string) : void {
+    const pagina = tipo === 'propios' ? this.paginaActual : this.paginaActualColaborador;
+
+    const total = tipo === 'propios' ? this.getTotalPaginas(this.tableros, true) : this.getTotalPaginas(this.tableros, false);
+    if(pagina < total){
+      if (tipo === 'propios') {
+        this.paginaActual++;
+      } else {
+        this.paginaActualColaborador++;
+      }
     }
   }
-  anterior(): void {
-    if(this.paginaActual > 1){
-      this.paginaActual--;
+  anterior(tipo: string): void {
+    const pagina = tipo === 'propios' ? this.paginaActual : this.paginaActualColaborador;
+
+    if (pagina > 1) {
+      if (tipo === 'propios') {
+        this.paginaActual--;
+      } else {
+        this.paginaActualColaborador--;
+      }
     }
   }
-  get paginasVisibles(): (number | string)[] {
+  getPaginasVisibles(lista: Tablero[], paginaActual: number, incluirCrear: boolean): (number | string)[] {
     const paginas: (number | string)[] = [];
 
-    if(this.totalPaginas <= 10) {
+    const totalPaginas = this.getTotalPaginas(lista, incluirCrear);
+
+    if (totalPaginas <= 10) {
       return Array.from(
-        { length: this.totalPaginas },
+        { length: totalPaginas },
         (valor,i) => i + 1
       );
     }
 
     paginas.push(1);
 
-    const inicio = Math.max(2, this.paginaActual - 3);
-    const fin = Math.min(this.totalPaginas - 1, this.paginaActual + 3);
+    const inicio = Math.max(2, paginaActual - 3);
+    const fin = Math.min(totalPaginas - 1, paginaActual + 3);
 
     if(inicio > 2) {
       paginas.push("...");
@@ -122,11 +152,11 @@ export class Home {
     for (let i = inicio; i <= fin; i++){
       paginas.push(i);
     }
-    if(fin < this.totalPaginas - 1){
+    if(fin < totalPaginas - 1){
       paginas.push("...");
     }
 
-    paginas.push(this.totalPaginas);
+    paginas.push(totalPaginas);
 
     return paginas;
   }

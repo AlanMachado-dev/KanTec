@@ -128,4 +128,20 @@ class tableroAPI
 
         respond(200, ["mensaje" => "Tablero eliminado"]);
     }
+
+    // GET http://localhost/kantecAPI/api/tableros/colaborador/alias
+    public function misColaboraciones(string $alias): void 
+    {
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt->execute([$alias]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user === false || empty($user)) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+        }
+
+        $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT idTablero from pertenece where aliasUsuario = ? AND tipoRelacion != 0)");
+        $stmt->execute([$alias]);
+        respond(200, $stmt->fetchAll());
+    }
 }

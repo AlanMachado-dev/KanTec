@@ -58,6 +58,24 @@ class Database{
             aliasCreador VARCHAR(30), FOREIGN KEY (aliasCreador) REFERENCES usuario(alias)
             )
         ");
+        $this->conn->exec("
+            CREATE TABLE IF NOT EXISTS pertenece (
+            idTablero BINARY(16) NOT NULL,
+            aliasUsuario VARCHAR(30) NOT NULL,
+            tipoRelacion int NOT NULL,
+            FOREIGN KEY (aliasUsuario) REFERENCES usuario(alias),
+            FOREIGN KEY (idTablero) REFERENCES tablero(id),
+            PRIMARY KEY (idTablero,aliasUsuario)
+            )
+        ");
+        // $this->conn->exec("
+        // DROP TRIGGER IF EXISTS evitarTablerosEliminados
+        //     CREATE TRIGGER evitarTablerosEliminados BEFORE DELETE
+        //     ON tablero FOR EACH ROW
+        //     BEGIN
+        //         DELETE FROM pertenece WHERE idTablero = OLD.id;
+        //     END
+        // ");
 
     }
 }

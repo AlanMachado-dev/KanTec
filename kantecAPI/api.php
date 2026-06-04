@@ -55,6 +55,8 @@ match(true) {
         && $method === 'POST' => $tablero->create(),
     $partes[1] === 'tableros' && $partes[2] === 'usuario' && isset($partes[3]) && !isset($partes[4]) 
         && $method === 'GET' => $tablero->getTableros($partes[3]),
+    $partes[1] === 'tableros' && $partes[2] === 'colaborador' && isset($partes[3]) && !isset($partes[4]) 
+    && $method === 'GET' => $tablero->misColaboraciones($partes[3]),
     
     //ruta imagenes
     $partes[1] === 'imagenes' && $partes[2] === 'usuarios' && !isset($partes[3]) 

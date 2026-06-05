@@ -47,9 +47,9 @@ match(true) {
     //ruta tableros
     
     $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
-        && $method === 'PUT' => $tablero->update($partes[2]),
-    $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
         && $method === 'GET' => $tablero->getOne($partes[2]),
+    $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
+        && $method === 'PUT' => $tablero->update($partes[2]),
     $partes[1] === 'tableros' && isset($partes[2])  && !isset($partes[3])
         && $method === 'DELETE' => $tablero->delete($partes[2]),
     $partes[1] === 'tableros' && !isset($partes[2]) 
@@ -63,8 +63,16 @@ match(true) {
     
     //ruta tareas
 
-     $partes[1] === 'tareas' && !isset($partes[2]) 
+    $partes[1] === 'tareas' && !isset($partes[2]) 
         && $method === 'POST' => $tarea->create(),
+    $partes[1] === 'tareas' && $partes[2] === 'tablero' && isset($partes[3]) && !isset($partes[4]) 
+        && $method === 'GET' => $tarea->getTareas($partes[3]),
+    $partes[1] === 'tareas' && isset($partes[2]) && isset($partes[3]) && !isset($partes[4]) 
+        && $method === 'GET' => $tarea->getOne($partes[2], $partes[3]),
+    $partes[1] === 'tareas' && isset($partes[2]) && isset($partes[3]) && !isset($partes[4]) 
+        && $method === 'PUT' => $tarea->update($partes[2], $partes[3]),
+    $partes[1] === 'tareas' && isset($partes[2]) && isset($partes[3]) && !isset($partes[4])
+        && $method === 'DELETE' => $tarea->delete($partes[2], $partes[3]),
 
     //ruta imagenes
     $partes[1] === 'imagenes' && $partes[2] === 'usuarios' && !isset($partes[3]) 

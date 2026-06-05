@@ -10,7 +10,7 @@ class tareaAPI
         $this->db = (new Database())->getConnection();
     }
 
-    // GET http://localhost/kantecAPI/api/tarea/tablero/id
+    // GET http://localhost/kantecAPI/api/tareas/tablero/idTablero
     public function getTareas(string $idTablero): void
     {   
         $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ?");
@@ -18,8 +18,8 @@ class tareaAPI
         respond(200, $stmt->fetchAll());
     }
 
-    // GET http://localhost/kantecAPI/api/tarea/id
-    public function getOne(string $idTarea, string $idTablero): void
+    // GET http://localhost/kantecAPI/api/tareas/idTablero/idTarea
+    public function getOne(string $idTablero, string $idTarea): void
     {
         $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? AND idTarea = ?");
         $stmt->execute([$idTablero, $idTarea]);
@@ -67,8 +67,8 @@ class tareaAPI
         ]);
     }
 
-    // PUT http://localhost/kantecAPI/api/tableros/1
-    public function update(string $id): void {
+    // PUT http://localhost/kantecAPI/api/tareas/idTablero/idTarea
+    public function update(string $idTablero, string $idTarea): void {
         $body = json_decode(file_get_contents("php://input"), true);
 
         if (!$body) {
@@ -76,41 +76,45 @@ class tareaAPI
         }
 
         $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
-        $stmt->execute([$id]);
-
+        $stmt->execute([$idTablero]);
         $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
-        // Si se intenta actualizar el tablero y los datos son iguales el $stmt->rowCount() === 0 va a tirar error de tablero no encontrado
-        // y eso esta mal deberia simplemente decir que esta actualizado aunque no haya cambios supongo
         if(!$tablero) {
             respond (404, ["error" => "Tablero no encontrado"]);
         }
 
-        //Cambio para que se pueda actualizar el tablero sin necesidad de actualizar todas las cosas del tablero
-        $titulo = $body['titulo'] ?? $tablero['titulo'];
-        $descripcion = $body['descripcion'] ?? $tablero['descripcion'];
-        $imagen = $body['imagen'] ?? $tablero['imagen'];
-        $color = $body['color'] ?? $tablero['color'];
+        $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? AND idTarea = ?");
+        $stmt->execute([$idTablero, $idTarea]);
+        $tarea = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $stmt = $this->db->prepare(
-            "UPDATE tablero SET titulo = ?, descripcion = ?, imagen = ?, color = ? WHERE id = ?"
-        );
-        $stmt->execute([$titulo, $descripcion, $imagen, $color ,$id]);
-        
-        respond(200, ["mensaje" => "Tablero actualizado"]);
-    }
-
-    // DELETE http://localhost/kantecAPI/api/tableros/1
-    public function delete(string $id): void
-    {
-        $stmt = $this->db->prepare("DELETE FROM tablero WHERE id = ?");
-        $stmt->execute([$id]);
-
-        if ($stmt->rowCount() === 0) {
-            respond(404, ["error" => "Tablero no encontrado"]);
+        if(!$tarea) {
+            respond (404, ["error" => "Tarea no encontrada"]);
         }
 
-        respond(200, ["mensaje" => "Tablero eliminado"]);
+        $nombre = $body['nombre'] ?? $tablero['nombre'];
+        $descripcion = $body['descripcion'] ?? $tablero['descripcion'];
+        $fechaInicio = $body['fechaInicio'] ?? $tablero['fechaInicio'];
+        $fechaFinal = $body['fechaFinal'] ?? $tablero['fechaFinal'];
+        $prioridad = $body['prioridad'] ?? $tablero['prioridad'];
+
+        $stmt = $this->db->prepare(
+            "UPDATE tarea SET nombre = ?, descripcion = ?, fechaInicio = ?, fechaFinal = ?, prioridad = ? WHERE idTablero = ? AND idTarea = ?"
+        );
+        $stmt->execute([$nombre, $descripcion, $fechaInicio, $fechaFinal, $prioridad, $idTablero, $idTarea]);
+        
+        respond(200, ["mensaje" => "Tarea actualizada"]);
+    }
+
+    // DELETE http://localhost/kantecAPI/api/tareas/idTablero/idTarea
+    public function delete(string $idTablero, string $idTarea): void
+    {
+        $stmt = $this->db->prepare("DELETE FROM tarea WHERE idTablero = ? AND idTarea = ?");
+        $stmt->execute([$idTablero, $idTarea]);
+
+        if ($stmt->rowCount() === 0) {
+            respond(404, ["error" => "Tarea no encontrada"]);
+        }
+
+        respond(200, ["mensaje" => "Tarea eliminada"]);
     }
 }

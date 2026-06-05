@@ -4,6 +4,7 @@ require_once 'config/db.php';
 require_once 'config/jwt.php';
 require_once 'api/usuarioAPI.php'; //se incluye el controlador de cada tabla a usar
 require_once 'api/tableroAPI.php';
+require_once 'api/tareaAPI.php';
 require_once 'api/imagenesAPI.php';
 
 
@@ -21,6 +22,8 @@ $partes = explode('/', trim($uri, '/'));
 $usuario = new usuarioAPI(); 
 
 $tablero = new tableroAPI();
+
+$tarea = new tareaAPI();
 
 $imagenes = new imagenesAPI();
 
@@ -58,6 +61,11 @@ match(true) {
     $partes[1] === 'tableros' && $partes[2] === 'colaborador' && isset($partes[3]) && !isset($partes[4]) 
     && $method === 'GET' => $tablero->misColaboraciones($partes[3]),
     
+    //ruta tareas
+
+     $partes[1] === 'tareas' && !isset($partes[2]) 
+        && $method === 'POST' => $tarea->create(),
+
     //ruta imagenes
     $partes[1] === 'imagenes' && $partes[2] === 'usuarios' && !isset($partes[3]) 
         && $method === 'POST' => $imagenes->subirImgUsuario(),

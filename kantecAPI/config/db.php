@@ -79,6 +79,22 @@ class Database{
                 DELETE FROM pertenece WHERE idTablero = OLD.id;
             END
         ");
+        $this->conn->exec("
+            CREATE TABLE IF NOT EXISTS tarea (
+                idTarea     INTEGER NOT NULL,
+                idTablero   BINARY(16) NOT NULL,
+                nombre      VARCHAR(50) NOT NULL,
+                descripcion VARCHAR(300),
+                fechaCreacion DATETIME NOT NULL,
+                fechaInicio DATETIME, 
+                fechaFinal  DATETIME,
+                posicion    INTEGER NOT NULL,
+                columna     INTEGER NOT NULL,
+                prioridad   INTEGER,
+                FOREIGN KEY (idTablero) REFERENCES tablero(id),
+                PRIMARY KEY (idTablero, idTarea)
+            )
+        ");
 
     }
 }

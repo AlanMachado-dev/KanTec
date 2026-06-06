@@ -20,7 +20,7 @@ class tableroAPI
 
     // GET http://localhost/kantecAPI/api/tableros/usuario/Luqui86
     public function getTableros(string $alias): void
-    {   
+    {
         $stmt = $this->db->prepare("SELECT * FROM tablero WHERE aliasCreador = ? ORDER BY fechaCreacion");
         $stmt->execute([$alias]);
         respond(200, $stmt->fetchAll());
@@ -76,12 +76,12 @@ class tableroAPI
             "SELECT uuid()"
         )->fetchColumn();
 
-        $stmt->execute([$uuid,'Titulo',$body['alias'],$fechaActual, $color]);
+        $stmt->execute([$uuid, 'Titulo', $body['alias'], $fechaActual, $color]);
 
         //Si llego hasta aca se pudo crear el tablero por lo que agregare en pertenece que este usuario es el creador de este tablero
 
         $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,0,true)");
-        $stmt->execute([$uuid,$body["alias"]]);
+        $stmt->execute([$uuid, $body["alias"]]);
 
         //Probablemente podria hacerlo con un trigger pero me parece una mountain
 
@@ -91,7 +91,8 @@ class tableroAPI
     }
 
     // PUT http://localhost/kantecAPI/api/tableros/1
-    public function update(string $id): void {
+    public function update(string $id): void
+    {
         $body = json_decode(file_get_contents("php://input"), true);
 
         if (!$body) {
@@ -106,8 +107,8 @@ class tableroAPI
 
         // Si se intenta actualizar el tablero y los datos son iguales el $stmt->rowCount() === 0 va a tirar error de tablero no encontrado
         // y eso esta mal deberia simplemente decir que esta actualizado aunque no haya cambios supongo
-        if(!$tablero) {
-            respond (404, ["error" => "Tablero no encontrado"]);
+        if (!$tablero) {
+            respond(404, ["error" => "Tablero no encontrado"]);
         }
 
         //Cambio para que se pueda actualizar el tablero sin necesidad de actualizar todas las cosas del tablero
@@ -119,8 +120,8 @@ class tableroAPI
         $stmt = $this->db->prepare(
             "UPDATE tablero SET titulo = ?, descripcion = ?, imagen = ?, color = ? WHERE id = ?"
         );
-        $stmt->execute([$titulo, $descripcion, $imagen, $color ,$id]);
-        
+        $stmt->execute([$titulo, $descripcion, $imagen, $color, $id]);
+
         respond(200, ["mensaje" => "Tablero actualizado"]);
     }
 
@@ -138,7 +139,7 @@ class tableroAPI
     }
 
     // GET http://localhost/kantecAPI/api/tableros/colaborador/alias
-    public function misColaboraciones(string $alias): void 
+    public function misColaboraciones(string $alias): void
     {
         $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
         $stmt->execute([$alias]);
@@ -154,7 +155,7 @@ class tableroAPI
     }
 
     // GET http://localhost/kantecAPI/api/tableros/colaboradores/idTablero
-    public function colaboradoresTablero(string $id): void 
+    public function colaboradoresTablero(string $id): void
     {
         $stmt = $this->db->prepare("SELECT aliasUsuario,tipoRelacion from pertenece where idTablero = ? AND aceptada=1");
         $stmt->execute([$id]);
@@ -188,22 +189,30 @@ class tableroAPI
     }
 
     // GET http://localhost/kantecAPI/api/tableros/invitaciones/alias
-    public function getInvitaciones(string $alias){
-        $stmt = $this->db->prepare("SELECT aliasCreador,titulo as tituloTablero,tipoRelacion FROM tablero as t , pertenece as p WHERE aceptada=0 AND aliasUsuario=? AND t.id = p.idTablero");
+    public function getInvitaciones(string $alias)
+    {
+        $stmt = $this->db->prepare("SELECT idTablero,aliasCreador,titulo as tituloTablero,tipoRelacion FROM tablero as t , pertenece as p WHERE aceptada=0 AND aliasUsuario=? AND t.id = p.idTablero");
         $stmt->execute([$alias]);
 
         respond(200, $stmt->fetchAll());
     }
 
     // PUT http://localhost/kantecAPI/api/tableros/invitacion/
-    public function aceptarInvitacion(){
+    public function aceptarInvitacion()
+    {
         $body = json_decode(file_get_contents("php://input"), true);
 
         if (empty($body['idTablero']) || empty($body['aliasUsuario']) || empty($body['acepto'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
         }
-
-        $stmt = $this->db->prepare("UPDATE pertenece SET aceptada = ? WHERE idTablero = ? AND aliasUsuario = ?");
-        $stmt->execute([$body['acepto'],$body['idTablero'], $body['aliasUsuario']]);
+        if ($body['acepto'] === 1) {
+            $stmt = $this->db->prepare("UPDATE pertenece SET aceptada = true WHERE idTablero = ? AND aliasUsuario = ?");
+            $stmt->execute([$body['idTablero'], $body['aliasUsuario']]);
+            respond(201, ["mensaje" => "Se acepto la invitacion"]);
+        } else {
+            $stmt = $this->db->prepare("DELETE from pertenece WHERE idTablero = ? AND aliasUsuario = ?");
+            $stmt->execute([$body['idTablero'], $body['aliasUsuario']]);
+            respond(201, ["mensaje" => "Se rechazo la invitacion"]);
+        }
     }
 }

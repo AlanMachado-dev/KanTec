@@ -5,6 +5,7 @@ import { Usuario } from '../interfaces/usuario';
 import { Tablero } from '../interfaces/tablero';
 import { Colaborador } from '../interfaces/colaborador';
 import { Tarea } from '../interfaces/tarea';
+import { Invitacion } from '../interfaces/invitacion';
 
 @Injectable({
   providedIn: 'root',
@@ -109,13 +110,17 @@ export class Http {
   }
 
   private tableroCreado = new Subject<void>();
+  private tableroAceptado = new Subject<void>();
 
   tableroCreado$ = this.tableroCreado.asObservable();
+  tableroAceptado$ = this.tableroAceptado.asObservable();
 
   notificarTableroCreado(): void {
     this.tableroCreado.next();
   }
-
+  notificarTableroAceptado(): void {
+    this.tableroAceptado.next();
+  }
   actualizarTablero(idTablero: string, body: any): Observable<any> { 
     return this.http.put<any>("http://localhost/kantecAPI/api/tableros/" + idTablero ,
       body
@@ -133,7 +138,13 @@ export class Http {
   getColaboradoresDeTablero(idTablero : string): Observable<Colaborador[]> {
     return this.http.get<Colaborador[]>("http://localhost/kantecAPI/api/tableros/colaboradores/" + idTablero);
   }
+  getInvitaciones(alias: string): Observable<Invitacion[]> {
+    return this.http.get<Invitacion[]>("http://localhost/kantecAPI/api/tableros/invitaciones/" + alias);
+  }
 
+  contestarInvitacion(aliasUsuario: string, idTablero: string, acepto: number): Observable<any> {
+    return this.http.put<any>("http://localhost/kantecAPI/api/tableros/invitacion", { aliasUsuario: aliasUsuario, idTablero: idTablero, acepto: acepto });
+  }
   //tarea//
   crearTarea(idTablero: string, columna: number, posicion: number): Observable<any>{
     console.log(idTablero,posicion,columna);
@@ -149,6 +160,5 @@ export class Http {
   }
 
   getTareasTableroColumna(idTablero: string, columna: number): Observable<Tarea[]>{
-    return this.http.get<Tarea[]>("http://localhost/kantecAPI/api/tareas/tablero/" + idTablero + "/" + columna);
-  }
+    return this.http.get<Tarea[]>("http://localhost/kantecAPI/api/tareas/tablero/" + idTablero + "/" + columna);}
 }

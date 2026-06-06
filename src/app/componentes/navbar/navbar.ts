@@ -3,6 +3,7 @@ import { Router, RouterLink } from "@angular/router";
 import { Http } from '../../services/http';
 import { Usuario } from '../../interfaces/usuario';
 import { Subscription } from 'rxjs';
+import { Invitacion } from '../../interfaces/invitacion';
 
 @Component({
   selector: 'app-navbar',
@@ -14,6 +15,7 @@ export class Navbar implements OnInit, OnDestroy{
 
   usuario: Usuario | null = null;
   imagenUsu: string | null = null;
+  misInvitaciones: Invitacion[] = [];
   estaLogueado = false;
   private sub: Subscription = new Subscription(); 
   private router = inject(Router);
@@ -69,5 +71,22 @@ export class Navbar implements OnInit, OnDestroy{
   verPerfil(){
     this.router.navigate(['/perfil', this.usuario?.alias]);
   }
+  cargarInvitaciones(){
+    this.http.getInvitaciones(this.http.getAliasDelToken() || "").subscribe({
+      next: (invitaciones) => {
+        this.misInvitaciones = invitaciones;
+        this._cdr.detectChanges();
+      }
+    })
+  }
 
+  contestarInvitacion(idTablero: string,acepto: number){
+    this.http.contestarInvitacion(this.http.getAliasDelToken() || "", idTablero,acepto)
+    .subscribe({
+      next: () => {
+        this.cargarInvitaciones();
+        this.http.notificarTableroAceptado();
+      }
+    });
+  }
 }

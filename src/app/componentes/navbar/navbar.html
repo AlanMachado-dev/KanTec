@@ -27,6 +27,7 @@
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" routerLink="/home">Inicio</a></li>
             <li><a class="dropdown-item" (click)="crearTablero()">Crear Tablero</a></li>
+            <li><a class="dropdown-item" (click)="cargarInvitaciones()" data-bs-toggle="modal" type="button" data-bs-target="#modalInvitaciones">Mis Invitaciones</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" href="" (click)="cerrarSesion()">Cerrar Sesion</a></li>
           </ul>
@@ -36,3 +37,44 @@
     </div>
   </div>
 </nav>
+
+
+<div class="modal fade" id="modalInvitaciones" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Invitaciones a Tableros
+        </h5>
+
+        <button type="button" class="btn-close" data-bs-dismiss="modal">
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @if(misInvitaciones.length === 0){
+          <p>No tienes invitaciones pendientes.</p>
+        }
+        @else{
+          @for(invitacion of misInvitaciones; track $index){
+          
+            {{invitacion.aliasCreador}} te invito a {{invitacion.tituloTablero}} como
+            @if(invitacion.tipoRelacion === 1) {
+            <span class="badge bg-success ms-2">Contribuidor</span>
+            }
+            @else{
+            <span class="badge bg-secondary ms-2">Espectador</span>
+            }
+            <div class="ms-3 badge bg-success" type="button" (click)="contestarInvitacion(invitacion.idTablero,1)">Aceptar</div>
+            <div class="ms-3 badge bg-danger" type="button" (click)="contestarInvitacion(invitacion.idTablero,-1)">Rechazar</div>
+            <br>
+          }
+        }
+      </div>
+    </div>
+
+  </div>
+
+</div>

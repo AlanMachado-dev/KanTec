@@ -63,22 +63,12 @@ class Database{
             idTablero BINARY(16) NOT NULL,
             aliasUsuario VARCHAR(30) NOT NULL,
             tipoRelacion int NOT NULL,
+            aceptada boolean NOT NULL,
             FOREIGN KEY (aliasUsuario) REFERENCES usuario(alias),
             FOREIGN KEY (idTablero) REFERENCES tablero(id),
             PRIMARY KEY (idTablero,aliasUsuario)
             )
         ");
-        // $this->conn->exec("
-        //     DROP TRIGGER IF EXISTS evitarTablerosEliminados
-        // ");
-
-        // $this->conn->exec("
-        //     CREATE TRIGGER evitarTablerosEliminados BEFORE DELETE
-        //     ON tablero FOR EACH ROW
-        //     BEGIN
-        //         DELETE FROM pertenece WHERE idTablero = OLD.id;
-        //     END
-        // ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS tarea (
                 idTarea     INTEGER NOT NULL,

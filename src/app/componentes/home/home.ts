@@ -34,10 +34,10 @@ export class Home {
   aliasUsuario !: string;
   estaLogueado = false;
 
-  private sub: Subscription = new Subscription();
+  private subTablerosCompartidos: Subscription = new Subscription();
   private subTableros: Subscription = new Subscription();
   ngOnInit(): void {
-    this.sub = this.http.sesionActiva$.subscribe(logueado => {
+    this.http.sesionActiva$.subscribe(logueado => {
       this.estaLogueado = logueado;
       this.aliasUsuario = this.http.getAliasDelToken() || "";
       if(logueado){
@@ -55,10 +55,15 @@ export class Home {
         this.cargarTableros();
       }
     })
+    this.subTablerosCompartidos = this.http.tableroAceptado$.subscribe(() => {
+      if (this.aliasUsuario) {
+        this.cargarTablerosColaboraciones();
+      }
+    })
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    this.subTablerosCompartidos.unsubscribe();
     this.subTableros.unsubscribe();
   }
   tableros: Tablero[] = [];

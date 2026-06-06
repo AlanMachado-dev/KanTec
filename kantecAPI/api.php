@@ -6,6 +6,7 @@ require_once 'api/usuarioAPI.php'; //se incluye el controlador de cada tabla a u
 require_once 'api/tableroAPI.php';
 require_once 'api/tareaAPI.php';
 require_once 'api/imagenesAPI.php';
+require_once 'api/utilidadesAPI.php';
 
 
 
@@ -27,6 +28,8 @@ $tarea = new tareaAPI();
 
 $imagenes = new imagenesAPI();
 
+$utilidades = new utilidadesAPI();
+
 match(true) {
     //ruta usuarios
     $partes[1] === 'usuarios' && isset($partes[2]) && !isset($partes[3]) 
@@ -45,7 +48,8 @@ match(true) {
         && $method === 'GET' => $usuario->existe($partes[3]),
 
     //ruta tableros
-    
+    $partes[1] === 'tableros' && $partes[2] === 'invitacion' && !isset($partes[3])
+        && $method === 'PUT' => $tablero->aceptarInvitacion(),
     $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
         && $method === 'GET' => $tablero->getOne($partes[2]),
     $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
@@ -64,6 +68,8 @@ match(true) {
         && $method === 'GET' => $tablero->colaboradoresTablero($partes[3]),
     $partes[1] === 'tableros' && $partes[2] === 'colaboradores' && !isset($partes[3])
         && $method === 'POST' => $tablero->agregarColaborador(),
+    $partes[1] === 'tableros' && $partes[2] === 'invitaciones' && isset($partes[3]) && !isset($partes[4])
+        && $method === 'GET' => $tablero->getInvitaciones($partes[3]),
 
     //ruta tareas
 
@@ -86,6 +92,8 @@ match(true) {
     $partes[1] === 'imagenes' && $partes[2] === 'tableros' && !isset($partes[3]) 
         && $method === 'POST' => $imagenes->subirImgTablero(),
     
+    //ruta utilidades
+    $partes[1] === 'utilidad' && $partes[2] === 'triggers' && $method === 'GET' => $utilidades->agregarTriggers(),
 
     default => respond(404, ["error" => "Ruta no encontrada"])
 };

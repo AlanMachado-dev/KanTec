@@ -8,6 +8,7 @@ class tableroAPI
     public function __construct()
     {
         $this->db = (new Database())->getConnection();
+        $this->db->query("SET sql_mode=''");
     }
 
     // GET http://localhost/kantecAPI/api/tableros
@@ -79,7 +80,7 @@ class tableroAPI
 
         //Si llego hasta aca se pudo crear el tablero por lo que agregare en pertenece que este usuario es el creador de este tablero
 
-        $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,0)");
+        $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,0,true)");
         $stmt->execute([$uuid,$body["alias"]]);
 
         //Probablemente podria hacerlo con un trigger pero me parece una mountain
@@ -147,7 +148,7 @@ class tableroAPI
             respond(404, ["error" => "Usuario no encontrado"]);
         }
 
-        $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT idTablero from pertenece where aliasUsuario = ? AND tipoRelacion != 0)");
+        $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT idTablero from pertenece where aliasUsuario = ? AND tipoRelacion != 0 AND aceptada=1)");
         $stmt->execute([$alias]);
         respond(200, $stmt->fetchAll());
     }
@@ -155,7 +156,7 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/tableros/colaboradores/idTablero
     public function colaboradoresTablero(string $id): void 
     {
-        $stmt = $this->db->prepare("SELECT aliasUsuario,tipoRelacion from pertenece where idTablero = ?");
+        $stmt = $this->db->prepare("SELECT aliasUsuario,tipoRelacion from pertenece where idTablero = ? AND aceptada=1");
         $stmt->execute([$id]);
 
         respond(200, $stmt->fetchAll());
@@ -178,11 +179,31 @@ class tableroAPI
             respond(404, ["error" => "Tablero no encontrado"]);
         }
 
-        $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,?)");
+        $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,?,false)");
         $stmt->execute([$body['idTablero'], $body['aliasUsuario'], $body['tipoRelacion']]);
 
         respond(201, [
-            "mensaje" => "Colaborador añadido"
+            "mensaje" => "Colaborador invitado"
         ]);
+    }
+
+    // GET http://localhost/kantecAPI/api/tableros/invitaciones/alias
+    public function getInvitaciones(string $alias){
+        $stmt = $this->db->prepare("SELECT aliasCreador,titulo as tituloTablero,tipoRelacion FROM tablero as t , pertenece as p WHERE aceptada=0 AND aliasUsuario=? AND t.id = p.idTablero");
+        $stmt->execute([$alias]);
+
+        respond(200, $stmt->fetchAll());
+    }
+
+    // PUT http://localhost/kantecAPI/api/tableros/invitacion/
+    public function aceptarInvitacion(){
+        $body = json_decode(file_get_contents("php://input"), true);
+
+        if (empty($body['idTablero']) || empty($body['aliasUsuario']) || empty($body['acepto'])) {
+            respond(400, ["error" => "Todos los campos son requeridos"]);
+        }
+
+        $stmt = $this->db->prepare("UPDATE pertenece SET aceptada = ? WHERE idTablero = ? AND aliasUsuario = ?");
+        $stmt->execute([$body['acepto'],$body['idTablero'], $body['aliasUsuario']]);
     }
 }

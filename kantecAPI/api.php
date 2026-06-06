@@ -77,6 +77,8 @@ match(true) {
         && $method === 'PUT' => $tarea->update($partes[2], $partes[3]),
     $partes[1] === 'tareas' && isset($partes[2]) && isset($partes[3]) && !isset($partes[4])
         && $method === 'DELETE' => $tarea->delete($partes[2], $partes[3]),
+    $partes[1] === 'tareas' && $partes[2] === 'tablero' && isset($partes[3]) && isset($partes[4]) && !isset($partes[5]) 
+        && $method === 'GET' => $tarea->getTareasColumna($partes[3], $partes[4]),
 
     //ruta imagenes
     $partes[1] === 'imagenes' && $partes[2] === 'usuarios' && !isset($partes[3]) 

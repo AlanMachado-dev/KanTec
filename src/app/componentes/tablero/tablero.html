@@ -81,8 +81,8 @@
 <div class="container mt-4">
     <div class="row text-center">
         <div class="col-md-3 column">
-            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start">+ Pendiente</h5>
-            <div class="postit mb-5 bg-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(0)">+ Pendiente</h5>
+            <!-- <div class="postit mb-5 bg-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
                 aria-controls="post-it-info">
 
                 <div class="postit-usuarios">
@@ -92,23 +92,38 @@
 
             </div>
             <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                aria-controls="post-it-info"></div>
+                aria-controls="post-it-info"></div> -->
+            @for (item of columnas[0].tareas; track item.idTarea) {
+                <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+                    <p>{{item.nombre}}</p>
+                    <p>{{item.descripcion}}</p>
+                </div>
+            }
         </div>
 
         <div class="col-md-3 column">
-            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start">+ Analisis</h5>
-            <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(1)">+ Analisis</h5>
+            <!-- <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
                 aria-controls="post-it-info">
                 <div class="postit-usuarios">
                     <span class="postit-usuario">[usuario1]</span>
                     <span class="postit-usuario">[usuario2]</span>
                 </div>
-            </div>
+            </div> -->
+
+            @for (item of columnas[1].tareas; track item.idTarea) {
+                <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+                    <p>{{item.nombre}}</p>
+                    <p>{{item.descripcion}}</p>
+                </div>
+            }
         </div>
 
         <div class="col-md-3 column">
-            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start">+ Desarrollo</h5>
-            <div class="postit mb-5 bg-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(2)">+ Desarrollo</h5>
+            <!-- <div class="postit mb-5 bg-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
                 aria-controls="post-it-info">
 
                 <div class="postit-usuarios">
@@ -116,6 +131,7 @@
                     <span class="postit-usuario">[usuario2]</span>
                     <span class="postit-usuario">[usuario3]</span>
                 </div>
+            
             </div>
             <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
                 aria-controls="post-it-info">
@@ -123,12 +139,19 @@
                     <span class="postit-usuario">[usuario1]</span>
                     <span class="postit-usuario">[usuario2]</span>
                 </div>
-            </div>
+            </div> -->
+            @for (item of columnas[2].tareas; track item.idTarea) {
+                <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+                    <p>{{item.nombre}}</p>
+                    <p>{{item.descripcion}}</p>
+                </div>
+            }
         </div>
 
         <div class="col-md-3 column">
-            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start">+ Hecho</h5>
-            <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(3)">+ Hecho</h5>
+            <!-- <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
                 aria-controls="post-it-info">
                 <div class="postit-usuarios">
                     <span class="postit-usuario">[usuario1]</span>
@@ -141,7 +164,14 @@
                     <span class="postit-usuario">[usuario2]</span>
                     <span class="postit-usuario">[usuario3]</span>
                 </div>
-            </div>
+            </div> -->
+            @for (item of columnas[3].tareas; track item.idTarea) {
+                <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                aria-controls="post-it-info">
+                    <p>{{item.nombre}}</p>
+                    <p>{{item.descripcion}}</p>
+                </div>
+            }
         </div>
     </div>
 </div>

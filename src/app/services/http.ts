@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, Subject, switchMap } from 'rxjs';
 import { Usuario } from '../interfaces/usuario';
 import { Tablero } from '../interfaces/tablero';
 import { Colaborador } from '../interfaces/colaborador';
+import { Tarea } from '../interfaces/tarea';
 
 @Injectable({
   providedIn: 'root',
@@ -131,5 +132,23 @@ export class Http {
 
   getColaboradoresDeTablero(idTablero : string): Observable<Colaborador[]> {
     return this.http.get<Colaborador[]>("http://localhost/kantecAPI/api/tableros/colaboradores/" + idTablero);
+  }
+
+  //tarea//
+  crearTarea(idTablero: string, columna: number, posicion: number): Observable<any>{
+    console.log(idTablero,posicion,columna);
+    return this.http.post<any>("http://localhost/kantecAPI/api/tareas", {
+      "idTablero": idTablero,
+      "posicion": posicion+1,
+      "columna": columna
+    });
+  }
+
+  getTareasTablero(idTablero: string): Observable<Tarea[]>{
+    return this.http.get<Tarea[]>("http://localhost/kantecAPI/api/tareas/tablero/" + idTablero);
+  }
+
+  getTareasTableroColumna(idTablero: string, columna: number): Observable<Tarea[]>{
+    return this.http.get<Tarea[]>("http://localhost/kantecAPI/api/tareas/tablero/" + idTablero + "/" + columna);
   }
 }

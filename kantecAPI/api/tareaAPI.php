@@ -18,6 +18,14 @@ class tareaAPI
         respond(200, $stmt->fetchAll());
     }
 
+    // GET http://localhost/kantecAPI/api/tareas/tablero/idTablero/columna
+    public function getTareasColumna(string $idTablero, int $columna): void
+    {   
+        $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? AND columna = ?");
+        $stmt->execute([$idTablero, $columna]);
+        respond(200, $stmt->fetchAll());
+    }
+
     // GET http://localhost/kantecAPI/api/tareas/idTablero/idTarea
     public function getOne(string $idTablero, string $idTarea): void
     {
@@ -37,7 +45,7 @@ class tareaAPI
     {
         $body = json_decode(file_get_contents("php://input"), true);
 
-        if (empty($body['idTablero']) || empty($body['posicion']) || empty($body['columna'])) {
+        if (empty($body['idTablero'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
         }
 

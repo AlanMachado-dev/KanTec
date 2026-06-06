@@ -37,6 +37,8 @@ export class Perfil implements OnInit, OnDestroy{
         },
         error: (err) => {
           console.log(err);
+          this.http.cerrarSesion();
+          this.router.navigate(['/ingreso']);
         }
       })
     }

@@ -1,5 +1,5 @@
 export interface Tablero {
-    id: number;
+    id: string;
     titulo: string;
     descripcion: string | null;
     aliasCreador: string

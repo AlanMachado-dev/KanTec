@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, switchMap } from 'rxjs';
 import { Usuario } from '../interfaces/usuario';
 import { Tablero } from '../interfaces/tablero';
+import { Colaborador } from '../interfaces/colaborador';
 
 @Injectable({
   providedIn: 'root',
@@ -114,17 +115,21 @@ export class Http {
     this.tableroCreado.next();
   }
 
-  actualizarTablero(idTablero: number, body: any): Observable<any> { 
+  actualizarTablero(idTablero: string, body: any): Observable<any> { 
     return this.http.put<any>("http://localhost/kantecAPI/api/tableros/" + idTablero ,
       body
     );
   }
 
-  borrarTablero(idTablero: number): Observable<any> {
+  borrarTablero(idTablero: string): Observable<any> {
     return this.http.delete<any>("http://localhost/kantecAPI/api/tableros/" + idTablero);
   }
   
   getTablerosColaborados(alias: string): Observable<Tablero[]>{
     return this.http.get<Tablero[]>("http://localhost/kantecAPI/api/tableros/colaborador/" + alias);
+  }
+
+  getColaboradoresDeTablero(idTablero : string): Observable<Colaborador[]> {
+    return this.http.get<Colaborador[]>("http://localhost/kantecAPI/api/tableros/colaboradores/" + idTablero);
   }
 }

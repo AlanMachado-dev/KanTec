@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Tablero } from '../../interfaces/tablero';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ɵInternalFormsSharedModule, ReactiveFormsModule } from '@angular/forms';
+import { Colaborador } from '../../interfaces/colaborador';
 
 @Component({
   selector: 'app-home',
@@ -176,15 +177,26 @@ export class Home {
     });
   }
   tableroSeleccionado: Tablero | null = null;
+  colaboradoresTablero: Colaborador[] = [];
 
-  seleccionarTablero(tablero: Tablero): void{
+  seleccionarTablero(tablero: Tablero, desdeOffCanvas: boolean): void{
     this.tableroSeleccionado = tablero;
+    if(desdeOffCanvas){
+      this.formularioTablero.patchValue({
+        titulo: tablero.titulo,
+        descripcion: tablero.descripcion,
+        color: tablero.color
+      });
+    }else{
+      this.http.getColaboradoresDeTablero(tablero.id)
+        .subscribe(colaboradores => {
 
-    this.formularioTablero.patchValue({
-      titulo: tablero.titulo,
-      descripcion: tablero.descripcion,
-      color: tablero.color
-    });
+          this.colaboradoresTablero = [];
+
+          this.colaboradoresTablero = colaboradores;
+          this.cdr.detectChanges();
+        });
+    }
   }
 
   archivoSeleccionado: File | null = null;

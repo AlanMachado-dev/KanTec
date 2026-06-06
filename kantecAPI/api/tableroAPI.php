@@ -77,6 +77,13 @@ class tableroAPI
 
         $stmt->execute([$uuid,'Titulo',$body['alias'],$fechaActual, $color]);
 
+        //Si llego hasta aca se pudo crear el tablero por lo que agregare en pertenece que este usuario es el creador de este tablero
+
+        $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,0)");
+        $stmt->execute([$uuid,$body["alias"]]);
+
+        //Probablemente podria hacerlo con un trigger pero me parece una mountain
+
         respond(201, [
             "mensaje" => "Tablero creado"
         ]);
@@ -143,5 +150,39 @@ class tableroAPI
         $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT idTablero from pertenece where aliasUsuario = ? AND tipoRelacion != 0)");
         $stmt->execute([$alias]);
         respond(200, $stmt->fetchAll());
+    }
+
+    // GET http://localhost/kantecAPI/api/tableros/colaboradores/idTablero
+    public function colaboradoresTablero(string $id): void 
+    {
+        $stmt = $this->db->prepare("SELECT aliasUsuario,tipoRelacion from pertenece where idTablero = ?");
+        $stmt->execute([$id]);
+
+        respond(200, $stmt->fetchAll());
+    }
+
+    // POST http://localhost/kantecAPI/api/tableros/colaboradores
+    public function agregarColaborador(): void //Por ahora con este endpoint se podra agregar colaboradores espectadores sin preguntarles 
+    //si quieren o no
+    {
+        $body = json_decode(file_get_contents("php://input"), true);
+
+        if (empty($body['idTablero']) || empty($body['aliasUsuario']) || empty($body['tipoRelacion'])) {
+            respond(400, ["error" => "Todos los campos son requeridos"]);
+        }
+        $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
+        $stmt->execute([$body['idTablero']]);
+        $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($tablero === false || empty($tablero)) {
+            respond(404, ["error" => "Tablero no encontrado"]);
+        }
+
+        $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,?)");
+        $stmt->execute([$body['idTablero'], $body['aliasUsuario'], $body['tipoRelacion']]);
+
+        respond(201, [
+            "mensaje" => "Colaborador añadido"
+        ]);
     }
 }

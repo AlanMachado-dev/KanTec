@@ -72,7 +72,7 @@
                 </div>
                 }
             </a>
-            <div class="card-body" type="button" (click)="seleccionarTablero(tablero)" data-bs-toggle="modal"
+            <div class="card-body" type="button" (click)="seleccionarTablero(tablero,false)" data-bs-toggle="modal"
   data-bs-target="#detalleTablero">
                 <p class="card-title "><b>{{tablero.titulo}}</b> by {{tablero.aliasCreador}} <span class="float-end"> {{tablero.fechaCreacion.slice(0,10)}} </span> </p>
                 @if(tablero.descripcion){
@@ -84,7 +84,7 @@
             <div class="card-footer">
                 <div class="row ">
                     <div class="col-12 d-flex">
-                        <button class="btn btn-primary border-top w-75 m-auto" (click)="seleccionarTablero(tablero)" data-bs-toggle="offcanvas" data-bs-target="#post-it-info" 
+                        <button class="btn btn-primary border-top w-75 m-auto" (click)="seleccionarTablero(tablero,true)" data-bs-toggle="offcanvas" data-bs-target="#post-it-info" 
                 aria-controls="post-it-info">Editar</button>
                     </div>
                 </div>
@@ -209,9 +209,27 @@
                 <p class="descripcionModal">
                     {{tableroSeleccionado?.descripcion}}
                 </p>
-    
-            </div>
-    
+                
+                <hr>
+                <h6 class="fw-bold mb-3">
+                    Colaboradores
+                </h6>
+                <div class="text-center">
+                    @for(colaborador of colaboradoresTablero; track $index){
+                        <div class="d-flex justify-content-center align-items-center mb-2">
+                            <span>{{colaborador.aliasUsuario}}</span>
+                            @if(colaborador.tipoRelacion === 0) {
+                                <span class="badge bg-primary ms-2">Creador</span>
+                            }@else if (colaborador.tipoRelacion === 1) {
+                                <span class="badge bg-success ms-2">Contribuidor</span>
+                            }
+                            @else{
+                                <span class="badge bg-secondary ms-2">Espectador</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div> 
         </div>
     
     </div>
@@ -246,7 +264,7 @@
             </div>
             }
         </a>
-        <div class="card-body" type="button" (click)="seleccionarTablero(tablero)" data-bs-toggle="modal"
+        <div class="card-body" type="button" (click)="seleccionarTablero(tablero,false)" data-bs-toggle="modal"
             data-bs-target="#detalleTablero">
             <p class="card-title "><b>{{tablero.titulo}}</b> by {{tablero.aliasCreador}} <span class="float-end">
                     {{tablero.fechaCreacion.slice(0,10)}} </span> </p>

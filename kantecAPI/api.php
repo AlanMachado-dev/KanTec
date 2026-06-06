@@ -60,7 +60,11 @@ match(true) {
         && $method === 'GET' => $tablero->getTableros($partes[3]),
     $partes[1] === 'tableros' && $partes[2] === 'colaborador' && isset($partes[3]) && !isset($partes[4]) 
     && $method === 'GET' => $tablero->misColaboraciones($partes[3]),
-    
+    $partes[1] === 'tableros' && $partes[2] === 'colaboradores' && isset($partes[3]) && !isset($partes[4])
+        && $method === 'GET' => $tablero->colaboradoresTablero($partes[3]),
+    $partes[1] === 'tableros' && $partes[2] === 'colaboradores' && !isset($partes[3])
+        && $method === 'POST' => $tablero->agregarColaborador(),
+
     //ruta tareas
 
     $partes[1] === 'tareas' && !isset($partes[2]) 

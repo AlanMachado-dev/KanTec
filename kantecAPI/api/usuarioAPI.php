@@ -88,29 +88,36 @@ class usuarioAPI {
             respond(400, ["error" => "Body inválido o vacío"]);
         }
 
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE id = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
         $stmt->execute([$id]);
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if(!$usuario) {
-            respond (404, ["error" => "Usuario no encontrado"]);
+        if (!$usuario) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+            exit; 
         }
 
-        $nombre = $body['nombre'] ?? $usuario['nombre'];
-        $password = $body['password'] ?? $usuario['password'];
-        $email = $body['email'] ?? $usuario['email'];
-        $imagen = $body['imagen'] ?? $usuario['imagen'];
+        $nombre = (!empty($body['nombre'])) ? $body['nombre'] : $usuario['nombre'];
+
+        $email = (!empty($body['email'])) ? $body['email'] : $usuario['email'];
+
+        $imagen = (!empty($body['imagen'])) ? $body['imagen'] : $usuario['imagen'];
 
         $stmt = $this->db->prepare(
-            "UPDATE usuario SET nombre = ?, password = ?, email = ?, imagen = ? WHERE alias = ?"
+            "UPDATE usuario SET nombre = ?, email = ?, imagen = ? WHERE alias = ?"
         );
-        $stmt->execute([$nombre, $password, $email, $imagen, $id]);
+        $stmt->execute([$nombre, $email, $imagen, $id]);
 
         respond(200, ["mensaje" => "Usuario actualizado"]);
+
     }
 
     // DELETE http://localhost/kantecAPI/api/usuarios/ElPro123
     public function delete(string $id): void {
+
+        $query = $this->db->prepare("DELETE FROM tablero WHERE aliasCreador = ?");
+        $query->execute([$id]);
+
         $stmt = $this->db->prepare("DELETE FROM usuario WHERE alias = ?");
         $stmt->execute([$id]);
 

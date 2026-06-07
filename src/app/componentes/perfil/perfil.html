@@ -5,7 +5,8 @@
             @if (usuario) {
             <div class="row border border-2 border-dark-subtle">
                 <div class="col-5 text-center">
-                    <img src="{{imagenUsu}}" alt="img" height="300px" width="300px" class="rounded-circle border border-2 border-dark-subtle my-3" style="object-fit: cover;">
+                    <img src="{{imagenUsu}}" alt="img" height="300px" width="300px"
+                        class="rounded-circle border border-2 border-dark-subtle my-3" style="object-fit: cover;">
                 </div>
                 <div class="col-7 text-center d-flex flex-column border-start border-3">
                     <div class="row mt-4">
@@ -18,21 +19,91 @@
                     <div class="row mb-4 mt-auto">
                         @if (usuPropio) {
                         <div class="col">
-                            <button class="btn btn-primary btn-lg m-2">Editar Perfil</button>
-                            <button class="btn btn-danger btn-lg m-2">Borrar Perfil</button>
+                            <button class="btn btn-primary btn-lg m-2" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasUsuario">Editar Perfil</button>
+                            <button class="btn btn-outline-danger btn-lg m-2" (click)="confirmarBorrado()">
+                                Borrar Perfil
+                            </button>
+
                         </div>
                         }
                     </div>
                 </div>
             </div>
             }@else{
-                <div class="text-center p-5">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Cargando...</span>
-                    </div>
+            <div class="text-center p-5">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Cargando...</span>
                 </div>
+            </div>
             }
         </div>
         <div class="col-2"></div>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasUsuario" aria-labelledby="offcanvasUsuarioLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasUsuarioLabel">{{usuario?.alias}}</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" id="btnCerrarOffCanvas"
+            aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form [formGroup]="formularioUsuario" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo electronico</label>
+                <input type="email" placeholder="{{usuario?.email}}" formControlName="email" class="form-control"
+                    id="email"
+                    [class.is-invalid]="formularioUsuario.get('email')?.invalid && formularioUsuario.get('email')?.touched">
+                @if(formularioUsuario.get('email')?.invalid && formularioUsuario.get('email')?.touched){
+                <div class="invalid-feedback">
+                    @if(formularioUsuario.get('email')?.errors?.['required']) {
+                    El email es obligatorio.
+                    }
+                    @if(formularioUsuario.get('email')?.errors?.['maxLength']) {
+                    Máximo de caracteres debe ser 60.
+                    }
+                </div>
+                }
+            </div>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre Completo</label>
+                <input type="text" placeholder="{{usuario?.nombre}}" formControlName="nombre" class="form-control"
+                    id="nombre"
+                    [class.is-invalid]="formularioUsuario.get('nombre')?.invalid && formularioUsuario.get('nombre')?.touched">
+                @if(formularioUsuario.get('nombre')?.invalid && formularioUsuario.get('nombre')?.touched){
+                <div class="invalid-feedback">
+                    @if(formularioUsuario.get('nombre')?.errors?.['required']) {
+                    El nombre es obligatorio.
+                    }
+                    @if(formularioUsuario.get('nombre')?.errors?.['maxLength']) {
+                    Máximo de caracteres debe ser 50.
+                    }
+                </div>
+                }
+            </div>
+            <div class="mb-3">
+                <label for="imagen" class="form-label">Imagen de Perfil</label>
+                <input type="file" (change)="onFileSelected($event)" class="form-control bg-secondary" id="imagen"
+                    accept="image/*">
+            </div>
+            @if(mostrarError){
+            <div class="alert alert-danger m-2 p-2 text-center" role="alert">
+                {{errorMessage}}
+            </div>
+            }
+            <div>
+                @if (!loading) {
+                <button type="submit"
+                    [disabled]="!formularioUsuario.valid || formularioUsuario.pristine || mostrarError"
+                    class="btn btn-outline-primary mt-3 w-100 h-25 fw-bold">Actualizar Perfil</button>
+                }@else {
+                <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status">Cargando...</span>
+                </button>
+                }
+            </div>
+        </form>
     </div>
 </div>

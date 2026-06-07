@@ -78,7 +78,16 @@ export class Http {
     return this.http.get<Usuario>("http://localhost/kantecAPI/api/usuarios/existe/"+alias);
   }
 
+  actualizarUsuario(alias: string, body: any): Observable<any> { 
+    return this.http.put<any>("http://localhost/kantecAPI/api/usuarios/" + alias ,
+      body
+    );
+  }
 
+  borrarUsuario(alias: string): Observable<any> {
+    return this.http.delete<any>("http://localhost/kantecAPI/api/usuarios/" + alias);
+  }
+  
   //imagenes//
   subirImgUsuario(archivo: File): Observable<any> {
     const formData = new FormData();

@@ -14,7 +14,7 @@ export class Registro {
   constructor(private http: Http, private _cdr: ChangeDetectorRef) { }
 
   imagenSeleccionada!: File;
-  extPermitidas = ['image/jpg','image/jpeg','image/png'];
+  extPermitidas = ['image/jpg', 'image/jpeg', 'image/png'];
   formBuilder = inject(FormBuilder);
   private router = inject(Router);
 
@@ -55,30 +55,30 @@ export class Registro {
   onFileSelected(event: any) {
     this.imagenSeleccionada = event.target.files[0];
     console.log(this.imagenSeleccionada.type);
-    if(!this.extPermitidas.includes(this.imagenSeleccionada.type)){
+    if (!this.extPermitidas.includes(this.imagenSeleccionada.type)) {
       this.errorMessage = "Tipo de imagen no permitida!"
       this.mostrarError = true;
       this._cdr.detectChanges();
-    }else{
+    } else {
       this.mostrarError = false;
       this._cdr.detectChanges();
     }
   }
 
-  afterAlias(aliasTemp: string){
+  afterAlias(aliasTemp: string) {
     this.http.existeUsuario(aliasTemp).subscribe({
-        next: (response) => {
-          if (response.existe == "true") {
-            this.errorMessage = "Alias ya existe!"
-            this.mostrarError = true;
-            this._cdr.detectChanges();
-          } else {
-            this.mostrarError = false;
-            this._cdr.detectChanges();
-          }
-        },
-        error: (err) => console.log(err)
-      });
+      next: (response) => {
+        if (response.existe == "true") {
+          this.errorMessage = "Alias ya existe!"
+          this.mostrarError = true;
+          this._cdr.detectChanges();
+        } else {
+          this.mostrarError = false;
+          this._cdr.detectChanges();
+        }
+      },
+      error: (err) => console.log(err)
+    });
   }
 
   onSubmit() {
@@ -95,41 +95,41 @@ export class Registro {
             this.loading = false;
             this._cdr.detectChanges();
           } else {
-            if(this.imagenSeleccionada && !this.extPermitidas.includes(this.imagenSeleccionada.type)){
+            if (this.imagenSeleccionada && !this.extPermitidas.includes(this.imagenSeleccionada.type)) {
               this.errorMessage = "Tipo de imagen no permitida!"
               this.mostrarError = true;
               this.loading = false;
               this._cdr.detectChanges();
-            }else{
-            this.http.subirImgUsuario(this.imagenSeleccionada).subscribe({
-              next: (respuestaImg) => {
-                usuario.imagen = respuestaImg.ruta;
-                this.http.registrarUsuario(usuario).subscribe({
-                  next: (response) => {
-                    console.log(response);
+            } else {
+              this.http.subirImgUsuario(this.imagenSeleccionada).subscribe({
+                next: (respuestaImg) => {
+                  usuario.imagen = respuestaImg.ruta;
+                  this.http.registrarUsuario(usuario).subscribe({
+                    next: (response) => {
+                      console.log(response);
 
-                    this.http.guardarToken(response.token);
-                    this.loading = false;
-                    // setTimeout(() => { //deberia agregar un sweetAlert (#sponsor) mientras carga y no un timeout
+                      this.http.guardarToken(response.token);
+                      this.loading = false;
+                      // setTimeout(() => { //deberia agregar un sweetAlert (#sponsor) mientras carga y no un timeout
                       this.router.navigate(['/home']);
-                    // }, 500);
-                  },
-                  error: (err) => {
-                    console.log(err);
-                    this.loading = false;
-                    this._cdr.detectChanges();
-                  }
+                      // }, 500);
+                    },
+                    error: (err) => {
+                      console.log(err);
+                      this.loading = false;
+                      this._cdr.detectChanges();
+                    }
 
-                })
-              },
-              error: (err) => {
-                console.log(err);
-                this.loading = false;
-                this._cdr.detectChanges();
-              }
-            })
+                  })
+                },
+                error: (err) => {
+                  console.log(err);
+                  this.loading = false;
+                  this._cdr.detectChanges();
+                }
+              })
+            }
           }
-        }
         },
         error: (err) => {
           console.log(err);

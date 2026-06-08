@@ -21,7 +21,7 @@ class tareaAPI
     // GET http://localhost/kantecAPI/api/tareas/tablero/idTablero/columna
     public function getTareasColumna(string $idTablero, int $columna): void
     {   
-        $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? AND columna = ?");
+        $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? AND columna = ? ORDER BY posicion");
         $stmt->execute([$idTablero, $columna]);
         respond(200, $stmt->fetchAll());
     }
@@ -99,16 +99,51 @@ class tareaAPI
             respond (404, ["error" => "Tarea no encontrada"]);
         }
 
-        $nombre = $body['nombre'] ?? $tablero['nombre'];
-        $descripcion = $body['descripcion'] ?? $tablero['descripcion'];
-        $fechaInicio = $body['fechaInicio'] ?? $tablero['fechaInicio'];
-        $fechaFinal = $body['fechaFinal'] ?? $tablero['fechaFinal'];
-        $prioridad = $body['prioridad'] ?? $tablero['prioridad'];
+        $nombre = $body['nombre'] ?? $tarea['nombre'];
+        $descripcion = $body['descripcion'] ?? $tarea['descripcion'];
+        $fechaInicio = $body['fechaInicio'] ?? $tarea['fechaInicio'];
+        $fechaFinal = $body['fechaFinal'] ?? $tarea['fechaFinal'];
+        $prioridad = $body['prioridad'] ?? $tarea['prioridad'];
 
         $stmt = $this->db->prepare(
             "UPDATE tarea SET nombre = ?, descripcion = ?, fechaInicio = ?, fechaFinal = ?, prioridad = ? WHERE idTablero = ? AND idTarea = ?"
         );
         $stmt->execute([$nombre, $descripcion, $fechaInicio, $fechaFinal, $prioridad, $idTablero, $idTarea]);
+        
+        respond(200, ["mensaje" => "Tarea actualizada"]);
+    }
+
+    // PUT http://localhost/kantecAPI/api/tareas/posicion/idTablero/idTarea
+    public function updatePosicion(string $idTablero, string $idTarea){
+        $body = json_decode(file_get_contents("php://input"), true);
+
+        if (!$body) {
+            respond(400, ["error" => "Body inválido o vacío"]);
+        }
+
+        $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
+        $stmt->execute([$idTablero]);
+        $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if(!$tablero) {
+            respond (404, ["error" => "Tablero no encontrado"]);
+        }
+
+        $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? AND idTarea = ?");
+        $stmt->execute([$idTablero, $idTarea]);
+        $tarea = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if(!$tarea) {
+            respond (404, ["error" => "Tarea no encontrada"]);
+        }
+
+        $columna = $body['columna'] ?? $tarea['columna'];
+        $posicion = $body['posicion'] ?? $tarea['posicion'];
+
+        $stmt = $this->db->prepare(
+            "UPDATE tarea SET columna = ?, posicion = ? WHERE idTablero = ? AND idTarea = ?"
+        );
+        $stmt->execute([$columna, $posicion, $idTablero, $idTarea]);
         
         respond(200, ["mensaje" => "Tarea actualizada"]);
     }

@@ -179,5 +179,13 @@ export class Http {
   }
 
   getTareasTableroColumna(idTablero: string, columna: number): Observable<Tarea[]>{
-    return this.http.get<Tarea[]>("http://localhost/kantecAPI/api/tareas/tablero/" + idTablero + "/" + columna);}
+    return this.http.get<Tarea[]>("http://localhost/kantecAPI/api/tareas/tablero/" + idTablero + "/" + columna);
+  }
+
+  actualizarPosicionTarea(idTablero: string, idTarea: number, columna: number, posicion: number): Observable<any>{
+    return this.http.put<any>("http://localhost/kantecAPI/api/tareas/posicion/" + idTablero + "/" + idTarea, {
+      "columna": columna,
+      "posicion": posicion
+    });
+  }
 }

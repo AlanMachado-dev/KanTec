@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from "@angular/router";
 import { Http } from '../../services/http';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-registro',
@@ -40,7 +41,8 @@ export class Registro {
     email: ['', {
       validators: [
         Validators.required,
-        Validators.maxLength(60)
+        Validators.maxLength(60),
+        Validators.email
       ]
     }],
     nombre: ['', {
@@ -87,7 +89,6 @@ export class Registro {
       this.loading = true;
       this.mostrarError = false;
       const usuario = this.registroForm.value as any;
-      console.log("estoy en el onSubmit"); //TEMP
       this.http.existeUsuario(this.registroForm.value.alias as any).subscribe({
         next: (response) => {
           if (response.existe == "true") {
@@ -95,45 +96,58 @@ export class Registro {
             this.mostrarError = true;
             this.loading = false;
             this._cdr.detectChanges();
-          } else {
-            if (this.imagenSeleccionada && !this.extPermitidas.includes(this.imagenSeleccionada.type)) {
-              this.errorMessage = "Tipo de imagen no permitida!"
-              this.mostrarError = true;
-              this.loading = false;
-              this._cdr.detectChanges();
-            } else {
-              this.http.subirImgUsuario(this.imagenSeleccionada).subscribe({
-                next: (respuestaImg) => {
-                  usuario.imagen = respuestaImg.ruta;
-                  this.http.registrarUsuario(usuario).subscribe({
-                    next: (response) => {
-                      console.log(response);
+            return;
+          } 
 
-                      this.http.guardarToken(response.token);
-                      this.loading = false;
-                      // setTimeout(() => { //deberia agregar un sweetAlert (#sponsor) mientras carga y no un timeout
-                      this.router.navigate(['/home']);
-                      // }, 500);
-                    },
-                    error: (err) => {
-                      console.log(err);
-                      this.loading = false;
-                      this._cdr.detectChanges();
-                    }
+          if (this.imagenSeleccionada && !this.extPermitidas.includes(this.imagenSeleccionada.type)) {
+            this.errorMessage = "Tipo de imagen no permitida!"
+            this.mostrarError = true;
+            this.loading = false;
+            this._cdr.detectChanges();
+            return;
+          }
 
-                  })
+          this.http.subirImgUsuario(this.imagenSeleccionada).subscribe({
+            next: (respuestaImg) => {
+              usuario.imagen = respuestaImg.ruta;
+              this.http.registrarUsuario(usuario).subscribe({
+                next: (response) => {
+                  this.http.guardarToken(response.token);
+                  this.loading = false;
+                  this.router.navigate(['/home']);
                 },
                 error: (err) => {
-                  console.log(err);
+                  Swal.fire({
+                    title: "Error",
+                    text: "Ha ocurrido un error inesperado.",
+                    icon: "error"
+                  });
+                  console.log(err); //TEST
                   this.loading = false;
                   this._cdr.detectChanges();
                 }
+
               })
+            },
+            error: (err) => {
+              Swal.fire({
+                title: "Error",
+                text: "Ha ocurrido un error inesperado.",
+                icon: "error"
+              });
+              console.log(err); //TEST
+              this.loading = false;
+              this._cdr.detectChanges();
             }
-          }
+          })
         },
         error: (err) => {
-          console.log(err);
+          Swal.fire({
+            title: "Error",
+            text: "Ha ocurrido un error inesperado.",
+            icon: "error"
+          });
+          console.log(err); //TEST
           this.loading = false;
         }
       });

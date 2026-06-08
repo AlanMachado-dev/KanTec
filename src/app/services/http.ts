@@ -87,6 +87,13 @@ export class Http {
   borrarUsuario(alias: string): Observable<any> {
     return this.http.delete<any>("http://localhost/kantecAPI/api/usuarios/" + alias);
   }
+
+  private perfilModificado = new Subject<void>();
+  perfilModificado$ = this.perfilModificado.asObservable();
+  
+  notificarPerfilModificado(): void {
+    this.perfilModificado.next();
+  }
   
   //imagenes//
   subirImgUsuario(archivo: File): Observable<any> {
@@ -120,9 +127,11 @@ export class Http {
 
   private tableroCreado = new Subject<void>();
   private tableroAceptado = new Subject<void>();
+  
 
   tableroCreado$ = this.tableroCreado.asObservable();
   tableroAceptado$ = this.tableroAceptado.asObservable();
+  
 
   notificarTableroCreado(): void {
     this.tableroCreado.next();
@@ -130,6 +139,7 @@ export class Http {
   notificarTableroAceptado(): void {
     this.tableroAceptado.next();
   }
+
   actualizarTablero(idTablero: string, body: any): Observable<any> { 
     return this.http.put<any>("http://localhost/kantecAPI/api/tableros/" + idTablero ,
       body

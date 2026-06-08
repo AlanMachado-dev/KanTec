@@ -141,6 +141,7 @@ export class Perfil implements OnInit, OnDestroy {
         this.formularioUsuario.reset();
         this.loading = false;
         this.ngOnInit();
+        this.http.notificarPerfilModificado();
         let btn = document.getElementById("btnCerrarOffCanvas");
         btn?.click();
       },

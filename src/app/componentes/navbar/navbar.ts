@@ -17,13 +17,14 @@ export class Navbar implements OnInit, OnDestroy{
   imagenUsu: string | null = null;
   misInvitaciones: Invitacion[] = [];
   estaLogueado = false;
-  private sub: Subscription = new Subscription(); 
+  private subLogueado: Subscription = new Subscription();
+  private subPerfilMod: Subscription = new Subscription(); 
   private router = inject(Router);
 
   constructor(private http: Http, private _cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void { //el codigo dentro corre cuando se crea el componente
-    this.sub = this.http.sesionActiva$.subscribe(logueado => { 
+    this.subLogueado = this.http.sesionActiva$.subscribe(logueado => { 
       //se suscribe al Observable, cada vez que cambie la variable de sesionActiva se ejecuta el codigo
       this.estaLogueado = logueado;
 
@@ -34,10 +35,15 @@ export class Navbar implements OnInit, OnDestroy{
         this.imagenUsu = null;
       }
     })
+
+    this.subPerfilMod = this.http.perfilModificado$.subscribe(() => {
+      this.cargarUsuario();
+      // this._cdr.detectChanges();
+    })
   }
 
   ngOnDestroy(): void { //el codigo dentro corre cuando se destruye el componente (mas para evitar memory leaks)
-    this.sub.unsubscribe();
+    this.subLogueado.unsubscribe();
   }
 
   cargarUsuario(){
@@ -50,7 +56,11 @@ export class Navbar implements OnInit, OnDestroy{
         this.imagenUsu = this.http.getRutaBaseImg() + this.usuario.imagen;
         this._cdr.detectChanges();
       },
-      error: (err) => console.log(err)
+      error: (err) => {
+        console.log(err)
+        this.http.cerrarSesion();
+        this._cdr.detectChanges();
+      }
     })
   }
 

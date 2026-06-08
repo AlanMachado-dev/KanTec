@@ -141,18 +141,18 @@ export class Http {
   }
   
   getTablerosColaborados(alias: string): Observable<Tablero[]>{
-    return this.http.get<Tablero[]>("http://localhost/kantecAPI/api/tableros/colaborador/" + alias);
+    return this.http.get<Tablero[]>("http://localhost/kantecAPI/api/colaboradores/misColaboraciones/" + alias);
   }
 
   getColaboradoresDeTablero(idTablero : string): Observable<Colaborador[]> {
-    return this.http.get<Colaborador[]>("http://localhost/kantecAPI/api/tableros/colaboradores/" + idTablero);
+    return this.http.get<Colaborador[]>("http://localhost/kantecAPI/api/colaboradores/" + idTablero);
   }
   getInvitaciones(alias: string): Observable<Invitacion[]> {
-    return this.http.get<Invitacion[]>("http://localhost/kantecAPI/api/tableros/invitaciones/" + alias);
+    return this.http.get<Invitacion[]>("http://localhost/kantecAPI/api/colaboradores/invitaciones/" + alias);
   }
 
   contestarInvitacion(aliasUsuario: string, idTablero: string, acepto: number): Observable<any> {
-    return this.http.put<any>("http://localhost/kantecAPI/api/tableros/invitacion", { aliasUsuario: aliasUsuario, idTablero: idTablero, acepto: acepto });
+    return this.http.put<any>("http://localhost/kantecAPI/api/colaboradores/invitacion/", { aliasUsuario: aliasUsuario, idTablero: idTablero, acepto: acepto });
   }
   //tarea//
   crearTarea(idTablero: string, columna: number, posicion: number): Observable<any>{

@@ -5,6 +5,7 @@ import { Tablero } from '../../interfaces/tablero';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ɵInternalFormsSharedModule, ReactiveFormsModule } from '@angular/forms';
 import { Colaborador } from '../../interfaces/colaborador';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home',
@@ -256,16 +257,42 @@ export class Home {
     
   }
 
-  borrarTablero(){
+  confirmarBorrarTablero(){
+    Swal.fire({
+      title: "¿Estás seguro/a?",
+      text: "¡Esto será irreversible!",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Sí, borrar.",
+      cancelButtonText: "No, cancelar."
+    }).then((result) => {
+      if(result.isConfirmed && this.tableroSeleccionado) {
+        this.http.borrarTablero(this.tableroSeleccionado.id).subscribe({
+          next: () => {
+            Swal.fire({
+              title: "¡Tablero borrado!",
+              text: "Tu tablero ha sido borrado exitosamente.",
+              icon: "success"
+            });
+            this.cargarTableros();
+            const btnCerrar = document.getElementById('btnCerrarOffcanvas');
+            btnCerrar?.click();
+          },
+          error: (error) => {
+            Swal.fire({
+              title: "Error",
+              text: "No se pudo borrar el tablero. Inténtalo de nuevo.",
+              icon: "error"
+            });
+          }
+        });
+      }
+    });
     if(!this.tableroSeleccionado){
       return;
     }
-    this.http.borrarTablero(this.tableroSeleccionado.id).subscribe({
-      next: () => {
-        this.cargarTableros();
-        const btnCerrar = document.getElementById('btnCerrarOffcanvas');
-        btnCerrar?.click();
-      }
-    });
+    
   }
 }

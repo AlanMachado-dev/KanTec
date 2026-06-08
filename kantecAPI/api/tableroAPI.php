@@ -138,7 +138,7 @@ class tableroAPI
         respond(200, ["mensaje" => "Tablero eliminado"]);
     }
 
-    // GET http://localhost/kantecAPI/api/tableros/colaborador/alias
+    // GET http://localhost/kantecAPI/api/colaboradores/misColaboraciones/alias
     public function misColaboraciones(string $alias): void
     {
         $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
@@ -154,7 +154,7 @@ class tableroAPI
         respond(200, $stmt->fetchAll());
     }
 
-    // GET http://localhost/kantecAPI/api/tableros/colaboradores/idTablero
+    // GET http://localhost/kantecAPI/api/colaboradores/idTablero
     public function colaboradoresTablero(string $id): void
     {
         $stmt = $this->db->prepare("SELECT aliasUsuario,tipoRelacion from pertenece where idTablero = ? AND aceptada=1");
@@ -163,9 +163,8 @@ class tableroAPI
         respond(200, $stmt->fetchAll());
     }
 
-    // POST http://localhost/kantecAPI/api/tableros/colaboradores
-    public function agregarColaborador(): void //Por ahora con este endpoint se podra agregar colaboradores espectadores sin preguntarles 
-    //si quieren o no
+    // POST http://localhost/kantecAPI/api/colaboradores/invitar
+    public function agregarColaborador(): void 
     {
         $body = json_decode(file_get_contents("php://input"), true);
 
@@ -188,7 +187,7 @@ class tableroAPI
         ]);
     }
 
-    // GET http://localhost/kantecAPI/api/tableros/invitaciones/alias
+    // GET http://localhost/kantecAPI/api/colaboradores/invitaciones/alias
     public function getInvitaciones(string $alias)
     {
         $stmt = $this->db->prepare("SELECT idTablero,aliasCreador,titulo as tituloTablero,tipoRelacion FROM tablero as t , pertenece as p WHERE aceptada=0 AND aliasUsuario=? AND t.id = p.idTablero");
@@ -197,7 +196,7 @@ class tableroAPI
         respond(200, $stmt->fetchAll());
     }
 
-    // PUT http://localhost/kantecAPI/api/tableros/invitacion/
+    // PUT http://localhost/kantecAPI/api/colaboradores/invitacion/
     public function aceptarInvitacion()
     {
         $body = json_decode(file_get_contents("php://input"), true);

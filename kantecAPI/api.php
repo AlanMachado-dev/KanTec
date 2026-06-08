@@ -48,8 +48,6 @@ match(true) {
         && $method === 'GET' => $usuario->existe($partes[3]),
 
     //ruta tableros
-    $partes[1] === 'tableros' && $partes[2] === 'invitacion' && !isset($partes[3])
-        && $method === 'PUT' => $tablero->aceptarInvitacion(),
     $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
         && $method === 'GET' => $tablero->getOne($partes[2]),
     $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 
@@ -62,14 +60,19 @@ match(true) {
         && $method === 'POST' => $tablero->create(),
     $partes[1] === 'tableros' && $partes[2] === 'usuario' && isset($partes[3]) && !isset($partes[4]) 
         && $method === 'GET' => $tablero->getTableros($partes[3]),
-    $partes[1] === 'tableros' && $partes[2] === 'colaborador' && isset($partes[3]) && !isset($partes[4]) 
-    && $method === 'GET' => $tablero->misColaboraciones($partes[3]),
-    $partes[1] === 'tableros' && $partes[2] === 'colaboradores' && isset($partes[3]) && !isset($partes[4])
-        && $method === 'GET' => $tablero->colaboradoresTablero($partes[3]),
-    $partes[1] === 'tableros' && $partes[2] === 'colaboradores' && !isset($partes[3])
+    
+
+    //ruta colaboraciones
+    $partes[1] === 'colaboradores' && $partes[2] === 'invitar' && !isset($partes[3])
         && $method === 'POST' => $tablero->agregarColaborador(),
-    $partes[1] === 'tableros' && $partes[2] === 'invitaciones' && isset($partes[3]) && !isset($partes[4])
+    $partes[1] === 'colaboradores' && $partes[2] === 'misColaboraciones' && isset($partes[3]) && !isset($partes[4])
+        && $method === 'GET' => $tablero->misColaboraciones($partes[3]),
+    $partes[1] === 'colaboradores' && isset($partes[2]) && !isset($partes[3]) 
+        && $method === 'GET' => $tablero->colaboradoresTablero($partes[2]),
+    $partes[1] === 'colaboradores' && $partes[2] === 'invitaciones' && isset($partes[3]) && !isset($partes[4])
         && $method === 'GET' => $tablero->getInvitaciones($partes[3]),
+    $partes[1] === 'colaboradores' && $partes[2] === 'invitacion' && !isset($partes[3])
+        && $method === 'PUT' => $tablero->aceptarInvitacion(),
 
     //ruta tareas
 

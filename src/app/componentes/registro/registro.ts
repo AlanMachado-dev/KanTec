@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from "@angular/router";
 import { Http } from '../../services/http';
 
@@ -22,7 +22,6 @@ export class Registro {
   loading = false;
   errorMessage?: string;
 
-
   registroForm = this.formBuilder.group({
     alias: ['', {
       validators: [
@@ -37,6 +36,7 @@ export class Registro {
         Validators.minLength(8)
       ]
     }],
+    confirmPassword: ['', [Validators.required, this.matchPassword.bind(this)]],
     email: ['', {
       validators: [
         Validators.required,
@@ -51,6 +51,7 @@ export class Registro {
     }],
     imagen: ['',]
   })
+
 
   onFileSelected(event: any) {
     this.imagenSeleccionada = event.target.files[0];
@@ -138,4 +139,15 @@ export class Registro {
       });
     }
   }
+matchPassword(control: AbstractControl): ValidationErrors | null {
+  if (!this.registroForm) return null; // Evita errores en la carga inicial
+
+  const password = this.registroForm.get('password')?.value;
+  const confirmPassword = control.value;
+
+  // Si no coinciden, devolvemos el error personalizado
+  return password === confirmPassword ? null : { noMatch: true };
 }
+
+}
+

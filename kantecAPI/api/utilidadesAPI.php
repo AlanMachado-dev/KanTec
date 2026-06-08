@@ -7,6 +7,7 @@ class utilidadesAPI {
     $this->db = (new Database())->getConnection();
     }
 
+    // GET http://localhost/kantecAPI/api/utilidad/triggers
     function agregarTriggers(){
         
         $this->db->exec("

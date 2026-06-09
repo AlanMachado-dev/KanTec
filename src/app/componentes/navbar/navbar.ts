@@ -59,14 +59,15 @@ export class Navbar implements OnInit, OnDestroy{
       error: (err) => {
         console.log(err)
         this.http.cerrarSesion();
-        this._cdr.detectChanges();
+        // this._cdr.detectChanges();
+        this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
       }
     })
   }
 
   cerrarSesion(){
     this.http.cerrarSesion();
-    this.router.navigate(['']);
+    this.router.navigate(['/']);
   }
   crearTablero(): void {
     const aliasUsuario = this.http.getAliasDelToken() || "";

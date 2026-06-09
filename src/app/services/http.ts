@@ -172,9 +172,9 @@ export class Http {
   invitarColaborador(idTablero: string, body: any): Observable<any> {
     return this.http.post<any>("http://localhost/kantecAPI/api/colaboradores/invitar", {idTablero: idTablero, tipoRelacion: body.tipoRelacion, aliasUsuario: body.aliasUsuario});
   }
+
   //tarea//
   crearTarea(idTablero: string, columna: number, posicion: number): Observable<any>{
-    console.log(idTablero,posicion,columna);
     return this.http.post<any>("http://localhost/kantecAPI/api/tareas", {
       "idTablero": idTablero,
       "posicion": posicion+1,
@@ -190,10 +190,18 @@ export class Http {
     return this.http.get<Tarea[]>("http://localhost/kantecAPI/api/tareas/tablero/" + idTablero + "/" + columna);
   }
 
+  actualizarTarea(idTablero: string, idTarea: number, body: any){
+    return this.http.put<any>(`http://localhost/kantecAPI/api/tareas/${idTablero}/${idTarea}`, body);
+  }
+
   actualizarPosicionTarea(idTablero: string, idTarea: number, columna: number, posicion: number): Observable<any>{
     return this.http.put<any>("http://localhost/kantecAPI/api/tareas/posicion/" + idTablero + "/" + idTarea, {
       "columna": columna,
       "posicion": posicion
     });
+  }
+
+  borrarTarea(idTablero: string, idTarea: number): Observable<any>{
+    return this.http.delete<any>(`http://localhost/kantecAPI/api/tareas/${idTablero}/${idTarea}`);
   }
 }

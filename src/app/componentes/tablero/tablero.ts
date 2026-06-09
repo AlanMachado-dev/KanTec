@@ -7,6 +7,7 @@ import { Columna } from '../../interfaces/columna';
 import { TableroInterfaz } from '../../interfaces/tablero';
 import { ɵInternalFormsSharedModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from "@angular/forms";
 import Swal from 'sweetalert2';
+import { Tarea } from '../../interfaces/tarea';
 
 @Component({
   selector: 'app-tablero',
@@ -29,8 +30,7 @@ export class Tablero implements OnInit, AfterViewInit {
 
   private fb = inject(FormBuilder);
 
-
-   columnas: Columna[] = [
+  columnas: Columna[] = [
     {
       id: 0,
       titulo: 'Pendiente',
@@ -66,6 +66,12 @@ export class Tablero implements OnInit, AfterViewInit {
             next: (response) => {
               this.columnas[i].tareas = response;
               this.cdr.detectChanges();
+            },
+            error: (err) => {
+              console.log(err);
+              this.http.cerrarSesion();
+              this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
+              return;
             }
           })
         }
@@ -76,7 +82,7 @@ export class Tablero implements OnInit, AfterViewInit {
             });
           }
       } else {
-        this.router.navigate(['/']);
+        this.router.navigate(['/ingreso'], {state: {expirado: 'true'}});
       }
     });
   }
@@ -125,6 +131,11 @@ ngAfterViewInit(): void {
       this.http.getTareasTableroColumna(this.idTablero,i).subscribe({
         next: (response) => {
           this.columnas[i].tareas = response;
+          for(const tarea of this.columnas[i].tareas){
+            if(tarea.prioridad == null){
+              tarea.prioridad = 0;
+            }
+          }
           this.cdr.detectChanges();
         }
       })
@@ -210,6 +221,8 @@ ngAfterViewInit(): void {
     return this.columnas[colIndex].tareas.length;
   }
  
+  ////// COLABORADORES //////
+
   formularioAgregarColaborador: FormGroup = this.fb.group({
     aliasUsuario: ['',{
       validators: [
@@ -275,6 +288,99 @@ ngAfterViewInit(): void {
       }
     }
     
+  }
+
+  ////// EDITAR TAREA //////
+
+  formularioTarea: FormGroup = this.fb.group({
+    idTarea: [''],
+    nombre: ['', {
+      validators: [
+        Validators.required,
+        Validators.maxLength(50)
+      ]
+    }],
+    descripcion: ['', {
+      validators: [
+        Validators.maxLength(50)
+      ]
+    }],
+    fechaInicio: ['', {
+      validators: [
+      ]
+    }],
+    fechaFinal: ['', {
+      validators: [
+      ]
+    }],
+    fechaCreacion: ['', {
+      validators: [
+      ]
+    }],
+    prioridad: [''],
+  });
+
+  seleccionarTarea(tarea: Tarea): void{
+    this.formularioTarea.patchValue({
+      idTarea: tarea.idTarea,
+      nombre: tarea.nombre,
+      descripcion: tarea.descripcion,
+      fechaInicio: tarea.fechaInicio,
+      fechaFinal: tarea.fechaFinal,
+      fechaCreacion: tarea.fechaCreacion,
+      prioridad: String(tarea.prioridad)
+    })
+  }
+
+  guardarCambiosTarea(){
+    const body = this.formularioTarea.value;
+    if(!this.idTablero){return;}
+    this.http.actualizarTarea(this.idTablero, this.formularioTarea.value.idTarea, body).subscribe({
+      next: () => {
+        this.cargarTareas();
+        this.cdr.detectChanges();
+        const btnCerrar = document.getElementById('btnCerrarOffcanvas');
+        btnCerrar?.click();
+      },
+      error: (err) => console.log(err)
+    })
+  }
+
+  confirmarBorrarTarea(){
+    Swal.fire({
+      title: "¿Estás seguro/a?",
+      text: "¡Esto será irreversible!",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Sí, borrar.",
+      cancelButtonText: "No, cancelar."
+    }).then((result) => {
+      if(result.isConfirmed) {
+        if(!this.idTablero){return;}
+        this.http.borrarTarea(this.idTablero, this.formularioTarea.value.idTarea).subscribe({
+          next: () => {
+            Swal.fire({
+              title: "Tarea borrada!",
+              text: "La tarea ha sido borrado exitosamente.",
+              icon: "success"
+            });
+            this.cargarTareas();
+            const btnCerrar = document.getElementById('btnCerrarOffcanvas');
+            btnCerrar?.click();
+          },
+          error: (error) => {
+            Swal.fire({
+              title: "Error",
+              text: "No se pudo borrar la tarea. Inténtalo de nuevo.",
+              icon: "error"
+            });
+            console.log(error);
+          }
+        });
+      }
+    });
   }
 
 }

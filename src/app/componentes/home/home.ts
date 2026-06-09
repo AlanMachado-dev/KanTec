@@ -49,6 +49,7 @@ export class Home {
   private subTablerosCompartidos: Subscription = new Subscription();
   private subTableros: Subscription = new Subscription();
   ngOnInit(): void {
+    // setTimeout(() => {},500);
     this.http.sesionActiva$.subscribe(logueado => {
       this.estaLogueado = logueado;
       this.aliasUsuario = this.http.getAliasDelToken() || "";
@@ -86,9 +87,17 @@ export class Home {
 
   private cargarTableros(): void {
     this.http.getTablerosAlias(this.aliasUsuario)
-      .subscribe(tableros => {
-        this.tableros = tableros;
-        this.cdr.detectChanges();
+      .subscribe({
+        next: (tableros) => {
+          this.tableros = tableros;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.log(err);
+          this.http.cerrarSesion();
+          this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
+          return;
+        }
       });
   }
   private cargarTablerosColaboraciones(): void{

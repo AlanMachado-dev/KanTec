@@ -1,6 +1,6 @@
 <?php
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+// use Firebase\JWT\Key;
 
 class usuarioAPI {
     private PDO $db;
@@ -28,7 +28,7 @@ class usuarioAPI {
         $payload = [
             'alias' => $user['alias'],
             'nombre' => $user['nombre'],
-            'exp' => time() + (60 * 60) //tiempo que dura el token (1h)
+            'exp' => time() + (60) //tiempo que dura el token (1h)
         ];
 
         $token = JWT::encode($payload, JWT_SECRET, 'HS256');
@@ -47,7 +47,7 @@ class usuarioAPI {
 
     // GET http://localhost/kantecAPI/api/usuarios/itsmafiu
     public function getOne(string $alias): void {
-        $tokenData = verificarToken();
+        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
 
         $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
         $stmt->execute([$alias]);
@@ -82,6 +82,7 @@ class usuarioAPI {
 
     // PUT http://localhost/kantecAPI/api/usuarios/lewan500
     public function update(string $id): void {
+        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
         $body = json_decode(file_get_contents("php://input"), true);
 
         if (!$body) {
@@ -114,7 +115,7 @@ class usuarioAPI {
 
     // DELETE http://localhost/kantecAPI/api/usuarios/ElPro123
     public function delete(string $id): void {
-
+        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
         $query = $this->db->prepare("DELETE FROM tablero WHERE aliasCreador = ?");
         $query->execute([$id]);
 

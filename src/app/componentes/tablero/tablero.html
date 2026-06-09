@@ -201,9 +201,12 @@
                 <div class="postits-container">
                     @for (tarea of col.tareas; track tarea.idTarea) {
                     <div class="postit" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#post-it-info" aria-controls="post-it-info" draggable="true"
-                        (dragstart)="onDragStart($event, tarea.idTarea)" (dragend)="onDragEnd($event)">
-                        <p>{{tarea.nombre}}</p>
+                        data-bs-target="#post-it-info" 
+                        aria-controls="post-it-info" draggable="true"
+                        (dragstart)="onDragStart($event, tarea.idTarea)" 
+                        (dragend)="onDragEnd($event)"
+                        (click)="seleccionarTarea(tarea)">
+                        <p class="fw-bold">{{tarea.nombre}}</p>
                         <p>{{tarea.descripcion}}</p>
                     </div>
                     }
@@ -289,35 +292,67 @@
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="post-it-info" aria-labelledby="[id Tarea]"
     style="--bs-offcanvas-width: 600px;">
-
+<form [formGroup]="formularioTarea">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="[id Tarea]">[Nombre Tarea]</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <!-- <h5 class="offcanvas-title" id="[id Tarea]"></h5> -->
+        <input type="text" formControlName="nombre" class="form-control form-control-lg" 
+        [class.is-invalid]="formularioTarea.get('nombre')?.invalid && formularioTarea.get('nombre')?.touched">
+        @if(formularioTarea.get('nombre')?.invalid && formularioTarea.get('nombre')?.touched){
+            <div class="invalid-feedback">
+                @if(formularioTarea.get('nombre')?.errors?.['required']) {
+                    El nombre de la tarea es obligatorio.
+                }
+                @if(formularioTarea.get('nombre')?.errors?.['maxlength']) {
+                    Máximo de caracteres debe ser de 50.
+                }
+            </div>
+        }
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" id="btnCerrarOffcanvas"></button>
     </div>
     <hr class="m-0">
 
     <div class="offcanvas-body">
         <div class="mb-3">
             <label for="descripcion" class="form-label">Descripcion:</label>
-            <input type="text" id="descripcion" class="form-control">
+            <textarea class="form-control" rows="5" formControlName="descripcion" 
+            [class.is-invalid]="formularioTarea.get('descripcion')?.invalid && formularioTarea.get('descripcion')?.touched"></textarea>
+            @if(formularioTarea.get('descripcion')?.invalid && formularioTarea.get('descripcion')?.touched){
+            <div class="invalid-feedback">
+                @if(formularioTarea.get('descripcion')?.errors?.['maxlength']) {
+                Máximo de caracteres debe ser de 300.
+                }
+            </div>
+            }
         </div>
 
         <div class="float-start">
-            <p>Prioridad:</p>
+            <p>Prioridad: (Actual = {{this.formularioTarea.value.prioridad}})</p>
             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                <button type="button" class="btn btn-danger px-3">1</button>
+                <input type="radio" class="btn-check" formControlName="prioridad" name="prioridad" id="btnradio1" value="1" autocomplete="off">
+                <label class="btn btn-danger" for="btnradio1">1</label>
+
+                <input type="radio" class="btn-check" formControlName="prioridad" name="prioridad" id="btnradio2" value="2" autocomplete="off">
+                <label class="btn btn-warning" for="btnradio2">2</label>
+
+                <input type="radio" class="btn-check" formControlName="prioridad" name="prioridad" id="btnradio3" value="3" autocomplete="off">
+                <label class="btn btn-success" for="btnradio3">3</label>
+
+                <input type="radio" class="btn-check" formControlName="prioridad" name="prioridad" id="btnradio4" value="4" autocomplete="off">
+                <label class="btn btn-primary" for="btnradio4">4</label>
+
+                <!-- <button type="button" class="btn btn-danger px-3">1</button>
                 <button type="button" class="btn btn-warning text-white px-3">2</button>
                 <button type="button" class="btn btn-success px-3">3</button>
-                <button type="button" class="btn btn-primary px-3">4</button>
+                <button type="button" class="btn btn-primary px-3">4</button> -->
             </div>
             <div class="mt-5">
-                <p class="mb-4">Miembros Asignados:</p>
+                <p class="mb-4">Miembros Asignados: (en progreso)</p>
                 <p class="text-info">[usuario1] [usuario2] [+]</p>
             </div>
         </div>
 
         <div class="float-end me-5">
-            <p>Rango Fecha:</p>
+            <p>Rango Fecha: (en progreso)</p>
             <input type="text" id="calendario-siempre-abierto" name="calendario" class="form-control me-5"
                 placeholder="Selecciona una fecha">
         </div>
@@ -327,14 +362,14 @@
     <div class="p-3 border-top">
         <div class="row">
             <div class="col-4">
-                <button type="button" class="btn btn-outline-danger w-100">Borrar Tarea</button>
+                <button type="button" class="btn btn-outline-danger w-100" (click)="confirmarBorrarTarea()">Borrar Tarea</button>
             </div>
             <div class="col-8">
-                <button type="button" class="btn btn-primary w-100">Guardar</button>
+                <button type="button" class="btn btn-primary w-100" (click)="guardarCambiosTarea()">Guardar</button>
             </div>
         </div>
     </div>
-
+</form>
 </div>
 
 <div class="modal fade" id="agregarColaborador" tabindex="-1">

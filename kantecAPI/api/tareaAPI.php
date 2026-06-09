@@ -21,6 +21,8 @@ class tareaAPI
     // GET http://localhost/kantecAPI/api/tareas/tablero/idTablero/columna
     public function getTareasColumna(string $idTablero, int $columna): void
     {   
+        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
+
         $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? AND columna = ? ORDER BY posicion");
         $stmt->execute([$idTablero, $columna]);
         respond(200, $stmt->fetchAll());
@@ -29,6 +31,8 @@ class tareaAPI
     // GET http://localhost/kantecAPI/api/tareas/idTablero/idTarea
     public function getOne(string $idTablero, string $idTarea): void
     {
+        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
+
         $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? AND idTarea = ?");
         $stmt->execute([$idTablero, $idTarea]);
         $tarea = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -43,6 +47,7 @@ class tareaAPI
     // POST http://localhost/kantecAPI/api/tareas
     public function create(): void
     {
+        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
         $body = json_decode(file_get_contents("php://input"), true);
 
         if (empty($body['idTablero'])) {
@@ -77,6 +82,7 @@ class tareaAPI
 
     // PUT http://localhost/kantecAPI/api/tareas/idTablero/idTarea
     public function update(string $idTablero, string $idTarea): void {
+        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
         $body = json_decode(file_get_contents("php://input"), true);
 
         if (!$body) {
@@ -115,6 +121,7 @@ class tareaAPI
 
     // PUT http://localhost/kantecAPI/api/tareas/posicion/idTablero/idTarea
     public function updatePosicion(string $idTablero, string $idTarea){
+        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
         $body = json_decode(file_get_contents("php://input"), true);
 
         if (!$body) {
@@ -151,6 +158,7 @@ class tareaAPI
     // DELETE http://localhost/kantecAPI/api/tareas/idTablero/idTarea
     public function delete(string $idTablero, string $idTarea): void
     {
+        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
         $stmt = $this->db->prepare("DELETE FROM tarea WHERE idTablero = ? AND idTarea = ?");
         $stmt->execute([$idTablero, $idTarea]);
 

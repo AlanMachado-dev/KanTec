@@ -1,13 +1,16 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Http } from '../../services/http';
 import flatpickr from "flatpickr";
 import { Spanish } from "flatpickr/dist/l10n/es.js";
 import { Columna } from '../../interfaces/columna';
+import { TableroInterfaz } from '../../interfaces/tablero';
+import { ɵInternalFormsSharedModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from "@angular/forms";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-tablero',
-  imports: [],
+  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule],
   templateUrl: './tablero.html',
   styles: ``,
 })
@@ -20,6 +23,12 @@ export class Tablero implements OnInit, AfterViewInit {
 
   private idTablero: string | null = null;
   private draggingId: number | null = null;
+
+  aliasLogueado: string | null = null;
+  miTablero: TableroInterfaz | null = null;
+
+  private fb = inject(FormBuilder);
+
 
    columnas: Columna[] = [
     {
@@ -47,9 +56,25 @@ export class Tablero implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.http.sesionActiva$.subscribe(logueado => {
       if (logueado) {
+        this.aliasLogueado = this.http.getAliasDelToken();
         this.idTablero = this.ruta.snapshot.paramMap.get('id');
         this.cargarTareas();
         this.cdr.detectChanges();
+        for(let i = 0; i < 4; i++){
+          if(!this.idTablero){return console.log("error pendejo");}
+          this.http.getTareasTableroColumna(this.idTablero,i).subscribe({
+            next: (response) => {
+              this.columnas[i].tareas = response;
+              this.cdr.detectChanges();
+            }
+          })
+        }
+        if(this.idTablero){
+          this.http.getTablero(this.idTablero)
+            .subscribe(tablero => {
+              this.miTablero = tablero;
+            });
+          }
       } else {
         this.router.navigate(['/']);
       }
@@ -91,6 +116,7 @@ ngAfterViewInit(): void {
       }
     });
   }
+
 
   cargarTareas(): void{
     for(let i = 0; i < this.columnas.length; i++){
@@ -184,5 +210,72 @@ ngAfterViewInit(): void {
     return this.columnas[colIndex].tareas.length;
   }
  
+  formularioAgregarColaborador: FormGroup = this.fb.group({
+    aliasUsuario: ['',{
+      validators: [
+        Validators.required,
+        Validators.maxLength(50)
+      ]
+    }],
+    tipoRelacion: ['1']
+  })
+  agregarColaborador(){
+    if (this.miTablero?.aliasCreador != this.aliasLogueado) {
+      Swal.fire({
+        title: "Falta de Permisos",
+        icon: "error",
+        text: "No podes invitar colaboradores."
+      });
+      return;
+    }
+    const body = this.formularioAgregarColaborador.value;
+
+    if (body.aliasUsuario === this.aliasLogueado){
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No puedes agregarte a ti mismo'
+      });
+      return;
+    }else{
+      if(this.idTablero){
+        this.http.invitarColaborador(this.idTablero,body).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Usuario invitado',
+              text: 'Invitacion enviada con exito'
+            });
+            const btnCerrar = document.getElementById('btnCerrarModal');
+            btnCerrar?.click();
+          },
+          error: (err) => {
+            if (err.status === 404) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Usuario no encontrado',
+                text: 'No existe un usuario con ese alias.'
+              });
+            } else if (err.status === 400) {
+              Swal.fire({
+                title: "Ya pertenece al tablero",
+                text: "Ese usuario ya colabora o especta este tablero.",
+                icon: "warning"
+              });
+            } else {
+              Swal.fire({
+                title: "Error",
+                text: "Ocurrio un error inesperado.",
+                icon: "error"
+              });
+            }
+            
+          }
+        });
+      }
+    }
+    
+  }
+
 }
 

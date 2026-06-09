@@ -1,4 +1,4 @@
-export interface Tablero {
+export interface TableroInterfaz {
     id: string;
     titulo: string;
     descripcion: string | null;

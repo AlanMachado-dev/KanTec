@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Http } from '../../services/http';
 import { Router, RouterLink } from '@angular/router';
-import { Tablero } from '../../interfaces/tablero';
+import { TableroInterfaz } from '../../interfaces/tablero';
 import { Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, ɵInternalFormsSharedModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ɵInternalFormsSharedModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Colaborador } from '../../interfaces/colaborador';
 import Swal from 'sweetalert2';
 
@@ -16,10 +16,21 @@ import Swal from 'sweetalert2';
 export class Home {
 
   private fb = inject(FormBuilder);
+  extPermitidas = ['image/jpg', 'image/jpeg', 'image/png'];
+  mostrarError = false;
 
   formularioTablero: FormGroup = this.fb.group({
-    titulo: [''],
-    descripcion: [''],
+    titulo: ['', {
+      validators: [
+        Validators.required,
+        Validators.maxLength(50)
+      ]
+    }],
+    descripcion: ['', {
+      validators: [
+        Validators.maxLength(300)
+      ]
+    }],
     color: ['']
   });
 
@@ -67,8 +78,8 @@ export class Home {
     this.subTablerosCompartidos.unsubscribe();
     this.subTableros.unsubscribe();
   }
-  tableros: Tablero[] = [];
-  tablerosColaborados: Tablero[] = [];
+  tableros: TableroInterfaz[] = [];
+  tablerosColaborados: TableroInterfaz[] = [];
   paginaActual = 1;
   paginaActualColaborador = 1;
   private tablerosPorPagina = 3;
@@ -87,14 +98,14 @@ export class Home {
         this.cdr.detectChanges();
       })
   }
-  getTablerosPaginados(lista: Tablero[], pagina: number): Tablero[] {
+  getTablerosPaginados(lista: TableroInterfaz[], pagina: number): TableroInterfaz[] {
     const inicio = (pagina - 1) * this.tablerosPorPagina;
     const fin = inicio + this.tablerosPorPagina;
 
     return lista.slice(inicio,fin);
   }
 
-  getTotalPaginas(lista: Tablero[], incluirCrear: boolean): number {
+  getTotalPaginas(lista: TableroInterfaz[], incluirCrear: boolean): number {
 
     const extras = incluirCrear ? 1 : 0;
 
@@ -136,7 +147,7 @@ export class Home {
       }
     }
   }
-  getPaginasVisibles(lista: Tablero[], paginaActual: number, incluirCrear: boolean): (number | string)[] {
+  getPaginasVisibles(lista: TableroInterfaz[], paginaActual: number, incluirCrear: boolean): (number | string)[] {
     const paginas: (number | string)[] = [];
 
     const totalPaginas = this.getTotalPaginas(lista, incluirCrear);
@@ -182,10 +193,10 @@ export class Home {
       }
     });
   }
-  tableroSeleccionado: Tablero | null = null;
+  tableroSeleccionado: TableroInterfaz | null = null;
   colaboradoresTablero: Colaborador[] = [];
 
-  seleccionarTablero(tablero: Tablero, desdeOffCanvas: boolean): void{
+  seleccionarTablero(tablero: TableroInterfaz, desdeOffCanvas: boolean): void{
     this.tableroSeleccionado = tablero;
     if(desdeOffCanvas){
       this.formularioTablero.patchValue({
@@ -212,6 +223,13 @@ export class Home {
 
     if(input.files?.length){
       this.archivoSeleccionado = input.files[0];
+      if(!this.extPermitidas.includes(this.archivoSeleccionado.type)){
+        this.mostrarError = true;
+        this.cdr.detectChanges();
+      } else {
+        this.mostrarError = false;
+        this.cdr.detectChanges();
+      }
     }
   }
 

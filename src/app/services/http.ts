@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, switchMap } from 'rxjs';
 import { Usuario } from '../interfaces/usuario';
-import { Tablero } from '../interfaces/tablero';
+import { TableroInterfaz } from '../interfaces/tablero';
 import { Colaborador } from '../interfaces/colaborador';
 import { Tarea } from '../interfaces/tarea';
 import { Invitacion } from '../interfaces/invitacion';
@@ -117,12 +117,16 @@ export class Http {
   }
 
   //tableros//
-  getTablerosAlias(alias: string): Observable<Tablero[]>{
-    return this.http.get<Tablero[]>("http://localhost/kantecAPI/api/tableros/usuario/" + alias);
+  getTablerosAlias(alias: string): Observable<TableroInterfaz[]>{
+    return this.http.get<TableroInterfaz[]>("http://localhost/kantecAPI/api/tableros/usuario/" + alias);
   }
 
   crearTablero(alias: string): Observable<any>{
     return this.http.post<any>("http://localhost/kantecAPI/api/tableros", {alias: alias});
+  }
+
+  getTablero(idTablero: string): Observable<TableroInterfaz>{
+    return this.http.get<TableroInterfaz>("http://localhost/kantecAPI/api/tableros/" + idTablero);
   }
 
   private tableroCreado = new Subject<void>();
@@ -150,8 +154,8 @@ export class Http {
     return this.http.delete<any>("http://localhost/kantecAPI/api/tableros/" + idTablero);
   }
   
-  getTablerosColaborados(alias: string): Observable<Tablero[]>{
-    return this.http.get<Tablero[]>("http://localhost/kantecAPI/api/colaboradores/misColaboraciones/" + alias);
+  getTablerosColaborados(alias: string): Observable<TableroInterfaz[]>{
+    return this.http.get<TableroInterfaz[]>("http://localhost/kantecAPI/api/colaboradores/misColaboraciones/" + alias);
   }
 
   getColaboradoresDeTablero(idTablero : string): Observable<Colaborador[]> {
@@ -163,6 +167,10 @@ export class Http {
 
   contestarInvitacion(aliasUsuario: string, idTablero: string, acepto: number): Observable<any> {
     return this.http.put<any>("http://localhost/kantecAPI/api/colaboradores/invitacion/", { aliasUsuario: aliasUsuario, idTablero: idTablero, acepto: acepto });
+  }
+
+  invitarColaborador(idTablero: string, body: any): Observable<any> {
+    return this.http.post<any>("http://localhost/kantecAPI/api/colaboradores/invitar", {idTablero: idTablero, tipoRelacion: body.tipoRelacion, aliasUsuario: body.aliasUsuario});
   }
   //tarea//
   crearTarea(idTablero: string, columna: number, posicion: number): Observable<any>{

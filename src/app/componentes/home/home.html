@@ -145,8 +145,18 @@
 
     <form [formGroup]="formularioTablero" class="d-flex flex-column h-100">
         <div class="offcanvas-header">
-            <input type="text" placeholder="{{tableroSeleccionado?.titulo}}" formControlName="titulo" class="form-control">
+            <input type="text" formControlName="titulo" class="form-control" [class.is-invalid]="formularioTablero.get('titulo')?.invalid && formularioTablero.get('titulo')?.touched">
             <!-- <h5 class="offcanvas-title" id="[id Tablero]">[Nombre Tarea]</h5> -->
+             @if(formularioTablero.get('titulo')?.invalid && formularioTablero.get('titulo')?.touched){
+                <div class="invalid-feedback">
+                    @if(formularioTablero.get('titulo')?.errors?.['required']) {
+                        El titulo del tablero es obligatorio.
+                    }
+                    @if(formularioTablero.get('titulo')?.errors?.['maxlength']) {
+                        Máximo de caracteres debe ser de 50.
+                    }
+                </div>
+             }
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" id="btnCerrarOffcanvas"></button>
         </div>
         <hr class="m-0">
@@ -154,13 +164,25 @@
         <div class="offcanvas-body flex-grow-1">
             <div class="mb-3">
                 <label for="descripcion" class="form-label">Descripcion:</label>
-                <textarea class="form-control" rows="5" formControlName="descripcion"></textarea>
+                <textarea class="form-control" rows="5" formControlName="descripcion" [class.is-invalid]="formularioTablero.get('descripcion')?.invalid && formularioTablero.get('descripcion')?.touched"></textarea>
+                @if(formularioTablero.get('descripcion')?.invalid && formularioTablero.get('descripcion')?.touched){
+                <div class="invalid-feedback">
+                    @if(formularioTablero.get('descripcion')?.errors?.['maxlength']) {
+                    Máximo de caracteres debe ser de 300.
+                    }
+                </div>
+                }
             </div>
 
             <div class="float-start border-bottom">
                 <label for="imagen" class="form-label">Imagen del Tablero</label>
                 <input type="file"  class="form-control bg-secondary" (change)="onImagenSeleccionada($event)"
                 accept="image/*">
+                @if(mostrarError){
+                    <div class="alert alert-danger m-2 p-2 text-center" role="alert">
+                        Tipo de imagen no permitida!
+                    </div>
+                }
             </div>
 
             <br style="clear: both;">

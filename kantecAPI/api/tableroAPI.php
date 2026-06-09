@@ -179,6 +179,22 @@ class tableroAPI
             respond(404, ["error" => "Tablero no encontrado"]);
         }
 
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt->execute([$body['aliasUsuario']]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($usuario === false || empty($usuario)) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+        }
+
+        $stmt = $this->db->prepare("SELECT * FROM pertenece WHERE aliasUsuario = ? AND idTablero = ?");
+        $stmt->execute([$body['aliasUsuario'], $body['idTablero']]);
+        $colaboracion = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($colaboracion === true || $colaboracion != null) {
+            respond(400, ["error" => "Usuario ya colabora con este tablero"]);
+        }
+
         $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,?,false)");
         $stmt->execute([$body['idTablero'], $body['aliasUsuario'], $body['tipoRelacion']]);
 

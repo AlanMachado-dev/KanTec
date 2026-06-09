@@ -162,8 +162,9 @@
 </style>
 
 <div class="w-100 bg-black p-3 d-flex">
-    <h5 class="text-white">Tablero by Usuario</h5>
-    <span class="text-white ms-auto">[+]</span>
+    <h5 class="text-white">{{miTablero?.titulo}} by {{miTablero?.aliasCreador}}</h5>
+    <span class="text-white ms-auto" data-bs-toggle="modal"
+  data-bs-target="#agregarColaborador" data-bs-placement="bottom" type="button">[+]</span>
     <span class="text-info mx-1">[usuario1]</span>
     <span class="text-info mx-1">[usuario2]</span>
     <span class="text-info mx-1">[usuario3]</span>
@@ -334,4 +335,54 @@
         </div>
     </div>
 
+</div>
+
+<div class="modal fade" id="agregarColaborador" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Agregar Colaborador/Espectador
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formularioAgregarColaborador">
+                    <div class="mb-3">
+                        <label for="aliasUsuario" class="form-label">Alias</label>
+                        <input type="text" class="form-control" formControlName="aliasUsuario" [class.is-invalid]="formularioAgregarColaborador.get('aliasUsuario')?.invalid 
+                        && formularioAgregarColaborador.get('aliasUsuario')?.touched">
+                        @if(formularioAgregarColaborador.get('aliasUsuario')?.invalid && 
+                        formularioAgregarColaborador.get('aliasUsuario')?.touched){
+                        <div class="invalid-feedback">
+                            @if(formularioAgregarColaborador.get('aliasUsuario')?.errors?.['required']) {
+                                Necesitas el Alias para agregar un Colaborador/Espectador.
+                            }
+                            @if(formularioAgregarColaborador.get('aliasUsuario')?.errors?.['maxlength']) {
+                                Los Alias no pueden ser de mas de 50 caracteres.
+                            }
+                        </div>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label for="tipoRelacion">Permiso</label>
+                        <select class="form-select" formControlName="tipoRelacion">
+                            <option value="1">
+                                Contribuidor
+                            </option>
+                            <option value="2">
+                                Espectador
+                            </option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button class="btn btn-primary" (click)="agregarColaborador()">Agregar</button>
+            </div>
+        </div>
+    </div>
 </div>

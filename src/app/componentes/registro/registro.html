@@ -15,8 +15,8 @@
                     @if(registroForm.get('alias')?.errors?.['minlength']) {
                     Mínimo de 8 caracteres requerido.
                     }
-                    @if(registroForm.get('alias')?.errors?.['maxLength']) {
-                    Máximo de caracteres debe ser 30.
+                    @if(registroForm.get('alias')?.errors?.['maxlength']) {
+                        Máximo de caracteres debe ser 30.
                     }
                 </div>
                 }
@@ -64,11 +64,11 @@
                     @if(registroForm.get('email')?.errors?.['required']) {
                     El email es obligatorio.
                     }
-                    @if(registroForm.get('email')?.errors?.['maxLength']) {
-                    Máximo de caracteres debe ser 60.
-                    }
                     @if(registroForm.get('email')?.errors?.['email']) {
                         Debe ingresar un email válido.
+                    }
+                    @if(registroForm.get('email')?.errors?.['maxlength']) {
+                        Máximo de caracteres debe ser 60.
                     }
                 </div>
                 }
@@ -82,8 +82,8 @@
                     @if(registroForm.get('nombre')?.errors?.['required']) {
                     El nombre es obligatorio.
                     }
-                    @if(registroForm.get('nombre')?.errors?.['maxLength']) {
-                    Máximo de caracteres debe ser 50.
+                    @if(registroForm.get('nombre')?.errors?.['maxlength']) {
+                        Máximo de caracteres debe ser 50.
                     }
                 </div>
                 }

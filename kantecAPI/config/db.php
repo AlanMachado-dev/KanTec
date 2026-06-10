@@ -37,14 +37,32 @@ class Database{
         return $this->conn;
     }
 
-    private function crearTablas(): void { //crear un exec por cada tabla necesaria
+    private function crearTablas(): void {
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS usuario (
                 alias    VARCHAR(30)  NOT NULL PRIMARY KEY,
-                nombre   VARCHAR(50)  NOT NULL,
-                password VARCHAR(100)  NOT NULL,
-                email    VARCHAR(60)  NOT NULL,
-                imagen   VARCHAR(40)  NULL
+                password VARCHAR(100) NOT NULL   
+            )
+        ");
+        $this->conn->exec("
+            CREATE TABLE IF NOT EXISTS perfil (
+            alias    VARCHAR(30) PRIMARY KEY REFERENCES usuario(alias),
+            email    VARCHAR(60) NOT NULL,
+            nombre   VARCHAR(50) NOT NULL,
+            imagen   VARCHAR(40) NULL,
+            fecNac   DATE        NULL,
+            bio      VARCHAR(100)NULL    
+            )
+        ");
+        $this->conn->exec("
+            CREATE TABLE IF NOT EXISTS usuarioPerfilBorrado (
+            alias    VARCHAR(30) PRIMARY KEY,
+            password VARCHAR(100)NOT NULL,   
+            email    VARCHAR(60) NOT NULL,
+            nombre   VARCHAR(50) NOT NULL,
+            imagen   VARCHAR(40) NULL,
+            fecNac   DATE        NULL,
+            bio      VARCHAR(100)NULL    
             )
         ");
         $this->conn->exec("

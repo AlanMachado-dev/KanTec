@@ -57,7 +57,7 @@
 
             <div class="mb-3">
                 <label for="email" class="form-label">Correo electronico</label>
-                <input type="email" formControlName="email" class="form-control" id="email"
+                <input type="email" #emailInput (blur)="afterEmail(emailInput.value)" formControlName="email" class="form-control" id="email"
                     [class.is-invalid]="registroForm.get('email')?.invalid && registroForm.get('email')?.touched">
                 @if(registroForm.get('email')?.invalid && registroForm.get('email')?.touched){
                 <div class="invalid-feedback">

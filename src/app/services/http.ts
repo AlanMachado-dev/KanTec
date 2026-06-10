@@ -12,26 +12,26 @@ import { Invitacion } from '../interfaces/invitacion';
 })
 export class Http {
 
-  constructor(private http: HttpClient){}
+  constructor(private http: HttpClient) { }
 
   private sesionActiva = new BehaviorSubject<boolean>(this.estaLogueado());
-      //BehaviorSubject es una variable que avisa a los que estes suscritos cuando cambia de valor
+  //BehaviorSubject es una variable que avisa a los que estes suscritos cuando cambia de valor
   sesionActiva$ = this.sesionActiva.asObservable();
-      //asObservable() expone la variable como un observable de solo lectura. el $ es convencion de que es un observable
-      //los suscriptores pueden escucharlo pero no cambiarlo, solo el servicio
+  //asObservable() expone la variable como un observable de solo lectura. el $ es convencion de que es un observable
+  //los suscriptores pueden escucharlo pero no cambiarlo, solo el servicio
 
   //sesion//
-  inicioSesion(credentials: any): Observable<any>{
+  inicioSesion(credentials: any): Observable<any> {
     return this.http.post<Usuario>("http://localhost/kantecAPI/api/usuarios/login", credentials);
   }
 
-  cerrarSesion(): void{
+  cerrarSesion(): void {
     localStorage.removeItem('token');
     this.sesionActiva.next(false); //next(bool) emite el valor de la sesion, en este caso que se cerró
   }
 
   //token//
-  guardarToken(token: string): void{
+  guardarToken(token: string): void {
     localStorage.setItem('token', token);
     this.sesionActiva.next(true); //le dice a los suscriptores que se inició sesion
   }
@@ -69,24 +69,29 @@ export class Http {
   }
 
   //usuarios//
-  getUsuario(alias: string): Observable<Usuario>{
+  getUsuario(alias: string): Observable<Usuario> {
     const headers = new HttpHeaders({
       'Authorization': 'Bearer ' + this.getToken()
     });
-    return this.http.get<Usuario>("http://localhost/kantecAPI/api/usuarios/"+alias, {headers});
+    return this.http.get<Usuario>("http://localhost/kantecAPI/api/usuarios/" + alias, { headers });
   }
 
-  registrarUsuario(usuario: Usuario): Observable<any>{
+  registrarUsuario(usuario: Usuario): Observable<any> {
     return this.http.post<Usuario>("http://localhost/kantecAPI/api/usuarios", usuario).pipe(
       switchMap(() => this.inicioSesion(usuario)));
   }
 
-  existeUsuario(alias: string): Observable<any>{
-    return this.http.get<Usuario>("http://localhost/kantecAPI/api/usuarios/existe/"+alias);
+  existeUsuario(alias: string): Observable<any> {
+    return this.http.get<Usuario>("http://localhost/kantecAPI/api/usuarios/existe/" + alias);
   }
 
-  actualizarUsuario(alias: string, body: any): Observable<any> { 
-    return this.http.put<any>("http://localhost/kantecAPI/api/usuarios/" + alias ,
+  existeEmail(email: string): Observable<any> {
+    return this.http.get<Usuario>("http://localhost/kantecAPI/api/usuarios/existeEmail/" + email);
+  }
+
+
+  actualizarUsuario(alias: string, body: any): Observable<any> {
+    return this.http.put<any>("http://localhost/kantecAPI/api/usuarios/" + alias,
       body
     );
   }
@@ -97,18 +102,18 @@ export class Http {
 
   private perfilModificado = new Subject<void>();
   perfilModificado$ = this.perfilModificado.asObservable();
-  
+
   notificarPerfilModificado(): void {
     this.perfilModificado.next();
   }
-  
+
   //imagenes//
   subirImgUsuario(archivo: File): Observable<any> {
     const formData = new FormData();
 
     formData.append('archivo', archivo);
 
-    return this.http.post<any>("http://localhost/kantecAPI/api/imagenes/usuarios",formData);
+    return this.http.post<any>("http://localhost/kantecAPI/api/imagenes/usuarios", formData);
   }
 
   subirImgTablero(archivo: File): Observable<any> {
@@ -119,7 +124,7 @@ export class Http {
     return this.http.post<any>("http://localhost/kantecAPI/api/imagenes/tableros", formData);
   }
 
-  public getRutaBaseImg(): string{
+  public getRutaBaseImg(): string {
     return "http://localhost/kantecAPI/imagenes/";
   }
 
@@ -138,11 +143,11 @@ export class Http {
 
   private tableroCreado = new Subject<void>();
   private tableroAceptado = new Subject<void>();
-  
+
 
   tableroCreado$ = this.tableroCreado.asObservable();
   tableroAceptado$ = this.tableroAceptado.asObservable();
-  
+
 
   notificarTableroCreado(): void {
     this.tableroCreado.next();
@@ -151,8 +156,8 @@ export class Http {
     this.tableroAceptado.next();
   }
 
-  actualizarTablero(idTablero: string, body: any): Observable<any> { 
-    return this.http.put<any>("http://localhost/kantecAPI/api/tableros/" + idTablero ,
+  actualizarTablero(idTablero: string, body: any): Observable<any> {
+    return this.http.put<any>("http://localhost/kantecAPI/api/tableros/" + idTablero,
       body
     );
   }
@@ -165,7 +170,7 @@ export class Http {
     return this.http.get<TableroInterfaz[]>("http://localhost/kantecAPI/api/colaboradores/misColaboraciones/" + alias);
   }
 
-  getColaboradoresDeTablero(idTablero : string): Observable<Colaborador[]> {
+  getColaboradoresDeTablero(idTablero: string): Observable<Colaborador[]> {
     return this.http.get<Colaborador[]>("http://localhost/kantecAPI/api/colaboradores/" + idTablero);
   }
   getInvitaciones(alias: string): Observable<Invitacion[]> {
@@ -184,16 +189,16 @@ export class Http {
   crearTarea(idTablero: string, columna: number, posicion: number): Observable<any>{
     return this.http.post<any>("http://localhost/kantecAPI/api/tareas", {
       "idTablero": idTablero,
-      "posicion": posicion+1,
+      "posicion": posicion + 1,
       "columna": columna
     });
   }
 
-  getTareasTablero(idTablero: string): Observable<Tarea[]>{
+  getTareasTablero(idTablero: string): Observable<Tarea[]> {
     return this.http.get<Tarea[]>("http://localhost/kantecAPI/api/tareas/tablero/" + idTablero);
   }
 
-  getTareasTableroColumna(idTablero: string, columna: number): Observable<Tarea[]>{
+  getTareasTableroColumna(idTablero: string, columna: number): Observable<Tarea[]> {
     return this.http.get<Tarea[]>("http://localhost/kantecAPI/api/tareas/tablero/" + idTablero + "/" + columna);
   }
 

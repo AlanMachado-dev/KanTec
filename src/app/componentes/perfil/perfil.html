@@ -57,9 +57,6 @@
                     [class.is-invalid]="formularioUsuario.get('email')?.invalid && formularioUsuario.get('email')?.touched">
                 @if(formularioUsuario.get('email')?.invalid && formularioUsuario.get('email')?.touched){
                 <div class="invalid-feedback">
-                    @if(formularioUsuario.get('email')?.errors?.['required']) {
-                    El email es obligatorio.
-                    }
                     @if(formularioUsuario.get('email')?.errors?.['maxLength']) {
                     Máximo de caracteres debe ser 60.
                     }
@@ -73,9 +70,19 @@
                     [class.is-invalid]="formularioUsuario.get('nombre')?.invalid && formularioUsuario.get('nombre')?.touched">
                 @if(formularioUsuario.get('nombre')?.invalid && formularioUsuario.get('nombre')?.touched){
                 <div class="invalid-feedback">
-                    @if(formularioUsuario.get('nombre')?.errors?.['required']) {
-                    El nombre es obligatorio.
+                    @if(formularioUsuario.get('nombre')?.errors?.['maxLength']) {
+                    Máximo de caracteres debe ser 50.
                     }
+                </div>
+                }
+            </div>
+            <div class="mb-3">
+                <label for="bio" class="form-label">Biografia</label>
+                <input type="text" formControlName="bio" class="form-control"
+                    id="bio"
+                    [class.is-invalid]="formularioUsuario.get('bio')?.invalid && formularioUsuario.get('bio')?.touched">
+                @if(formularioUsuario.get('bio')?.invalid && formularioUsuario.get('bio')?.touched){
+                <div class="invalid-feedback">
                     @if(formularioUsuario.get('nombre')?.errors?.['maxLength']) {
                     Máximo de caracteres debe ser 50.
                     }

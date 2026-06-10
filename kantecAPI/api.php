@@ -46,6 +46,8 @@ match(true) {
         && $method === 'POST' => $usuario->inicioSesion(),
     $partes[1] === 'usuarios' && $partes[2] === 'existe' && isset($partes[3]) && !isset($partes[4]) 
         && $method === 'GET' => $usuario->existe($partes[3]),
+    $partes[1] === 'usuarios' && $partes[2] === 'existeEmail' && isset($partes[3]) && !isset($partes[4]) 
+        && $method === 'GET' => $usuario->existeEmail($partes[3]),
 
     //ruta tableros
     $partes[1] === 'tableros' && isset($partes[2]) && !isset($partes[3]) 

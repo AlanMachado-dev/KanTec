@@ -84,84 +84,95 @@ export class Registro {
     });
   }
 
-  onSubmit() {
-    if (this.registroForm.valid) {
-      this.loading = true;
-      this.mostrarError = false;
-      const usuario = this.registroForm.value as any;
-      this.http.existeUsuario(this.registroForm.value.alias as any).subscribe({
-        next: (response) => {
-          if (response.existe == "true") {
-            this.errorMessage = "Alias ya existe!"
-            this.mostrarError = true;
-            this.loading = false;
-            this._cdr.detectChanges();
-            return;
-          } 
-
-          if (this.imagenSeleccionada && !this.extPermitidas.includes(this.imagenSeleccionada.type)) {
-            this.errorMessage = "Tipo de imagen no permitida!"
-            this.mostrarError = true;
-            this.loading = false;
-            this._cdr.detectChanges();
-            return;
-          }
-
-          this.http.subirImgUsuario(this.imagenSeleccionada).subscribe({
-            next: (respuestaImg) => {
-              usuario.imagen = respuestaImg.ruta;
-              this.http.registrarUsuario(usuario).subscribe({
-                next: (response) => {
-                  this.http.guardarToken(response.token);
-                  this.loading = false;
-                  this.router.navigate(['/home']);
-                },
-                error: (err) => {
-                  Swal.fire({
-                    title: "Error",
-                    text: "Ha ocurrido un error inesperado.",
-                    icon: "error"
-                  });
-                  console.log(err); //TEST
-                  this.loading = false;
-                  this._cdr.detectChanges();
-                }
-
-              })
-            },
-            error: (err) => {
-              Swal.fire({
-                title: "Error",
-                text: "Ha ocurrido un error inesperado.",
-                icon: "error"
-              });
-              console.log(err); //TEST
-              this.loading = false;
-              this._cdr.detectChanges();
-            }
-          })
-        },
-        error: (err) => {
-          Swal.fire({
-            title: "Error",
-            text: "Ha ocurrido un error inesperado.",
-            icon: "error"
-          });
-          console.log(err); //TEST
-          this.loading = false;
+  afterEmail(emailTemp: string) {
+    this.http.existeEmail(emailTemp).subscribe({
+      next: (response) => {
+        if (response.existe == "true") {
+          this.errorMessage = "Email en uso!"
+          this.mostrarError = true;
+          this._cdr.detectChanges();
+        } else {
+          this.mostrarError = false;
+          this._cdr.detectChanges();
         }
-      });
-    }
+      },
+      error: (err) => console.log(err)
+    });
   }
-matchPassword(control: AbstractControl): ValidationErrors | null {
-  if (!this.registroForm) return null; // Evita errores en la carga inicial
 
-  const password = this.registroForm.get('password')?.value;
-  const confirmPassword = control.value;
+  onSubmit() {
+    if (this.registroForm.invalid) return;
 
-  // Si no coinciden, devolvemos el error personalizado
-  return password === confirmPassword ? null : { noMatch: true };
-}
+    this.loading = true;
+    this.mostrarError = false;
+    const usuario = this.registroForm.value as any;
+    const { alias, email } = this.registroForm.value as any;
+
+    this.http.existeUsuario(alias).subscribe({
+      next: (resAlias) => {
+        if (resAlias.existe === "true") {
+          this.manejarErrorFormulario("Alias ya existe!");
+          return;
+        }
+
+        this.http.existeEmail(email).subscribe({
+          next: (resEmail) => {
+            if (resEmail.existe === "true") {
+              this.manejarErrorFormulario("El Email ya está registrado!");
+              return;
+            }
+
+            if (this.imagenSeleccionada && !this.extPermitidas.includes(this.imagenSeleccionada.type)) {
+              this.manejarErrorFormulario("Tipo de imagen no permitida!");
+              return;
+            }
+
+            this.procederConRegistro(usuario);
+          },
+          error: (err) => { this.manejarErrorGlobal(err); }
+        });
+      },
+      error: (err) => { this.manejarErrorGlobal(err); }
+    });
+  }
+
+  private manejarErrorFormulario(mensaje: string) {
+    this.errorMessage = mensaje;
+    this.mostrarError = true;
+    this.loading = false;
+    this._cdr.detectChanges();
+  }
+
+  private manejarErrorGlobal(err: any) {
+    Swal.fire({ title: "Error", text: "Ha ocurrido un error inesperado.", icon: "error" });
+    console.log(err);
+    this.loading = false;
+    this._cdr.detectChanges();
+  }
+
+  private procederConRegistro(usuario: any) {
+    this.http.subirImgUsuario(this.imagenSeleccionada).subscribe({
+      next: (respuestaImg) => {
+        usuario.imagen = respuestaImg.ruta;
+        this.http.registrarUsuario(usuario).subscribe({
+          next: (response) => {
+            this.http.guardarToken(response.token);
+            this.loading = false;
+            this.router.navigate(['/home']);
+          },
+          error: (err) => this.manejarErrorGlobal(err)
+        });
+      },
+      error: (err) => this.manejarErrorGlobal(err)
+    });
+  }
+
+  matchPassword(control: AbstractControl): ValidationErrors | null {
+    if (!this.registroForm) return null;
+    const password = this.registroForm.get('password')?.value;
+    const confirmPassword = control.value;
+    return password === confirmPassword ? null : { noMatch: true };
+  }
 
 }
 

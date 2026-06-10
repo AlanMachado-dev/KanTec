@@ -184,9 +184,24 @@ ngAfterViewInit(): void {
     this.draggingId = null; 
   }
 
-  onDragOver(event: DragEvent): void{
-    event.preventDefault(); // para que el navegador no rechace el drop
+onDragOver(event: DragEvent, container: HTMLElement): void {
+  event.preventDefault();
+
+  const rect = container.getBoundingClientRect();
+
+  const zonaScroll = 80;
+
+  const distanciaArriba = event.clientY - rect.top;
+  const distanciaAbajo = rect.bottom - event.clientY;
+
+  if (distanciaArriba < zonaScroll) {
+    container.scrollTop -= (zonaScroll - distanciaArriba) / 2;
   }
+
+  if (distanciaAbajo < zonaScroll) {
+    container.scrollTop += (zonaScroll - distanciaAbajo) / 2;
+  }
+}
 
   onDrop(event: DragEvent, columnaFinalID: number): void{
     event.preventDefault();

@@ -10,6 +10,7 @@
         position: relative;
         overflow: visible;
     }
+     */
 
     .postit-usuarios {
         position: absolute;
@@ -24,13 +25,15 @@
     }
 
     .postit-usuario {
-        background: white;
-        padding: 0 8px;
+        background: wheat; /*No deberia tener fondo mas adelante, solo la foto del usuario*/
+        padding: 0 2px;
         font-size: 13px;
         font-weight: 600;
         color: #0d6efd;
         border-radius: 4px;
     }
+
+    /*  
 
     .postit::after {
         content: "";
@@ -68,7 +71,7 @@
     } */
 
     .board-wrapper {
-        min-height: 100vh;
+        min-height: 80lvh;
         padding: 2rem;
         background: #c69c6d;
         background-image: radial-gradient(#b88a5a 1px, transparent 1px);
@@ -78,6 +81,7 @@
     }
 
     .board {
+        height: 76vh;
         background: #d2a679;
         border: 10px solid #8b5a2b;
         border-radius: 10px;
@@ -88,6 +92,7 @@
     .columns-row {
         display: flex;
         gap: 12px;
+        height: 100%;
     }
 
     .column {
@@ -95,7 +100,9 @@
         min-height: 350px;
         padding: 10px;
 
-        min-height: 350px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .column-title {
@@ -106,11 +113,23 @@
     }
 
     .postits-container {
+        /* display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        min-height: 80px; */
+
+        flex: 1;
+        overflow-y: auto;
+
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 4px;
-        min-height: 80px;
+
+        padding-right: 4px;
+
+        scrollbar-color: #c69c6d papayawhip;
     }
 
     .postit {
@@ -122,11 +141,15 @@
         box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
         position: relative;
         user-select: none;
+        overflow: visible;
+
+        max-width: 400px;
+
         transition: box-shadow 0.15s ease, opacity 0.15s ease;
-        background-color: aliceblue;
+        background-color: papayawhip;
+        color: black;
 
-
-        &::before {
+        /* &::before {
             content: '';
             width: 12px;
             height: 12px;
@@ -136,7 +159,7 @@
             top: -6px;
             left: 50%;
             transform: translateX(-50%);
-        }
+        } */
 
         &:active {
             cursor: grabbing;
@@ -163,8 +186,8 @@
 
 <div class="w-100 bg-black p-3 d-flex">
     <h5 class="text-white">{{miTablero?.titulo}} by {{miTablero?.aliasCreador}}</h5>
-    <span class="text-white ms-auto" data-bs-toggle="modal"
-  data-bs-target="#agregarColaborador" data-bs-placement="bottom" type="button">[+]</span>
+    <span class="text-white ms-auto" data-bs-toggle="modal" data-bs-target="#agregarColaborador"
+        data-bs-placement="bottom" type="button">[+]</span>
     <span class="text-info mx-1">[usuario1]</span>
     <span class="text-info mx-1">[usuario2]</span>
     <span class="text-info mx-1">[usuario3]</span>
@@ -172,11 +195,12 @@
     <span class="text-info mx-1">[usuario5]</span>
 </div>
 
-<div class="container mt-4 board-wrapper">
+<div class="board-wrapper">
     <div class="board">
-        <div class="row text-center columns-row">
+        <div class="row columns-row">
             @for (col of columnas; track col.id){
-            <div class="col-md-3 column" #columnRef (dragover)="onDragOver($event)" (drop)="onDrop($event, col.id)">
+            <div class="col-md-3 column" #columnRef (dragover)="onDragOver($event, postitsContainer)"
+                (drop)="onDrop($event, col.id)">
                 <!-- <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(col.id)">+ {{col.titulo}}</h5> -->
                 <h5 class="column-title" type="button" id="0" (click)="crearTarea(col.id)">+ {{col.titulo}}</h5>
 
@@ -198,14 +222,26 @@
                         <p>{{item.descripcion}}</p>
                     </div>
                 } -->
-                <div class="postits-container">
+                <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
-                    <div class="postit" type="button" data-bs-toggle="offcanvas"
+                    <div class="postit w-100 mt-3" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#post-it-info" 
                         aria-controls="post-it-info" draggable="true"
                         (dragstart)="onDragStart($event, tarea.idTarea)" 
                         (dragend)="onDragEnd($event)"
                         (click)="seleccionarTarea(tarea)">
+
+                        <div class="postit-usuarios">
+                            <span class="postit-usuario">[usuario1]</span>
+                            <span class="postit-usuario">[usuario2]</span>
+                            <!-- para que se vean los usuarios bien hay que modificar el css probablemente -->
+                        </div>
+
+                        <div>
+                            <!-- <span class="float-end">dias restantes para [inicio || fin] [dias]</span> -->
+                            <!--probablemente habria que hacerlo de otra forma mas linda, sin tanto texto-->
+                        </div>
+
                         <p class="fw-bold">{{tarea.nombre}}</p>
                         <p>{{tarea.descripcion}}</p>
                     </div>
@@ -387,14 +423,14 @@
                         <label for="aliasUsuario" class="form-label">Alias</label>
                         <input type="text" class="form-control" formControlName="aliasUsuario" [class.is-invalid]="formularioAgregarColaborador.get('aliasUsuario')?.invalid 
                         && formularioAgregarColaborador.get('aliasUsuario')?.touched">
-                        @if(formularioAgregarColaborador.get('aliasUsuario')?.invalid && 
+                        @if(formularioAgregarColaborador.get('aliasUsuario')?.invalid &&
                         formularioAgregarColaborador.get('aliasUsuario')?.touched){
                         <div class="invalid-feedback">
                             @if(formularioAgregarColaborador.get('aliasUsuario')?.errors?.['required']) {
-                                Necesitas el Alias para agregar un Colaborador/Espectador.
+                            Necesitas el Alias para agregar un Colaborador/Espectador.
                             }
                             @if(formularioAgregarColaborador.get('aliasUsuario')?.errors?.['maxlength']) {
-                                Los Alias no pueden ser de mas de 50 caracteres.
+                            Los Alias no pueden ser de mas de 50 caracteres.
                             }
                         </div>
                         }

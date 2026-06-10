@@ -54,6 +54,18 @@ export class Tablero implements OnInit, AfterViewInit {
   ];
 
   ngOnInit(): void {
+    let detener = false;
+    this.http.verificarToken().subscribe({
+      next: () => {},
+      error: (err) => {
+        console.log(err);
+        this.http.cerrarSesion();
+        this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
+        detener = true;
+      }
+    })
+    if(detener) return;
+
     this.http.sesionActiva$.subscribe(logueado => {
       if (logueado) {
         this.aliasLogueado = this.http.getAliasDelToken();

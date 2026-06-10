@@ -61,6 +61,13 @@ export class Http {
     return payload ? payload.alias : null;
   }
 
+  verificarToken(): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.get<any>("http://localhost/kantecAPI/api/utilidad/token", {headers});
+  }
+
   //usuarios//
   getUsuario(alias: string): Observable<Usuario>{
     const headers = new HttpHeaders({

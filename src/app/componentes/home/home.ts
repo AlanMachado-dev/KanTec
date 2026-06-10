@@ -49,7 +49,18 @@ export class Home {
   private subTablerosCompartidos: Subscription = new Subscription();
   private subTableros: Subscription = new Subscription();
   ngOnInit(): void {
-    // setTimeout(() => {},500);
+    let detener = false;
+    this.http.verificarToken().subscribe({
+      next: () => {},
+      error: (err) => {
+        console.log(err);
+        this.http.cerrarSesion();
+        this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
+        detener = true;
+      }
+    })
+    if(detener) return;
+
     this.http.sesionActiva$.subscribe(logueado => {
       this.estaLogueado = logueado;
       this.aliasUsuario = this.http.getAliasDelToken() || "";

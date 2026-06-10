@@ -21,8 +21,6 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/tableros/usuario/Luqui86
     public function getTableros(string $alias): void
     {
-        // $tokenData = verificarToken(); //descomentar cuando sea la hora de entregar
-
         $stmt = $this->db->prepare("SELECT * FROM tablero WHERE aliasCreador = ? ORDER BY fechaCreacion");
         $stmt->execute([$alias]);
         respond(200, $stmt->fetchAll());

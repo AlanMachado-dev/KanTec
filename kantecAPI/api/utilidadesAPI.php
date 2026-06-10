@@ -30,5 +30,10 @@ class utilidadesAPI {
 
         respond(201, ['mensaje' => 'Triggers creados con exito?']);
     }
+
+    // GET http://localhost/kantecAPI/api/utilidad/token
+    function verificar(){
+        $tokenData = verificarToken();
+    }
     
 }

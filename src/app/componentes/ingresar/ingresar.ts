@@ -52,11 +52,10 @@ export class Ingresar implements OnInit{
     if(this.usuarioForm.valid){
       this.http.inicioSesion(this.usuarioForm.value as any).subscribe({
         next: (response) => {
-          console.log(response);
           this.http.guardarToken(response.token);
-          setTimeout(() => { //deberia agregar un sweetAlert (#sponsor) mientras carga y no un timeout
+          // setTimeout(() => { //deberia agregar un sweetAlert (#sponsor) mientras carga y no un timeout
             this.router.navigate(['/home']);
-          }, 500);
+          // }, 500);
           this.loading = false;
         },
 

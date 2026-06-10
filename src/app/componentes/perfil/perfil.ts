@@ -21,6 +21,18 @@ export class Perfil implements OnInit, OnDestroy {
   constructor(private http: Http, private router: Router, private ruta: ActivatedRoute, private _cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
+    let detener = false;
+    this.http.verificarToken().subscribe({
+      next: () => {},
+      error: (err) => {
+        console.log(err);
+        this.http.cerrarSesion();
+        this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
+        detener = true;
+      }
+    })
+    if(detener) return;
+
     if (!this.http.estaLogueado()) {
       this.router.navigate(['/ingreso']);
     } else {
@@ -38,9 +50,9 @@ export class Perfil implements OnInit, OnDestroy {
           this._cdr.detectChanges();
         },
         error: (err) => {
-          console.log(err);
-          this.http.cerrarSesion();
-          this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
+          // console.log(err);
+          // this.http.cerrarSesion();
+          // this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
         }
       })
     }

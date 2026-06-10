@@ -99,6 +99,7 @@ match(true) {
     
     //ruta utilidades
     $partes[1] === 'utilidad' && $partes[2] === 'triggers' && $method === 'GET' => $utilidades->agregarTriggers(),
+    $partes[1] === 'utilidad' && $partes[2] === 'token' && $method === 'GET' => $utilidades->verificar(),
 
     default => respond(404, ["error" => "Ruta no encontrada"])
 };

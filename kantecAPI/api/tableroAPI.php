@@ -80,7 +80,7 @@ class tableroAPI
 
         //Si llego hasta aca se pudo crear el tablero por lo que agregare en pertenece que este usuario es el creador de este tablero
 
-        $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,0,true)");
+        $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,0)");
         $stmt->execute([$uuid, $body["alias"]]);
 
         //Probablemente podria hacerlo con un trigger pero me parece una mountain
@@ -149,7 +149,7 @@ class tableroAPI
             respond(404, ["error" => "Usuario no encontrado"]);
         }
 
-        $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT idTablero from pertenece where aliasUsuario = ? AND tipoRelacion != 0 AND aceptada=1)");
+        $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT idTablero from pertenece where aliasUsuario = ? AND tipoRelacion != 0)");
         $stmt->execute([$alias]);
         respond(200, $stmt->fetchAll());
     }
@@ -157,7 +157,7 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/colaboradores/idTablero
     public function colaboradoresTablero(string $id): void
     {
-        $stmt = $this->db->prepare("SELECT aliasUsuario,tipoRelacion from pertenece where idTablero = ? AND aceptada=1");
+        $stmt = $this->db->prepare("SELECT p.aliasUsuario, p.tipoRelacion, u.imagen from pertenece p JOIN usuario u ON u.alias = p.aliasUsuario where idTablero = ?");
         $stmt->execute([$id]);
 
         respond(200, $stmt->fetchAll());
@@ -168,7 +168,7 @@ class tableroAPI
     {
         $body = json_decode(file_get_contents("php://input"), true);
 
-        if (empty($body['idTablero']) || empty($body['aliasUsuario']) || empty($body['tipoRelacion'])) {
+        if (!isset($body['idTablero']) || !isset($body['aliasUsuario']) || !isset($body['tipoRelacion'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
         }
         $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
@@ -191,12 +191,20 @@ class tableroAPI
         $stmt->execute([$body['aliasUsuario'], $body['idTablero']]);
         $colaboracion = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($colaboracion === true || $colaboracion != null) {
-            respond(400, ["error" => "Usuario ya colabora con este tablero"]);
+        if ($colaboracion) {
+            respond(409, ["codigo" => "YA_COLABORA", "error" => "Usuario ya colabora con este tablero"]);
         }
 
-        $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,?,false)");
-        $stmt->execute([$body['idTablero'], $body['aliasUsuario'], $body['tipoRelacion']]);
+        $stmt = $this->db->prepare("SELECT * FROM invitacion WHERE aliasInvitado = ? AND idTablero = ?");
+        $stmt->execute([$body['aliasUsuario'], $body['idTablero']]);
+        $invitacion = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($invitacion) {
+            respond(409, ["codigo" => "INVITACION_PENDIENTE", "error" => "El usuario ya tiene una invitación pendiente"]);
+        }
+
+        $stmt = $this->db->prepare("INSERT INTO invitacion (idTablero, aliasInvitado, aliasCreador, tipoRelacion, notificado) VALUES (? ,? ,? ,? , false)");
+        $stmt->execute([$body['idTablero'], $body['aliasUsuario'], $tablero['aliasCreador'], $body['tipoRelacion']]);
 
         respond(201, [
             "mensaje" => "Colaborador invitado"
@@ -206,7 +214,7 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/colaboradores/invitaciones/alias
     public function getInvitaciones(string $alias)
     {
-        $stmt = $this->db->prepare("SELECT idTablero,aliasCreador,titulo as tituloTablero,tipoRelacion FROM tablero as t , pertenece as p WHERE aceptada=0 AND aliasUsuario=? AND t.id = p.idTablero");
+        $stmt = $this->db->prepare("SELECT i.idTablero, i.aliasCreador, t.titulo as tituloTablero, i.tipoRelacion FROM invitacion i JOIN tablero t ON t.id = i.idTablero WHERE i.aliasInvitado = ?");
         $stmt->execute([$alias]);
 
         respond(200, $stmt->fetchAll());
@@ -217,15 +225,41 @@ class tableroAPI
     {
         $body = json_decode(file_get_contents("php://input"), true);
 
-        if (empty($body['idTablero']) || empty($body['aliasUsuario']) || empty($body['acepto'])) {
+        if (!isset($body['idTablero']) || !isset($body['aliasUsuario']) || !isset($body['acepto'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
         }
-        if ($body['acepto'] === 1) {
-            $stmt = $this->db->prepare("UPDATE pertenece SET aceptada = true WHERE idTablero = ? AND aliasUsuario = ?");
+        if ($body['acepto'] == 1) {
+            $stmt = $this->db->prepare(
+                "SELECT * FROM invitacion WHERE idTablero = ? AND aliasInvitado = ?"
+            );
+            $stmt->execute([ $body['idTablero'], $body['aliasUsuario'] ]);
+
+            $invitacion = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$invitacion) {
+                respond(404, ["error" => "Invitación no encontrada"]);
+            }
+
+            $stmt = $this->db->prepare("INSERT INTO pertenece (idTablero, aliasUsuario, tipoRelacion) VALUES (?, ?, ?)");
+
+            $stmt->execute([$invitacion['idTablero'], $invitacion['aliasInvitado'], $invitacion['tipoRelacion']]);
+
+            $stmt = $this->db->prepare("DELETE from invitacion WHERE idTablero = ? AND aliasInvitado = ?");
             $stmt->execute([$body['idTablero'], $body['aliasUsuario']]);
+
             respond(201, ["mensaje" => "Se acepto la invitacion"]);
         } else {
-            $stmt = $this->db->prepare("DELETE from pertenece WHERE idTablero = ? AND aliasUsuario = ?");
+            $stmt = $this->db->prepare(
+                "SELECT * FROM invitacion WHERE idTablero = ? AND aliasInvitado = ?"
+            );
+            $stmt->execute([$body['idTablero'], $body['aliasUsuario']]);
+
+            $invitacion = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$invitacion) {
+                respond(404, ["error" => "Invitación no encontrada"]);
+            }
+            $stmt = $this->db->prepare("DELETE from invitacion WHERE idTablero = ? AND aliasInvitado = ?");
             $stmt->execute([$body['idTablero'], $body['aliasUsuario']]);
             respond(201, ["mensaje" => "Se rechazo la invitacion"]);
         }

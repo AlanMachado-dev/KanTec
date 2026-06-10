@@ -14,8 +14,9 @@ class utilidadesAPI {
         CREATE TRIGGER eliminarRelacionesTablero BEFORE DELETE
         ON tablero FOR EACH ROW
         BEGIN
-        DELETE FROM pertenece WHERE idTablero = OLD.id;
-        DELETE FROM tarea WHERE idTablero = OLD.id;
+            DELETE FROM pertenece WHERE idTablero = OLD.id;
+            DELETE FROM invitacion WHERE idTablero = OLD.id;
+            DELETE FROM tarea WHERE idTablero = OLD.id;
         END
     ");
 
@@ -23,8 +24,9 @@ class utilidadesAPI {
         CREATE TRIGGER eliminarRelacionesUsuario BEFORE DELETE
         ON usuario FOR EACH ROW
         BEGIN
-        DELETE FROM tablero WHERE aliasCreador = OLD.alias;
-        DELETE FROM pertenece WHERE aliasUsuario = OLD.alias;
+            DELETE FROM tablero WHERE aliasCreador = OLD.alias;
+            DELETE FROM pertenece WHERE aliasUsuario = OLD.alias;
+            DELETE FROM invitacion WHERE aliasInvitado = OLD.alias OR aliasCreador = OLD.alias;
         END
         ");
 

@@ -5,13 +5,15 @@ import flatpickr from "flatpickr";
 import { Spanish } from "flatpickr/dist/l10n/es.js";
 import { Columna } from '../../interfaces/columna';
 import { TableroInterfaz } from '../../interfaces/tablero';
-import { ɵInternalFormsSharedModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from "@angular/forms";
 import Swal from 'sweetalert2';
 import { Tarea } from '../../interfaces/tarea';
+import { Colaborador } from '../../interfaces/colaborador';
+import { NgClass } from "@angular/common";
 
 @Component({
   selector: 'app-tablero',
-  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule],
+  imports: [ ReactiveFormsModule, NgClass],
   templateUrl: './tablero.html',
   styles: ``,
 })
@@ -26,6 +28,8 @@ export class Tablero implements OnInit, AfterViewInit {
   private draggingId: number | null = null;
 
   aliasLogueado: string | null = null;
+  colaboradoresTablero: Colaborador[] = [];
+  rutaImagenes !: string;
   miTablero: TableroInterfaz | null = null;
 
   private fb = inject(FormBuilder);
@@ -92,6 +96,11 @@ export class Tablero implements OnInit, AfterViewInit {
             .subscribe(tablero => {
               this.miTablero = tablero;
             });
+          this.http.getColaboradoresDeTablero(this.idTablero)
+            .subscribe(colaboradores => {
+              this.colaboradoresTablero = colaboradores;
+            })
+          this.rutaImagenes = this.http.getRutaBaseImg();
           }
       } else {
         this.router.navigate(['/ingreso'], {state: {expirado: 'true'}});
@@ -260,21 +269,13 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     tipoRelacion: ['1']
   })
   agregarColaborador(){
-    if (this.miTablero?.aliasCreador != this.aliasLogueado) {
-      Swal.fire({
-        title: "Falta de Permisos",
-        icon: "error",
-        text: "No podes invitar colaboradores."
-      });
-      return;
-    }
     const body = this.formularioAgregarColaborador.value;
 
     if (body.aliasUsuario === this.aliasLogueado){
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No puedes agregarte a ti mismo'
+        icon: 'warning',
+        title: 'Acción no permitida',
+        text: 'No puedes invitarte a ti mismo'
       });
       return;
     }else{
@@ -296,12 +297,22 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
                 title: 'Usuario no encontrado',
                 text: 'No existe un usuario con ese alias.'
               });
-            } else if (err.status === 400) {
-              Swal.fire({
-                title: "Ya pertenece al tablero",
-                text: "Ese usuario ya colabora o especta este tablero.",
-                icon: "warning"
-              });
+            } else if (err.status === 409) {
+              switch (err.error.codigo) {
+                case 'YA_COLABORA':
+                  Swal.fire({
+                    title: "Ya pertenece al tablero",
+                    text: "Ese usuario ya colabora o especta este tablero.",
+                    icon: "warning"
+                  });
+                  break;
+                case 'INVITACION_PENDIENTE':
+                  Swal.fire({
+                    title: "Invitación pendiente",
+                    text: "Ese usuario ya tiene una invitación pendiente.",
+                    icon: "info"
+                  });
+              }
             } else {
               Swal.fire({
                 title: "Error",
@@ -315,6 +326,22 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
       }
     }
     
+  }
+  verPerfil(alias: string): void {
+    this.router.navigate(['/perfil', alias]);
+  }
+
+  getRol(tipo: number): string{
+    switch(tipo){
+      case 0:
+        return 'Creador';
+      case 1:
+        return 'Contribuidor';
+      case 2:
+        return 'Espectador';
+      default:
+        return 'Desconocido';
+    }
   }
 
   ////// EDITAR TAREA //////

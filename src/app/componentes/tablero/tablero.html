@@ -189,17 +189,38 @@
             background: #ffadad;
         }
     }
+    .avatar-contenedor{
+        border-radius: 50%;
+        display: inline-block;
+        padding: 2px;
+    }
+    .creador{
+        border: 3px solid #0d6efd;
+    }
+
+    .contribuidor{
+        border: 3px solid #198754;
+    }
+
+    .espectador{
+        border: 3px solid #6c757d;
+    }
 </style>
 
 <div class="w-100 bg-black p-3 d-flex">
     <h5 class="text-white">{{miTablero?.titulo}} by {{miTablero?.aliasCreador}}</h5>
-    <span class="text-white ms-auto" data-bs-toggle="modal" data-bs-target="#agregarColaborador"
-        data-bs-placement="bottom" type="button">[+]</span>
-    <span class="text-info mx-1">[usuario1]</span>
-    <span class="text-info mx-1">[usuario2]</span>
-    <span class="text-info mx-1">[usuario3]</span>
-    <span class="text-info mx-1">[usuario4]</span>
-    <span class="text-info mx-1">[usuario5]</span>
+    <div class="ms-auto d-flex align-items-center gap-2">
+        @if(miTablero?.aliasCreador === aliasLogueado){
+            <span class="text-white ms-auto" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button">[+]</span>
+        }
+        
+        @for(colaborador of colaboradoresTablero; track colaborador.aliasUsuario){
+            <div class="avatar-contenedor" [ngClass]="{'creador': colaborador.tipoRelacion === 0, 'contribuidor': colaborador.tipoRelacion === 1, 
+            'espectador': colaborador.tipoRelacion === 2 }">
+                <img [src]="rutaImagenes + colaborador.imagen" [alt]="colaborador.aliasUsuario" [title]="colaborador.aliasUsuario + ' - ' + getRol(colaborador.tipoRelacion)" type="button" (click)="verPerfil(colaborador.aliasUsuario)" class="rounded-circle" width="32" height="32">
+            </div>
+        }
+    </div>
 </div>
 
 <div class="board-wrapper">

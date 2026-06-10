@@ -3,13 +3,13 @@ import { Http } from '../../services/http';
 import { Router, RouterLink } from '@angular/router';
 import { TableroInterfaz } from '../../interfaces/tablero';
 import { Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, ɵInternalFormsSharedModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Colaborador } from '../../interfaces/colaborador';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, ɵInternalFormsSharedModule, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './home.html',
   styles: ``,
 })

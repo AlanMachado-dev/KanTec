@@ -94,16 +94,20 @@
         display: flex;
         gap: 12px;
         height: 100%;
+        overflow-x: auto;
     }
 
     .column {
-        flex: 1;
+        flex: 1 0 300px;
+        min-width: 300px;
         min-height: 350px;
         padding: 10px;
 
         height: 100%;
         display: flex;
         flex-direction: column;
+
+        flex-shrink: 0;
     }
 
     .column-title {
@@ -114,27 +118,28 @@
     }
 
     .postits-container {
-        /* display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        min-height: 80px; */
-
+        min-height: 0;
         flex: 1;
         overflow-y: auto;
 
+        scrollbar-gutter: stable;
+
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 4px;
+
+        align-items: stretch;
+        gap: 8px;
 
         padding-right: 4px;
-
         scrollbar-color: #c69c6d papayawhip;
     }
 
     .postit {
-        width: 140px;
+        width: 100%;
+        box-sizing: border-box;
+
+        flex-shrink: 0;
+
         min-height: 100px;
         padding: 10px;
         font-size: 14px;
@@ -144,14 +149,13 @@
         user-select: none;
         overflow: visible;
 
-        height: auto;
-
-        max-width: 400px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
 
         transition: box-shadow 0.15s ease, opacity 0.15s ease;
         background-color: papayawhip;
         color: black;
-
+        
         /* &::before {
             content: '';
             width: 12px;
@@ -227,10 +231,9 @@
                 } -->
                 <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
-                    <div class="postit w-100 mt-3" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#post-it-info" aria-controls="post-it-info" draggable="true"
-                        (dragstart)="onDragStart($event, tarea.idTarea)" (dragend)="onDragEnd($event)"
-                        (click)="seleccionarTarea(tarea)">
+                    <div class="postit mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                        aria-controls="post-it-info" draggable="true" (dragstart)="onDragStart($event, tarea.idTarea)"
+                        (dragend)="onDragEnd($event)" (click)="seleccionarTarea(tarea)">
 
                         <div class="postit-usuarios">
                             <span class="postit-usuario">[usuario1]</span>
@@ -247,8 +250,8 @@
                             <!-- <span class="float-end mt-5">{{tarea.prioridad}}</span> -->
                             @if (tarea.prioridad === 1) {
                             <div class="d-flex float-end">
-                                <div class="mt-auto p-2 rounded-5 bg-danger"
-                                    style="font-size: 9px; font-weight: bold;">Prioridad Alta</div>
+                                <div class="mt-auto p-2 rounded-5 bg-danger" style="font-size: 9px; font-weight: bold;">
+                                    Prioridad Alta</div>
                             </div>
                             }
                             @if (tarea.prioridad === 2) {

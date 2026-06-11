@@ -51,6 +51,7 @@ class Database{
             nombre   VARCHAR(50) NOT NULL,
             imagen   VARCHAR(40) NULL,
             fecNac   DATE        NULL,
+            fecReg   DATE        NULL,
             bio      VARCHAR(100)NULL    
             )
         ");
@@ -62,6 +63,8 @@ class Database{
             nombre   VARCHAR(50) NOT NULL,
             imagen   VARCHAR(40) NULL,
             fecNac   DATE        NULL,
+            fecReg   DATE        NULL,
+            fecBor   DATE        NULL,
             bio      VARCHAR(100)NULL    
             )
         ");

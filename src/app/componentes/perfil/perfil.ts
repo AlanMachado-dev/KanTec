@@ -4,10 +4,11 @@ import { Usuario } from '../../interfaces/usuario';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-perfil',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './perfil.html',
   styles: [':host { display: block; width: 100%; }'],
 })
@@ -23,15 +24,15 @@ export class Perfil implements OnInit, OnDestroy {
   ngOnInit(): void {
     let detener = false;
     this.http.verificarToken().subscribe({
-      next: () => {},
+      next: () => { },
       error: (err) => {
         console.log(err);
         this.http.cerrarSesion();
-        this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
+        this.router.navigate(['/ingreso'], { state: { expirado: "true" } });
         detener = true;
       }
     })
-    if(detener) return;
+    if (detener) return;
 
     if (!this.http.estaLogueado()) {
       this.router.navigate(['/ingreso']);
@@ -73,11 +74,14 @@ export class Perfil implements OnInit, OnDestroy {
   loading = false;
   errorMessage?: string;
 
+  hoyStr = new Date().toISOString().split('T')[0]; 
+
 
   formularioUsuario = this.formBuilder.group({
     email: ['', {
       validators: [
-        Validators.maxLength(60)
+        Validators.maxLength(60),
+        Validators.email
       ]
     }],
     nombre: ['', {
@@ -85,7 +89,16 @@ export class Perfil implements OnInit, OnDestroy {
         Validators.maxLength(50)
       ]
     }],
-    imagen: ['',]
+    imagen: ['',],
+    fecNac: ['',
+      Validators.max('2010-1-1' as any)
+    ],
+    bio: ['', {
+      validators: [
+        Validators.maxLength(100)
+      ]
+    }]
+
   })
 
   onFileSelected(event: any) {
@@ -201,5 +214,20 @@ export class Perfil implements OnInit, OnDestroy {
     });
   }
 
+  afterEmail(emailTemp: string) {
+    this.http.existeEmail(emailTemp).subscribe({
+      next: (response) => {
+        if (response.existe == "true") {
+          this.errorMessage = "Email en uso!"
+          this.mostrarError = true;
+          this._cdr.detectChanges();
+        } else {
+          this.mostrarError = false;
+          this._cdr.detectChanges();
+        }
+      },
+      error: (err) => console.log(err)
+    });
+  }
 
 }

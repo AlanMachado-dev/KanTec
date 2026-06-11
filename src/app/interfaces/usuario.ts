@@ -4,4 +4,7 @@ export interface Usuario {
     password: string;
     email: string;
     imagen: string;
+    fecNac: Date;
+    fecReg: string;
+    bio: string;
 }

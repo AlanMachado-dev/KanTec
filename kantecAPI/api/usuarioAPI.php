@@ -76,7 +76,7 @@ class usuarioAPI {
         $stmt->execute([$body['alias'], $passhash]);
 
                 $stmt = $this->db->prepare(
-            "INSERT INTO perfil (alias, nombre, email, imagen) VALUES (?, ?, ?, ?)"
+            "INSERT INTO perfil (alias, nombre, email, imagen, fecReg) VALUES (?, ?, ?, ?, CURRENT_DATE())"
         );
         $stmt->execute([$body['alias'], $body['nombre'], $body['email'], $body['imagen']]);
 
@@ -103,10 +103,10 @@ class usuarioAPI {
         $nombre = (!empty($body['nombre'])) ? $body['nombre'] : $perfil['nombre'];
         $email = (!empty($body['email'])) ? $body['email'] : $perfil['email'];
         $imagen = (!empty($body['imagen'])) ? $body['imagen'] : $perfil['imagen'];
-        $fecNac = (!empty($body['imagen'])) ? $body['imagen'] : $perfil['imagen'];
-        $bio = (!empty($body['imagen'])) ? $body['imagen'] : $perfil['imagen'];
+        $fecNac = (!empty($body['fecNac'])) ? $body['fecNac'] : $perfil['fecNac'];
+        $bio = (!empty($body['bio'])) ? $body['bio'] : $perfil['bio'];
         $stmt = $this->db->prepare(
-            "UPDATE perfil SET nombre = ?, email = ?, imagen = ?, fecNac = ?, bio = ? WHERE alias = ?"
+            "UPDATE perfil SET nombre = ?, email = ?, imagen = ?, fecNac = ? ,bio = ? WHERE alias = ?"
         );
         $stmt->execute([$nombre, $email, $imagen, $fecNac, $bio, $alias]);
         respond(200, ["mensaje" => "Perfil actualizado"]);
@@ -114,7 +114,7 @@ class usuarioAPI {
     }
 
     // DELETE http://localhost/kantecAPI/api/usuarios/ElPro123
-public function delete(string $alias): void {
+    public function delete(string $alias): void {
     //$tokenData = verificarToken();
 
     $stmt = $this->db->prepare("SELECT * FROM usuario NATURAL JOIN perfil WHERE usuario.alias = ?");
@@ -125,12 +125,15 @@ public function delete(string $alias): void {
         respond(404, ["error" => "Usuario no encontrado"]);
         return; 
     }
+
+    $query = $this->db->prepare("DELETE FROM pertenece WHERE aliasUsuario = ?");
+    $query->execute([$alias]);
     
     $query = $this->db->prepare("DELETE FROM tablero WHERE aliasCreador = ?");
     $query->execute([$alias]);
 
     $query = $this->db->prepare(
-        "INSERT INTO usuarioPerfilBorrado (alias, password, email, nombre, imagen, fecNac, bio) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        "INSERT INTO usuarioPerfilBorrado (alias, password, email, nombre, imagen, fecNac, fecReg, bio, fecBor) VALUES (?, ?, ?, ?, ?, ? , ?, ? ,CURRENT_DATE())"
     );
 
     $query->execute([
@@ -140,6 +143,7 @@ public function delete(string $alias): void {
         $user['nombre'],
         $user['imagen'],
         $user['fecNac'],
+        $user['fecReg'],
         $user['bio']
     ]);
 
@@ -177,7 +181,7 @@ public function delete(string $alias): void {
     // GET http://localhost/kantecAPI/api/usuarios/existeEmail/email
     public function existeEmail(string $email): void {
 
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE email = ?");
+        $stmt = $this->db->prepare("SELECT * FROM perfil WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user !== false && !empty($user)) {

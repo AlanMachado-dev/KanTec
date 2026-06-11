@@ -103,7 +103,6 @@ export class Perfil implements OnInit, OnDestroy {
 
   onFileSelected(event: any) {
     this.imagenSeleccionada = event.target.files[0];
-    console.log(this.imagenSeleccionada.type);
     if (!this.extPermitidas.includes(this.imagenSeleccionada.type)) {
       this.errorMessage = "Tipo de imagen no permitida!"
       this.mostrarError = true;
@@ -228,6 +227,10 @@ export class Perfil implements OnInit, OnDestroy {
       },
       error: (err) => console.log(err)
     });
+  }
+
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = this.imagenUsu = this.http.getRutaBaseImg() + "usuarios/default.jpg";
   }
 
 }

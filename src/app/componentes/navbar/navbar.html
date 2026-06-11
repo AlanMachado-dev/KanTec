@@ -20,7 +20,7 @@
       }@else {
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="{{imagenUsu}}" alt="img" height="30px" width="30px" class="rounded-circle" style="object-fit: cover;">
+            <img src="{{imagenUsu}}" (error)="onImageError($event)" alt="img" height="30px" width="30px" class="rounded-circle" style="object-fit: cover;">
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item fw-bold" (click)="verPerfil()">{{usuario?.alias}}</a></li>

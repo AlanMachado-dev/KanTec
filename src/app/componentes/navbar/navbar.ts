@@ -24,14 +24,14 @@ export class Navbar implements OnInit, OnDestroy{
   constructor(private http: Http, private _cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void { //el codigo dentro corre cuando se crea el componente
-    this.http.verificarToken().subscribe({
-      next: () => {},
-      error: (err) => {
-        console.log(err);
-        this.http.cerrarSesion();
-        this._cdr.detectChanges();
-      }
-    })
+    // this.http.verificarToken().subscribe({
+    //   next: () => {},
+    //   error: (err) => {
+    //     // console.log(err);
+    //     this.http.cerrarSesion();
+    //     this._cdr.detectChanges();
+    //   }
+    // })
     
     this.subLogueado = this.http.sesionActiva$.subscribe(logueado => { 
       //se suscribe al Observable, cada vez que cambie la variable de sesionActiva se ejecuta el codigo
@@ -108,5 +108,9 @@ export class Navbar implements OnInit, OnDestroy{
         this.http.notificarTableroAceptado();
       }
     });
+  }
+
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = this.imagenUsu = this.http.getRutaBaseImg() + "usuarios/default.jpg";
   }
 }

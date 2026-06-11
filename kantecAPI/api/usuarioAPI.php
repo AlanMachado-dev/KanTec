@@ -27,7 +27,6 @@ class usuarioAPI {
 
         $payload = [
             'alias' => $user['alias'],
-            'nombre' => $user['nombre'],
             'exp' => time() + (60 * 60) //tiempo que dura el token (1h)
         ];
 
@@ -47,8 +46,6 @@ class usuarioAPI {
 
     // GET http://localhost/kantecAPI/api/usuarios/itsmafiu
     public function getOne(string $alias): void {
-        $tokenData = verificarToken();
-
         $stmt = $this->db->prepare("SELECT * FROM usuario NATURAL JOIN perfil WHERE usuario.alias = ?");
         $stmt->execute([$alias]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);

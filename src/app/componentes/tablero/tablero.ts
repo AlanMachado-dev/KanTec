@@ -99,6 +99,7 @@ export class Tablero implements OnInit, AfterViewInit {
           this.http.getColaboradoresDeTablero(this.idTablero)
             .subscribe(colaboradores => {
               this.colaboradoresTablero = colaboradores;
+              this.cdr.detectChanges();
             })
           this.rutaImagenes = this.http.getRutaBaseImg();
           }

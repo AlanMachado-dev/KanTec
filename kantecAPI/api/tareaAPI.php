@@ -65,7 +65,7 @@ class tareaAPI
         $idTarea = $stmt->fetchColumn();
         
         $stmt = $this->db->prepare(
-            "INSERT INTO tarea (idTarea,idTablero,nombre,posicion,columna,fechaCreacion) VALUES (?,?,?,?,?,?)"
+            "INSERT INTO tarea (idTarea,idTablero,nombre,posicion,columna,fechaCreacion,prioridad) VALUES (?,?,?,?,?,?,4)"
         );
 
         $stmt->execute([$idTarea,$body['idTablero'],"Tarea",$body['posicion'],$body['columna'],$fechaActual]);

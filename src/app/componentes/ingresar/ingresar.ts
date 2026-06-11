@@ -26,10 +26,10 @@ export class Ingresar implements OnInit{
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.onmouseenter = Swal.stopTimer;
-          toast.onmouseleave = Swal.resumeTimer;
-        }
+        // didOpen: (toast) => {
+        //   toast.onmouseenter = Swal.stopTimer;
+        //   toast.onmouseleave = Swal.resumeTimer;
+        // }
       }).fire({
         icon: "warning",
         title: "¡Sesión inválida!"

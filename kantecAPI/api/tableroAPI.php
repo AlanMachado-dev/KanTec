@@ -157,7 +157,7 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/colaboradores/idTablero
     public function colaboradoresTablero(string $id): void
     {
-        $stmt = $this->db->prepare("SELECT p.aliasUsuario, p.tipoRelacion, u.imagen from pertenece p JOIN usuario u ON u.alias = p.aliasUsuario where idTablero = ?");
+        $stmt = $this->db->prepare("SELECT p.aliasUsuario, p.tipoRelacion, u.imagen from pertenece p JOIN perfil u ON u.alias = p.aliasUsuario where idTablero = ?");
         $stmt->execute([$id]);
 
         respond(200, $stmt->fetchAll());

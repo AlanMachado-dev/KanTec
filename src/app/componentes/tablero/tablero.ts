@@ -32,6 +32,7 @@ export class Tablero implements OnInit, AfterViewInit {
   rutaImagenes !: string;
   miTablero: TableroInterfaz | null = null;
   esEspectador: boolean = false;
+  private intervaloColaboradores: any;
 
   private fb = inject(FormBuilder);
 
@@ -99,6 +100,11 @@ export class Tablero implements OnInit, AfterViewInit {
             });
 
           this.recargarColaboradores();
+
+          this.intervaloColaboradores = setInterval(() => { //pueden hacer algo parecido para recargar tareas supongo
+            this.recargarColaboradores();
+          }, 5000);
+
           this.rutaImagenes = this.http.getRutaBaseImg();
           }
       } else {
@@ -106,7 +112,11 @@ export class Tablero implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
+ngOnDestroy(): void {
+  clearInterval(this.intervaloColaboradores);
+}  
+
 ngAfterViewInit(): void {
     flatpickr("#calendario-siempre-abierto", {
       inline: true, 

@@ -199,7 +199,7 @@
                     <button type="button" class="btn btn-outline-danger w-100" (click)="confirmarBorrarTablero()">Borrar Tablero</button>
                 </div>
                 <div class="col-8">
-                    <button type="button" class="btn btn-primary w-100" (click)="guardarCambiosTablero()">Guardar</button>
+                    <button type="button" class="btn btn-primary w-100" [disabled]="formularioTablero.invalid || mostrarError" (click)="guardarCambiosTablero()">Guardar</button>
                 </div>
             </div>
         </div>

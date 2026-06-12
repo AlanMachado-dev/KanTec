@@ -31,6 +31,7 @@ export class Tablero implements OnInit, AfterViewInit {
   colaboradoresTablero: Colaborador[] = [];
   rutaImagenes !: string;
   miTablero: TableroInterfaz | null = null;
+  esEspectador: boolean = false;
 
   private fb = inject(FormBuilder);
 
@@ -96,11 +97,8 @@ export class Tablero implements OnInit, AfterViewInit {
             .subscribe(tablero => {
               this.miTablero = tablero;
             });
-          this.http.getColaboradoresDeTablero(this.idTablero)
-            .subscribe(colaboradores => {
-              this.colaboradoresTablero = colaboradores;
-              this.cdr.detectChanges();
-            })
+
+          this.recargarColaboradores();
           this.rutaImagenes = this.http.getRutaBaseImg();
           }
       } else {
@@ -131,6 +129,9 @@ ngAfterViewInit(): void {
   ////// PERSISTENCIA //////
 
   crearTarea(columna: number): void{
+    if (this.esEspectador) {
+      return;
+    }
     if(!this.idTablero){return console.log("error pendejo");}
     this.http.crearTarea(this.idTablero, columna, this.posicionFinalColumna(columna)).subscribe({
       next: () => {
@@ -214,6 +215,9 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
 }
 
   onDrop(event: DragEvent, columnaFinalID: number): void{
+    if (this.esEspectador) {
+      return;
+    }
     event.preventDefault();
 
     const id = Number(event.dataTransfer?.getData('text/plain')) ?? this.draggingId;
@@ -344,6 +348,22 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
         return 'Desconocido';
     }
   }
+  recargarColaboradores(): void {
+    if(this.idTablero){
+      this.http.getColaboradoresDeTablero(this.idTablero)
+        .subscribe(colaboradores => {
+          this.colaboradoresTablero = colaboradores;
+          this.cdr.detectChanges();
+          if (this.colaboradoresTablero) {
+            const miColaboracion = this.colaboradoresTablero.find(
+              c => c.aliasUsuario === this.aliasLogueado);
+            this.esEspectador = miColaboracion?.tipoRelacion === 2;
+          }
+        })
+        
+    }
+  }
+
 
   ////// EDITAR TAREA //////
 
@@ -388,6 +408,9 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
   }
 
   guardarCambiosTarea(){
+    if(this.esEspectador){
+      return;
+    }
     const body = this.formularioTarea.value;
     if(!this.idTablero){return;}
     this.http.actualizarTarea(this.idTablero, this.formularioTarea.value.idTarea, body).subscribe({
@@ -402,6 +425,9 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
   }
 
   confirmarBorrarTarea(){
+    if (this.esEspectador) {
+      return;
+    }
     Swal.fire({
       title: "¿Estás seguro/a?",
       text: "¡Esto será irreversible!",

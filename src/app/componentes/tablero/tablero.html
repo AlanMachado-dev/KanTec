@@ -230,7 +230,7 @@
             <div class="col-md-3 column" #columnRef (dragover)="onDragOver($event, postitsContainer)"
                 (drop)="onDrop($event, col.id)">
                 <!-- <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(col.id)">+ {{col.titulo}}</h5> -->
-                <h5 class="column-title" type="button" id="0" (click)="crearTarea(col.id)">+ {{col.titulo}}</h5>
+                <h5 class="column-title" type="button" id="0" [style.cursor]="esEspectador ? 'default' : 'pointer'" (click)="crearTarea(col.id)">+ {{col.titulo}}</h5>
 
                 <!-- <div class="postit mb-5 bg-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
                     aria-controls="post-it-info">
@@ -253,8 +253,8 @@
                 <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
                     <div class="postit mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                        aria-controls="post-it-info" draggable="true" (dragstart)="onDragStart($event, tarea.idTarea)"
-                        (dragend)="onDragEnd($event)" (click)="seleccionarTarea(tarea)">
+                        aria-controls="post-it-info" [draggable]="!esEspectador" (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
+                        (dragend)="!esEspectador && onDragEnd($event)" (click)="seleccionarTarea(tarea)" [style.cursor]="esEspectador ? 'pointer' : 'grab'">
 
                         <div class="postit-usuarios">
                             <span class="postit-usuario">[usuario1]</span>
@@ -384,7 +384,7 @@
     <form [formGroup]="formularioTarea">
         <div class="offcanvas-header">
             <!-- <h5 class="offcanvas-title" id="[id Tarea]"></h5> -->
-            <input type="text" formControlName="nombre" class="form-control form-control-lg"
+            <input type="text" formControlName="nombre" [readOnly]="esEspectador" class="form-control form-control-lg"
                 [class.is-invalid]="formularioTarea.get('nombre')?.invalid && formularioTarea.get('nombre')?.touched">
             @if(formularioTarea.get('nombre')?.invalid && formularioTarea.get('nombre')?.touched){
             <div class="invalid-feedback">
@@ -404,7 +404,7 @@
         <div class="offcanvas-body">
             <div class="mb-3">
                 <label for="descripcion" class="form-label">Descripcion:</label>
-                <textarea class="form-control" rows="5" formControlName="descripcion"
+                <textarea class="form-control" rows="5"  [readOnly]="esEspectador" formControlName="descripcion"
                     [class.is-invalid]="formularioTarea.get('descripcion')?.invalid && formularioTarea.get('descripcion')?.touched"></textarea>
                 @if(formularioTarea.get('descripcion')?.invalid && formularioTarea.get('descripcion')?.touched){
                 <div class="invalid-feedback">
@@ -417,7 +417,7 @@
 
             <div class="float-start">
                 <p>Prioridad: (Actual = {{this.formularioTarea.value.prioridad}})</p>
-                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                <div class="btn-group" [class.pe-none]="esEspectador" role="group" aria-label="Basic mixed styles example">
                     <input type="radio" class="btn-check" formControlName="prioridad" name="prioridad" id="btnradio1"
                         value="1" autocomplete="off">
                     <label class="btn btn-danger" for="btnradio1">1</label>
@@ -447,13 +447,14 @@
 
             <div class="float-end me-5">
                 <p>Rango Fecha: (en progreso)</p>
-                <input type="text" id="calendario-siempre-abierto" name="calendario" class="form-control me-5"
+                <input type="text" id="calendario-siempre-abierto"  [readOnly]="esEspectador" name="calendario" class="form-control me-5"
                     placeholder="Selecciona una fecha">
             </div>
 
             <br style="clear: both;">
         </div>
 
+        @if(!esEspectador){
         <div class="p-3 border-top">
             <div class="row">
                 <div class="col-4">
@@ -465,6 +466,7 @@
                 </div>
             </div>
         </div>
+        }
     </form>
 </div>
 

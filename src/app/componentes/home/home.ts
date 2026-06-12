@@ -255,6 +255,12 @@ export class Home {
 
   guardarCambiosTablero(): void {
     
+    this.formularioTablero.markAllAsTouched();
+
+    if(this.formularioTablero.invalid || this.mostrarError){
+      return;
+    }
+
     if(!this.tableroSeleccionado){
       return;
     }

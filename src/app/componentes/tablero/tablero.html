@@ -205,19 +205,26 @@
     .espectador{
         border: 3px solid #6c757d;
     }
+    .calendario-bloqueado {
+        pointer-events: none;
+        opacity: 0.8;
+    }
 </style>
 
 <div class="w-100 bg-black p-3 d-flex">
     <h5 class="text-white">{{miTablero?.titulo}} by {{miTablero?.aliasCreador}}</h5>
     <div class="ms-auto d-flex align-items-center gap-2">
         @if(miTablero?.aliasCreador === aliasLogueado){
-            <span class="text-white ms-auto" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button">[+]</span>
+            <span class="text-white ms-auto" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button" (click)="abrirModalAgregar()">[+]</span>
         }
         
         @for(colaborador of colaboradoresTablero; track colaborador.aliasUsuario){
             <div class="avatar-contenedor" [ngClass]="{'creador': colaborador.tipoRelacion === 0, 'contribuidor': colaborador.tipoRelacion === 1, 
             'espectador': colaborador.tipoRelacion === 2 }">
-                <img [src]="rutaImagenes + colaborador.imagen" [alt]="colaborador.aliasUsuario" [title]="colaborador.aliasUsuario + ' - ' + getRol(colaborador.tipoRelacion)" type="button" (click)="verPerfil(colaborador.aliasUsuario)" class="rounded-circle" width="32" height="32">
+                <img [src]="rutaImagenes + colaborador.imagen" [alt]="colaborador.aliasUsuario" 
+                [title]="colaborador.aliasUsuario + ' - ' + getRol(colaborador.tipoRelacion)" type="button" 
+                (click)="verPerfil(colaborador.aliasUsuario)" class="rounded-circle" width="32" height="32"
+                (contextmenu)="abrirMenuUsuario($event, colaborador)">
             </div>
         }
     </div>
@@ -445,9 +452,9 @@
                 </div>
             </div>
 
-            <div class="float-end me-5">
+            <div class="float-end me-5"  [class.calendario-bloqueado]="esEspectador">
                 <p>Rango Fecha: (en progreso)</p>
-                <input type="text" id="calendario-siempre-abierto"  [readOnly]="esEspectador" name="calendario" class="form-control me-5"
+                <input type="text" id="calendario-siempre-abierto" name="calendario" class="form-control me-5"
                     placeholder="Selecciona una fecha">
             </div>
 
@@ -475,23 +482,27 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
+                    @if(modoModal === 'agregar'){
                     Agregar Colaborador/Espectador
+                    } @else {
+                        Modificar Permisos
+                    }
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal"></button>
             </div>
             <div class="modal-body">
-                <form [formGroup]="formularioAgregarColaborador">
+                <form [formGroup]="formularioMiembro">
                     <div class="mb-3">
                         <label for="aliasUsuario" class="form-label">Alias</label>
-                        <input type="text" class="form-control" formControlName="aliasUsuario" [class.is-invalid]="formularioAgregarColaborador.get('aliasUsuario')?.invalid 
-                        && formularioAgregarColaborador.get('aliasUsuario')?.touched">
-                        @if(formularioAgregarColaborador.get('aliasUsuario')?.invalid &&
-                        formularioAgregarColaborador.get('aliasUsuario')?.touched){
+                        <input type="text" class="form-control" [readOnly]="modoModal === 'editar'" formControlName="aliasUsuario" [class.is-invalid]="formularioMiembro.get('aliasUsuario')?.invalid 
+                        && formularioMiembro.get('aliasUsuario')?.touched">
+                        @if(formularioMiembro.get('aliasUsuario')?.invalid &&
+                        formularioMiembro.get('aliasUsuario')?.touched){
                         <div class="invalid-feedback">
-                            @if(formularioAgregarColaborador.get('aliasUsuario')?.errors?.['required']) {
+                            @if(formularioMiembro.get('aliasUsuario')?.errors?.['required']) {
                             Necesitas el Alias para agregar un Colaborador/Espectador.
                             }
-                            @if(formularioAgregarColaborador.get('aliasUsuario')?.errors?.['maxlength']) {
+                            @if(formularioMiembro.get('aliasUsuario')?.errors?.['maxlength']) {
                             Los Alias no pueden ser de mas de 50 caracteres.
                             }
                         </div>
@@ -514,8 +525,16 @@
                 <button class="btn btn-secondary" data-bs-dismiss="modal">
                     Cancelar
                 </button>
-                <button class="btn btn-primary" (click)="agregarColaborador()">Agregar</button>
+                <button class="btn btn-primary" [disabled]="formularioMiembro.invalid" (click)="modoModal === 'agregar' ? agregarColaborador() : modificarPermisos()">
+                    {{ modoModal === 'agregar' ? 'Agregar' : 'Guardar cambios'}}</button>
             </div>
         </div>
     </div>
 </div>
+@if(menuVisible && usuarioSeleccionado){
+    <div class="dropdown-menu show" (click)="$event.stopPropagation()" [style.left.px]="menuX" [style.top.px]="menuY" style="position: fixed;">
+        <button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado.aliasUsuario)">Ver Perfil</button>
+        <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button" (click)="abrirModalEditar(usuarioSeleccionado)">Cambiar permisos</button>
+        <button class="dropdown-item text-danger" type="button" (click)="eliminarMiembro()">Quitar del tablero</button>
+    </div>
+}

@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Http } from '../../services/http';
 import flatpickr from "flatpickr";
@@ -33,6 +33,11 @@ export class Tablero implements OnInit, AfterViewInit {
   miTablero: TableroInterfaz | null = null;
   esEspectador: boolean = false;
   private intervaloColaboradores: any;
+  menuVisible = false;
+  menuX = 0;
+  menuY = 0;
+  usuarioSeleccionado: Colaborador | null = null;
+  modoModal: 'agregar' | 'editar' = 'agregar';
 
   private fpInstance: any;
 
@@ -285,7 +290,7 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
  
   ////// COLABORADORES //////
 
-  formularioAgregarColaborador: FormGroup = this.fb.group({
+  formularioMiembro: FormGroup = this.fb.group({
     aliasUsuario: ['',{
       validators: [
         Validators.required,
@@ -295,7 +300,15 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     tipoRelacion: ['1']
   })
   agregarColaborador(){
-    const body = this.formularioAgregarColaborador.value;
+
+    this.formularioMiembro.markAllAsTouched();
+
+    if (this.formularioMiembro.invalid) {
+      return;
+    }
+
+
+    const body = this.formularioMiembro.value;
 
     if (body.aliasUsuario === this.aliasLogueado){
       Swal.fire({
@@ -379,12 +392,151 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
             const miColaboracion = this.colaboradoresTablero.find(
               c => c.aliasUsuario === this.aliasLogueado);
             this.esEspectador = miColaboracion?.tipoRelacion === 2;
+            if(!miColaboracion){
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'info',
+                title: 'Ya no tienes acceso a este tablero',
+                showConfirmButton: false,
+                timer: 3000
+              });
+
+              this.router.navigate(['/home']);
+            }
           }
         })
         
     }
   }
 
+  abrirModalAgregar(){
+    this.modoModal = 'agregar';
+
+    this.formularioMiembro.reset({
+      aliasUsuario: '',
+      tipoRelacion: '1'
+    });
+    this.formularioMiembro.get('aliasUsuario')?.enable();
+  }
+
+  abrirModalEditar(colaborador: Colaborador){
+    this.modoModal = 'editar';
+
+    this.formularioMiembro.patchValue({
+      aliasUsuario: colaborador.aliasUsuario,
+      tipoRelacion: colaborador.tipoRelacion
+    });
+
+    this.formularioMiembro.get('aliasUsuario')?.disable();
+
+    this.formularioMiembro.markAsPristine();
+    this.formularioMiembro.markAsUntouched();
+  }
+  modificarPermisos(){
+    const relacion = this.formularioMiembro.get('tipoRelacion')?.value;
+    if(this.idTablero && this.usuarioSeleccionado){
+      this.http.modificarPermisos(this.idTablero, this.usuarioSeleccionado?.aliasUsuario, relacion).subscribe({
+        next: () => {
+          this.recargarColaboradores();
+          const btnCerrar = document.getElementById('btnCerrarModal');
+          btnCerrar?.click();
+          Swal.fire({
+            title: 'Permisos modificados con exito',
+            icon: 'success'
+          })
+        },
+        error: (err) => {
+          if (err.status === 409) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Usuario no modificado',
+              text: 'Este usuario ya tiene esos permisos.'
+            });
+          } else if (err.status === 404) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Usuario no encontrado',
+              text: 'El usuario ya no pertenece al tablero.'
+            });
+          } else {
+            Swal.fire({
+              title: "Error",
+              text: "Ocurrio un error inesperado.",
+              icon: "error"
+            });
+          }
+        }
+      })
+    }
+  }
+  eliminarMiembro(){
+    if (!this.usuarioSeleccionado) {
+      return;
+    }
+    Swal.fire({
+          title: "¿Estás seguro/a?",
+          text: `Se eliminará a ${this.usuarioSeleccionado.aliasUsuario} del tablero`,
+          icon: "warning",
+          showCancelButton: true,
+          cancelButtonColor: "#3085d6",
+          confirmButtonColor: "#d33",
+          confirmButtonText: "Sí, borrar.",
+          cancelButtonText: "No, cancelar."
+        }).then((result) => {
+          if(result.isConfirmed && this.usuarioSeleccionado && this.idTablero) {
+            this.http.eliminarMiembro(this.idTablero,this.usuarioSeleccionado.aliasUsuario).subscribe({
+              next: () => {
+                Swal.fire({
+                  title: "¡Miembro eliminado!",
+                  text: "El miembro ha sido eliminado del tablero exitosamente.",
+                  icon: "success"
+                });
+                this.recargarColaboradores();
+                this.usuarioSeleccionado = null;
+              },
+              error: (err) => {
+                if (err.status === 404) {
+                  Swal.fire({
+                    title: 'Miembro no encontrado',
+                    icon: 'error'
+                  });
+                } else {
+                  Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo eliminar al miembro. Inténtalo de nuevo.',
+                    icon: 'error'
+                  });
+              }
+            }
+          });
+          }
+        });
+  }
+
+  abrirMenuUsuario(event: MouseEvent, colaborador: Colaborador){
+    if(this.aliasLogueado != this.miTablero?.aliasCreador || this.aliasLogueado == colaborador.aliasUsuario){
+      return;
+    }
+    event.preventDefault();
+    const anchoMenu = 180;
+
+    this.menuVisible = true;
+    this.menuX = event.clientX;
+    
+    if (this.menuX + anchoMenu > window.innerWidth){
+      this.menuX = window.innerWidth - anchoMenu - 10;
+    }
+    
+    this.menuY = event.clientY;
+    this.usuarioSeleccionado = colaborador;
+
+    //console.log('Click derecho en: ', colaborador.aliasUsuario);
+  }
+  @HostListener('document:click')
+  cerrarMenu() {
+    this.menuVisible = false;
+  }
 
   ////// EDITAR TAREA //////
 

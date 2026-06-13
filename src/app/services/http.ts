@@ -193,6 +193,13 @@ export class Http {
     return this.http.post<any>(this.url+"colaboradores/invitar", {idTablero: idTablero, tipoRelacion: body.tipoRelacion, aliasUsuario: body.aliasUsuario});
   }
 
+  eliminarMiembro(idTablero: string, aliasUsuario: string): Observable<any> {
+    return this.http.delete<any>(this.url+"colaboradores/miembro",{ body:{idTablero: idTablero, aliasUsuario: aliasUsuario}});
+  }
+
+  modificarPermisos(idTablero: string, aliasUsuario: string, tipoRelacion: number): Observable<any> {
+    return this.http.put<any>(this.url + "colaboradores/permisos", { idTablero: idTablero, aliasUsuario: aliasUsuario , tipoRelacion: tipoRelacion});
+  }
   //tarea//
   crearTarea(idTablero: string, columna: number, posicion: number): Observable<any>{
     return this.http.post<any>(this.url+"tareas", {

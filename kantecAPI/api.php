@@ -67,6 +67,10 @@ match(true) {
     //ruta colaboraciones
     $partes[1] === 'colaboradores' && $partes[2] === 'invitar' && !isset($partes[3])
         && $method === 'POST' => $tablero->agregarColaborador(),
+    $partes[1] === 'colaboradores' && $partes[2] === 'miembro' && !isset($partes[3])
+        && $method === 'DELETE' => $tablero->eliminarMiembro(),
+    $partes[1] === 'colaboradores' && $partes[2] === 'permisos' && !isset($partes[3])
+        && $method === 'PUT' => $tablero->actualizarPermisosMiembro(),
     $partes[1] === 'colaboradores' && $partes[2] === 'misColaboraciones' && isset($partes[3]) && !isset($partes[4])
         && $method === 'GET' => $tablero->misColaboraciones($partes[3]),
     $partes[1] === 'colaboradores' && isset($partes[2]) && !isset($partes[3]) 

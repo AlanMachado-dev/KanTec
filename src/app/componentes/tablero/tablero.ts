@@ -34,6 +34,8 @@ export class Tablero implements OnInit, AfterViewInit {
   esEspectador: boolean = false;
   private intervaloColaboradores: any;
 
+  private fpInstance: any;
+
   private fb = inject(FormBuilder);
 
   columnas: Columna[] = [
@@ -113,19 +115,29 @@ export class Tablero implements OnInit, AfterViewInit {
     });
   }
 
-ngOnDestroy(): void {
-  clearInterval(this.intervaloColaboradores);
-}  
+  ngOnDestroy(): void {
+    clearInterval(this.intervaloColaboradores);
+  }  
 
-ngAfterViewInit(): void {
-    flatpickr("#calendario-siempre-abierto", {
+  ngAfterViewInit(): void {
+    this.fpInstance = flatpickr("#calendario-siempre-abierto", {
       inline: true, 
       locale: Spanish,
       altInput: true,
       altFormat: "j \\d\\e F Y",
       dateFormat: "Y-m-d", 
       mode: "range", 
-      minDate: "today",
+    
+      onChange: (selectedDates, dateStr, instance) => {
+        this.formularioTarea.patchValue({
+          fechaInicio: selectedDates[0]
+            ? instance.formatDate(selectedDates[0], 'Y-m-d')
+            : null,
+          fechaFinal: selectedDates[1]
+            ? instance.formatDate(selectedDates[1], 'Y-m-d')
+            : null
+        })
+      }
     });
   }
 
@@ -248,7 +260,6 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     const insertIndex = this.getInsertIndex(event, columnaFinalID);
     columnaFinal?.tareas.splice(insertIndex, 0, tarea);
 
-    console.log(this.columnas[columnaFinalID].tareas);
     this.guardarTareas();
   }
 
@@ -414,7 +425,13 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
       fechaFinal: tarea.fechaFinal,
       fechaCreacion: tarea.fechaCreacion,
       prioridad: String(tarea.prioridad)
-    })
+    });
+
+    const fechasTarea: string[] = [];
+    if(this.formularioTarea.value.fechaInicio) fechasTarea.push(this.formularioTarea.value.fechaInicio);
+    if(this.formularioTarea.value.fechaFinal) fechasTarea.push(this.formularioTarea.value.fechaFinal);
+
+    this.fpInstance?.setDate(fechasTarea, false);
   }
 
   guardarCambiosTarea(){
@@ -422,6 +439,7 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
       return;
     }
     const body = this.formularioTarea.value;
+
     if(!this.idTablero){return;}
     this.http.actualizarTarea(this.idTablero, this.formularioTarea.value.idTarea, body).subscribe({
       next: () => {

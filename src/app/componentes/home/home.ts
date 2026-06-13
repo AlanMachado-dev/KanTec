@@ -49,6 +49,7 @@ export class Home {
   private subTablerosCompartidos: Subscription = new Subscription();
   private subTableros: Subscription = new Subscription();
   ngOnInit(): void {
+    console.log("estoy en gnOnit");
     let detener = false;
     this.http.verificarToken().subscribe({
       next: () => {},
@@ -65,9 +66,11 @@ export class Home {
       this.estaLogueado = logueado;
       this.aliasUsuario = this.http.getAliasDelToken() || "";
       if(logueado){
+        console.log("estoy logueado?");
         this.cargarTableros();
         this.cargarTablerosColaboraciones();
       }else{
+        console.log("no estoy logueado?");
         this.tableros = [];
         this.aliasUsuario = "";
         this.router.navigate(['/']);
@@ -97,11 +100,14 @@ export class Home {
   private tablerosPorPagina = 3;
 
   private cargarTableros(): void {
+    console.log("entra a cargartableros");
     this.http.getTablerosAlias(this.aliasUsuario)
       .subscribe({
         next: (tableros) => {
           this.tableros = tableros;
+          console.log(tableros)
           this.cdr.detectChanges();
+          console.log("entro a al next y detectChanges");
         },
         error: (err) => {
           console.log(err);

@@ -4,6 +4,6 @@ export interface Tarea {
     descripcion: string;
     fechaFinal: string;
     fechaInicio: string;
-    prioridad: number; //????
+    prioridad: number;
     fechaCreacion: string;
 }

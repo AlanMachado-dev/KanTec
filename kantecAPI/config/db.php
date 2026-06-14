@@ -122,10 +122,15 @@ class Database{
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS asignacion (
-                idTarea     VARCHAR(30) NOT NULL PRIMARY KEY REFERENCES tarea(idTarea),
-                idTablero   VARCHAR(30) NOT NULL PRIMARY KEY REFERENCES tarea(idTablero),
-                alias       INTEGER     NOT NULL PRIMARY KEY REFERENCES usuario(alias),
-                fecHorAsig  DATETIME    NOT NULL
+                idTarea     INTEGER     NOT NULL,
+                idTablero   BINARY(16)  NOT NULL,
+                alias       VARCHAR(30) NOT NULL,
+                fecHorAsig  DATETIME    NOT NULL,
+
+                FOREIGN KEY (idTablero,idTarea) REFERENCES tarea(idTablero,idTarea),
+                FOREIGN KEY (alias)             REFERENCES usuario(alias),
+
+                PRIMARY KEY(idTarea,idTablero,alias)
             )
         ");
     }

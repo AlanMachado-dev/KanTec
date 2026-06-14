@@ -1,7 +1,7 @@
 <?php
 require_once 'config/db.php';
 
-class tareaAPI
+class asignacionAPI
 {
     private PDO $db;
 

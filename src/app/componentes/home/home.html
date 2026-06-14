@@ -62,7 +62,7 @@
 
     @for(tablero of getTablerosPaginados(tableros, paginaActual); track tablero.id){
     <div class="col">
-        <div class="card tamanioTarjeta">
+        <div class="card tamanioTarjeta animate__animated animate__bounceInDown">
             <a [routerLink]="['/tablero',tablero.id]" class="imagenTablero">
                 @if(tablero.imagen){
                     <img [src]="rutaImagenes + tablero.imagen" class="card-img-top imagenTablero" alt="..." (error)="tablero.imagen = null">
@@ -275,7 +275,7 @@
     
 @for(tablero of getTablerosPaginados(tablerosColaborados, paginaActualColaborador); track tablero.id){
 <div class="col">
-    <div class="card tamanioTarjeta">
+    <div class="card tamanioTarjeta animate__animated animate__bounceInUp">
         <a [routerLink]="['/tablero',tablero.id]" class="imagenTablero">
             @if(tablero.imagen){
             <img [src]="rutaImagenes + tablero.imagen" class="card-img-top imagenTablero" alt="..."

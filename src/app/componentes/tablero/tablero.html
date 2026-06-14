@@ -173,13 +173,23 @@
         }
 
         @for(colaborador of colaboradoresTablero; track colaborador.aliasUsuario){
-        <div class="avatar-contenedor" [ngClass]="{'creador': colaborador.tipoRelacion === 0, 'contribuidor': colaborador.tipoRelacion === 1, 
+
+            <div class="avatar-contenedor dropdown" [ngClass]="{'creador': colaborador.tipoRelacion === 0, 'contribuidor': colaborador.tipoRelacion === 1, 
             'espectador': colaborador.tipoRelacion === 2 }">
-            <img [src]="rutaImagenes + colaborador.imagen" [alt]="colaborador.aliasUsuario"
-                [title]="colaborador.aliasUsuario + ' - ' + getRol(colaborador.tipoRelacion)" type="button"
-                (click)="verPerfil(colaborador.aliasUsuario)" class="rounded-circle" width="32" height="32"
-                (contextmenu)="abrirMenuUsuario($event, colaborador)">
-        </div>
+                <img [src]="rutaImagenes + colaborador.imagen" [alt]="colaborador.aliasUsuario" 
+                [title]="colaborador.aliasUsuario + ' - ' + getRol(colaborador.tipoRelacion)" type="button" 
+                (click)="abrirMenuUsuario(colaborador)" class="rounded-circle dropdown-toggle" width="32" height="32" data-bs-toggle="dropdown" data-bs-target="#menuUsuario"
+                >
+                
+                <div class="dropdown-menu" style="position: fixed;" id="menuUsuario">
+                    <li><button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver Perfil</button></li>
+                    <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button"
+                        (click)="abrirModalEditar()">Cambiar permisos</button></li>
+                    <li><button class="dropdown-item text-danger" type="button" (click)="eliminarMiembro()">Quitar del tablero</button></li>
+                </div>
+                
+            </div>
+
         }
     </div>
 </div>
@@ -392,13 +402,5 @@
             </div>
         </div>
     </div>
+
 </div>
-@if(menuVisible && usuarioSeleccionado){
-<div class="dropdown-menu show" (click)="$event.stopPropagation()" [style.left.px]="menuX" [style.top.px]="menuY"
-    style="position: fixed;">
-    <button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado.aliasUsuario)">Ver Perfil</button>
-    <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button"
-        (click)="abrirModalEditar(usuarioSeleccionado)">Cambiar permisos</button>
-    <button class="dropdown-item text-danger" type="button" (click)="eliminarMiembro()">Quitar del tablero</button>
-</div>
-}

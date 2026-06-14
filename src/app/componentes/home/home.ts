@@ -148,7 +148,7 @@ export class Home {
   siguiente(tipo: string) : void {
     const pagina = tipo === 'propios' ? this.paginaActual : this.paginaActualColaborador;
 
-    const total = tipo === 'propios' ? this.getTotalPaginas(this.tableros, true) : this.getTotalPaginas(this.tableros, false);
+    const total = tipo === 'propios' ? this.getTotalPaginas(this.tableros, true) : this.getTotalPaginas(this.tablerosColaborados, false);
     if(pagina < total){
       if (tipo === 'propios') {
         this.paginaActual++;

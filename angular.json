@@ -32,7 +32,8 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/flatpickr/dist/flatpickr.min.css"
+              "node_modules/flatpickr/dist/flatpickr.min.css",
+              "node_modules/animate.css/animate.min.css"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",

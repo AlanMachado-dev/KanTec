@@ -26,6 +26,7 @@ export class Tablero implements OnInit, AfterViewInit {
 
   private idTablero: string | null = null;
   private draggingId: number | null = null;
+  private intervaloTareas: any;
 
   aliasLogueado: string | null = null;
   colaboradoresTablero: Colaborador[] = [];
@@ -33,9 +34,6 @@ export class Tablero implements OnInit, AfterViewInit {
   miTablero: TableroInterfaz | null = null;
   esEspectador: boolean = false;
   private intervaloColaboradores: any;
-  menuVisible = false;
-  menuX = 0;
-  menuY = 0;
   usuarioSeleccionado: Colaborador | null = null;
   modoModal: 'agregar' | 'editar' = 'agregar';
 
@@ -85,21 +83,9 @@ export class Tablero implements OnInit, AfterViewInit {
         this.idTablero = this.ruta.snapshot.paramMap.get('id');
         this.cargarTareas();
         this.cdr.detectChanges();
-        for(let i = 0; i < 4; i++){
-          if(!this.idTablero){return console.log("error pendejo");}
-          this.http.getTareasTableroColumna(this.idTablero,i).subscribe({
-            next: (response) => {
-              this.columnas[i].tareas = response;
-              this.cdr.detectChanges();
-            },
-            error: (err) => {
-              console.log(err);
-              this.http.cerrarSesion();
-              this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
-              return;
-            }
-          })
-        }
+        this.intervaloTareas = setInterval(() => {
+          this.cargarTareas();
+        },1000);
         if(this.idTablero){
           this.http.getTablero(this.idTablero)
             .subscribe(tablero => {
@@ -122,6 +108,7 @@ export class Tablero implements OnInit, AfterViewInit {
 
   ngOnDestroy(): void {
     clearInterval(this.intervaloColaboradores);
+    clearInterval(this.intervaloTareas);
   }  
 
   ngAfterViewInit(): void {
@@ -420,12 +407,15 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     this.formularioMiembro.get('aliasUsuario')?.enable();
   }
 
-  abrirModalEditar(colaborador: Colaborador){
+  abrirModalEditar(){
+    if(!this.usuarioSeleccionado) {
+      return;
+    }
     this.modoModal = 'editar';
 
     this.formularioMiembro.patchValue({
-      aliasUsuario: colaborador.aliasUsuario,
-      tipoRelacion: colaborador.tipoRelacion
+      aliasUsuario: this.usuarioSeleccionado.aliasUsuario,
+      tipoRelacion: this.usuarioSeleccionado.tipoRelacion
     });
 
     this.formularioMiembro.get('aliasUsuario')?.disable();
@@ -514,28 +504,14 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
         });
   }
 
-  abrirMenuUsuario(event: MouseEvent, colaborador: Colaborador){
+  abrirMenuUsuario(colaborador: Colaborador){
     if(this.aliasLogueado != this.miTablero?.aliasCreador || this.aliasLogueado == colaborador.aliasUsuario){
+      this.verPerfil(colaborador.aliasUsuario);
       return;
     }
-    event.preventDefault();
-    const anchoMenu = 180;
-
-    this.menuVisible = true;
-    this.menuX = event.clientX;
-    
-    if (this.menuX + anchoMenu > window.innerWidth){
-      this.menuX = window.innerWidth - anchoMenu - 10;
-    }
-    
-    this.menuY = event.clientY;
+    console.log(colaborador);
     this.usuarioSeleccionado = colaborador;
-
-    //console.log('Click derecho en: ', colaborador.aliasUsuario);
-  }
-  @HostListener('document:click')
-  cerrarMenu() {
-    this.menuVisible = false;
+    console.log(this.usuarioSeleccionado);
   }
 
   ////// EDITAR TAREA //////

@@ -129,6 +129,10 @@ class usuarioAPI {
     $query = $this->db->prepare("DELETE FROM tablero WHERE aliasCreador = ?");
     $query->execute([$alias]);
 
+    $query = $this->db->prepare("DELETE FROM asignacion WHERE alias = ?");
+    $query->execute([$alias]);
+
+
     $query = $this->db->prepare(
         "INSERT INTO usuarioPerfilBorrado (alias, password, email, nombre, imagen, fecNac, fecReg, bio, fecBor) VALUES (?, ?, ?, ?, ?, ? , ?, ? ,CURRENT_DATE())"
     );

@@ -18,6 +18,9 @@
                     @if(registroForm.get('alias')?.errors?.['maxlength']) {
                         Máximo de caracteres debe ser 30.
                     }
+                    @if(registroForm.get('alias')?.errors?.['pattern']) {
+                        Carácteres permitidos: a-z A-Z 0-9 _ñ.
+                    }
                 </div>
                 }
             </div>
@@ -84,6 +87,9 @@
                     }
                     @if(registroForm.get('nombre')?.errors?.['maxlength']) {
                         Máximo de caracteres debe ser 50.
+                    }
+                    @if(registroForm.get('nombre')?.errors?.['pattern']) {
+                        Los nombres solo pueden tener letras y espacios.
                     }
                 </div>
                 }

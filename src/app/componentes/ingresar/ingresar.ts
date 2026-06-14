@@ -35,6 +35,12 @@ export class Ingresar implements OnInit{
         title: "¡Sesión inválida!"
       });
     }
+    this.http.sesionActiva$.subscribe(logueado => {
+      this.http.getAliasDelToken() || "";
+      if (logueado) {
+        this.router.navigate(['/home']);
+      }
+    });
   }
 
   formBuilder = inject(FormBuilder);

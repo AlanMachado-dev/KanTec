@@ -27,6 +27,7 @@ export class Registro {
     alias: ['', {
       validators: [
         Validators.required,
+        Validators.pattern('[a-zA-Z0-9_ñ.]*'),
         Validators.minLength(3),
         Validators.maxLength(30)
       ]
@@ -48,12 +49,20 @@ export class Registro {
     nombre: ['', {
       validators: [
         Validators.required,
+        Validators.pattern('[a-zA-Zñ ]*'),
         Validators.maxLength(50)
       ]
     }],
     imagen: ['',]
   })
-
+  ngOnInit(): void {
+    this.http.sesionActiva$.subscribe(logueado => {
+      this.http.getAliasDelToken() || "";
+      if (logueado) {
+        this.router.navigate(['/home']);
+      }
+    });
+  }
 
   onFileSelected(event: any) {
     this.imagenSeleccionada = event.target.files[0];
@@ -101,10 +110,10 @@ export class Registro {
   }
 
   onSubmit() {
+    this.registroForm.get('confirmPassword')?.updateValueAndValidity();
     if (this.registroForm.invalid) return;
-
     this.loading = true;
-    this.mostrarError = false;
+    this.mostrarError = false; 
     const usuario = this.registroForm.value as any;
     const { alias, email } = this.registroForm.value as any;
 

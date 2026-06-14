@@ -120,6 +120,14 @@ class Database{
                 PRIMARY KEY (idTablero,aliasInvitado)
             )
         ");
+        $this->conn->exec("
+            CREATE TABLE IF NOT EXISTS asignacion (
+                idTarea     VARCHAR(30) NOT NULL PRIMARY KEY REFERENCES tarea(idTarea),
+                idTablero   VARCHAR(30) NOT NULL PRIMARY KEY REFERENCES tarea(idTablero),
+                alias       INTEGER     NOT NULL PRIMARY KEY REFERENCES usuario(alias),
+                fecHorAsig  DATETIME    NOT NULL
+            )
+        ");
     }
 }
 

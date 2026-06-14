@@ -7,6 +7,7 @@ require_once 'api/tableroAPI.php';
 require_once 'api/tareaAPI.php';
 require_once 'api/imagenesAPI.php';
 require_once 'api/utilidadesAPI.php';
+require_once 'api/asignacionAPI.php';
 
 
 
@@ -29,6 +30,8 @@ $tarea = new tareaAPI();
 $imagenes = new imagenesAPI();
 
 $utilidades = new utilidadesAPI();
+
+$asignacion = new asignacionAPI();
 
 match(true) {
     //ruta usuarios
@@ -106,6 +109,16 @@ match(true) {
     //ruta utilidades
     $partes[1] === 'utilidad' && $partes[2] === 'triggers' && $method === 'GET' => $utilidades->agregarTriggers(),
     $partes[1] === 'utilidad' && $partes[2] === 'token' && $method === 'GET' => $utilidades->verificar(),
+
+    //ruta asignacion
+    $partes[1] === 'asignacion' &&
+        $method === 'POST' => $asignacion->create(),    
+    $partes[1] === 'asignacion' &&
+        $method === 'DELETE' => $asignacion->delete(),    
+    $partes[1] === 'asignacion' && $partes[2] === 'alias' &&
+        $method === 'GET' => $asignacion->getAsignacionesPorAlias(),    
+    $partes[1] === 'asignacion' && $partes[2] === 'tarea' &&
+        $method === 'GET' => $asignacion->getAsignacionesPorTarea(),
 
     default => respond(404, ["error" => "Ruta no encontrada"])
 };

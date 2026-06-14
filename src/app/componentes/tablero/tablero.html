@@ -1,17 +1,4 @@
 <style>
-    /* .postit {
-        min-height: 100px;
-        padding: 10px;
-        margin: 10px auto;
-        font-size: 14px;
-        cursor: grab;
-        box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
-        transform: rotate(calc(-3deg + 6deg * var(--random)));
-        position: relative;
-        overflow: visible;
-    }
-     */
-
     .postit-usuarios {
         position: absolute;
         top: -12px;
@@ -33,43 +20,6 @@
         color: #0d6efd;
         border-radius: 4px;
     }
-
-    /*  
-
-    .postit::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 0 0 20px 20px;
-        border-color: transparent transparent rgba(255, 255, 255, 0.8) transparent;
-    }
-
-    .postit::before {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 20px;
-        height: 20px;
-        box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.2);
-        clip-path: polygon(100% 0, 0 100%, 100% 100%);
-    }
-
-    .postit legend {
-        width: auto;
-        padding: 0 8px;
-        font-size: 14px;
-        color: #0d6efd;
-    }
-
-    .column h5 {
-        font-weight: bold;
-        margin-bottom: 15px;
-    } */
 
     .board-wrapper {
         min-height: 80lvh;
@@ -155,8 +105,8 @@
         transition: box-shadow 0.15s ease, opacity 0.15s ease;
         background-color: papayawhip;
         color: black;
-        
-        /* &::before {
+
+        &::before {
             content: '';
             width: 12px;
             height: 12px;
@@ -166,7 +116,7 @@
             top: -6px;
             left: 50%;
             transform: translateX(-50%);
-        } */
+        }
 
         &:active {
             cursor: grabbing;
@@ -189,22 +139,25 @@
             background: #ffadad;
         }
     }
-    .avatar-contenedor{
+
+    .avatar-contenedor {
         border-radius: 50%;
         display: inline-block;
         padding: 2px;
     }
-    .creador{
+
+    .creador {
         border: 3px solid #0d6efd;
     }
 
-    .contribuidor{
+    .contribuidor {
         border: 3px solid #198754;
     }
 
-    .espectador{
+    .espectador {
         border: 3px solid #6c757d;
     }
+
     .calendario-bloqueado {
         pointer-events: none;
         opacity: 0.8;
@@ -215,17 +168,18 @@
     <h5 class="text-white">{{miTablero?.titulo}} by {{miTablero?.aliasCreador}}</h5>
     <div class="ms-auto d-flex align-items-center gap-2">
         @if(miTablero?.aliasCreador === aliasLogueado){
-            <span class="text-white ms-auto" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button" (click)="abrirModalAgregar()">[+]</span>
+        <span class="text-white ms-auto" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button"
+            (click)="abrirModalAgregar()">[+]</span>
         }
-        
+
         @for(colaborador of colaboradoresTablero; track colaborador.aliasUsuario){
-            <div class="avatar-contenedor" [ngClass]="{'creador': colaborador.tipoRelacion === 0, 'contribuidor': colaborador.tipoRelacion === 1, 
+        <div class="avatar-contenedor" [ngClass]="{'creador': colaborador.tipoRelacion === 0, 'contribuidor': colaborador.tipoRelacion === 1, 
             'espectador': colaborador.tipoRelacion === 2 }">
-                <img [src]="rutaImagenes + colaborador.imagen" [alt]="colaborador.aliasUsuario" 
-                [title]="colaborador.aliasUsuario + ' - ' + getRol(colaborador.tipoRelacion)" type="button" 
+            <img [src]="rutaImagenes + colaborador.imagen" [alt]="colaborador.aliasUsuario"
+                [title]="colaborador.aliasUsuario + ' - ' + getRol(colaborador.tipoRelacion)" type="button"
                 (click)="verPerfil(colaborador.aliasUsuario)" class="rounded-circle" width="32" height="32"
                 (contextmenu)="abrirMenuUsuario($event, colaborador)">
-            </div>
+        </div>
         }
     </div>
 </div>
@@ -236,32 +190,16 @@
             @for (col of columnas; track col.id){
             <div class="col-md-3 column" #columnRef (dragover)="onDragOver($event, postitsContainer)"
                 (drop)="onDrop($event, col.id)">
-                <!-- <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(col.id)">+ {{col.titulo}}</h5> -->
-                <h5 class="column-title" type="button" id="0" [style.cursor]="esEspectador ? 'default' : 'pointer'" (click)="crearTarea(col.id)">+ {{col.titulo}}</h5>
+                <h5 class="column-title" type="button" id="0" [style.cursor]="esEspectador ? 'default' : 'pointer'"
+                    (click)="crearTarea(col.id)">+ {{col.titulo}}</h5>
 
-                <!-- <div class="postit mb-5 bg-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                    aria-controls="post-it-info">
-
-                    <div class="postit-usuarios">
-                        <span class="postit-usuario">[usuario1]</span>
-                        <span class="postit-usuario">[usuario2]</span>
-                    </div>
-
-                </div>
-                <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                    aria-controls="post-it-info"></div> -->
-                <!-- @for (item of columnas[0].tareas; track item.idTarea) {
-                    <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                    aria-controls="post-it-info">
-                        <p>{{item.nombre}}</p>
-                        <p>{{item.descripcion}}</p>
-                    </div>
-                } -->
                 <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
                     <div class="postit mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                        aria-controls="post-it-info" [draggable]="!esEspectador" (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
-                        (dragend)="!esEspectador && onDragEnd($event)" (click)="seleccionarTarea(tarea)" [style.cursor]="esEspectador ? 'pointer' : 'grab'">
+                        aria-controls="post-it-info" [draggable]="!esEspectador"
+                        (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
+                        (dragend)="!esEspectador && onDragEnd($event)" (click)="seleccionarTarea(tarea)"
+                        [style.cursor]="esEspectador ? 'pointer' : 'grab'">
 
                         <div class="postit-usuarios">
                             <span class="postit-usuario">[usuario1]</span>
@@ -275,7 +213,6 @@
                         </div>
 
                         <div>
-                            <!-- <span class="float-end mt-5">{{tarea.prioridad}}</span> -->
                             @if (tarea.prioridad === 1) {
                             <div class="d-flex float-end">
                                 <div class="mt-auto p-2 rounded-5 bg-danger" style="font-size: 9px; font-weight: bold;">
@@ -312,85 +249,11 @@
         </div>
     </div>
 </div>
-<!-- <div class="col-md-3 column">
-            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(1)">+ Analisis</h5> -->
-<!-- <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                aria-controls="post-it-info">
-                <div class="postit-usuarios">
-                    <span class="postit-usuario">[usuario1]</span>
-                    <span class="postit-usuario">[usuario2]</span>
-                </div>
-            </div> -->
-
-<!-- @for (item of columnas[1].tareas; track item.idTarea) {
-                <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                aria-controls="post-it-info">
-                    <p>{{item.nombre}}</p>
-                    <p>{{item.descripcion}}</p>
-                </div>
-            }
-        </div>
-
-        <div class="col-md-3 column">
-            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(2)">+ Desarrollo</h5> -->
-<!-- <div class="postit mb-5 bg-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                aria-controls="post-it-info">
-
-                <div class="postit-usuarios">
-                    <span class="postit-usuario">[usuario1]</span>
-                    <span class="postit-usuario">[usuario2]</span>
-                    <span class="postit-usuario">[usuario3]</span>
-                </div>
-            
-            </div>
-            <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                aria-controls="post-it-info">
-                <div class="postit-usuarios">
-                    <span class="postit-usuario">[usuario1]</span>
-                    <span class="postit-usuario">[usuario2]</span>
-                </div>
-            </div> -->
-<!-- @for (item of columnas[2].tareas; track item.idTarea) {
-                <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                aria-controls="post-it-info">
-                    <p>{{item.nombre}}</p>
-                    <p>{{item.descripcion}}</p>
-                </div>
-            }
-        </div>
-
-        <div class="col-md-3 column">
-            <h5 class="mb-5 bg-secondary text-white p-3 rounded-3 text-start" type="button" id="0" (click)="crearTarea(3)">+ Hecho</h5> -->
-<!-- <div class="postit mb-5 bg-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                aria-controls="post-it-info">
-                <div class="postit-usuarios">
-                    <span class="postit-usuario">[usuario1]</span>
-                </div>
-            </div>
-            <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                aria-controls="post-it-info">
-                <div class="postit-usuarios">
-                    <span class="postit-usuario">[usuario1]</span>
-                    <span class="postit-usuario">[usuario2]</span>
-                    <span class="postit-usuario">[usuario3]</span>
-                </div>
-            </div> -->
-<!-- @for (item of columnas[3].tareas; track item.idTarea) {
-                <div class="postit mb-5 bg-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                aria-controls="post-it-info">
-                    <p>{{item.nombre}}</p>
-                    <p>{{item.descripcion}}</p>
-                </div>
-            }
-        </div>
-    </div>
-</div> -->
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="post-it-info" aria-labelledby="[id Tarea]"
     style="--bs-offcanvas-width: 600px;">
     <form [formGroup]="formularioTarea">
         <div class="offcanvas-header">
-            <!-- <h5 class="offcanvas-title" id="[id Tarea]"></h5> -->
             <input type="text" formControlName="nombre" [readOnly]="esEspectador" class="form-control form-control-lg"
                 [class.is-invalid]="formularioTarea.get('nombre')?.invalid && formularioTarea.get('nombre')?.touched">
             @if(formularioTarea.get('nombre')?.invalid && formularioTarea.get('nombre')?.touched){
@@ -411,7 +274,7 @@
         <div class="offcanvas-body">
             <div class="mb-3">
                 <label for="descripcion" class="form-label">Descripcion:</label>
-                <textarea class="form-control" rows="5"  [readOnly]="esEspectador" formControlName="descripcion"
+                <textarea class="form-control" rows="5" [readOnly]="esEspectador" formControlName="descripcion"
                     [class.is-invalid]="formularioTarea.get('descripcion')?.invalid && formularioTarea.get('descripcion')?.touched"></textarea>
                 @if(formularioTarea.get('descripcion')?.invalid && formularioTarea.get('descripcion')?.touched){
                 <div class="invalid-feedback">
@@ -424,7 +287,8 @@
 
             <div class="float-start">
                 <p>Prioridad: ({{this.formularioTarea.value.prioridad}})</p>
-                <div class="btn-group" [class.pe-none]="esEspectador" role="group" aria-label="Basic mixed styles example">
+                <div class="btn-group" [class.pe-none]="esEspectador" role="group"
+                    aria-label="Basic mixed styles example">
                     <input type="radio" class="btn-check" formControlName="prioridad" name="prioridad" id="btnradio1"
                         value="1" autocomplete="off">
                     <label class="btn btn-danger" for="btnradio1">1</label>
@@ -441,10 +305,6 @@
                         value="4" autocomplete="off">
                     <label class="btn btn-primary" for="btnradio4">4</label>
 
-                    <!-- <button type="button" class="btn btn-danger px-3">1</button>
-                <button type="button" class="btn btn-warning text-white px-3">2</button>
-                <button type="button" class="btn btn-success px-3">3</button>
-                <button type="button" class="btn btn-primary px-3">4</button> -->
                 </div>
                 <div class="mt-5">
                     <p class="mb-4">Miembros Asignados:</p>
@@ -452,8 +312,8 @@
                 </div>
             </div>
 
-            <div class="float-end me-5"  [class.calendario-bloqueado]="esEspectador">
-                <p>Rango Fecha: (en progreso)</p>
+            <div class="float-end me-5" [class.calendario-bloqueado]="esEspectador">
+                <p>Rango Fecha:</p>
                 <input type="text" id="calendario-siempre-abierto" name="calendario" class="form-control me-5"
                     placeholder="Selecciona una fecha">
             </div>
@@ -485,7 +345,7 @@
                     @if(modoModal === 'agregar'){
                     Agregar Colaborador/Espectador
                     } @else {
-                        Modificar Permisos
+                    Modificar Permisos
                     }
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal"></button>
@@ -494,7 +354,8 @@
                 <form [formGroup]="formularioMiembro">
                     <div class="mb-3">
                         <label for="aliasUsuario" class="form-label">Alias</label>
-                        <input type="text" class="form-control" [readOnly]="modoModal === 'editar'" formControlName="aliasUsuario" [class.is-invalid]="formularioMiembro.get('aliasUsuario')?.invalid 
+                        <input type="text" class="form-control" [readOnly]="modoModal === 'editar'"
+                            formControlName="aliasUsuario" [class.is-invalid]="formularioMiembro.get('aliasUsuario')?.invalid 
                         && formularioMiembro.get('aliasUsuario')?.touched">
                         @if(formularioMiembro.get('aliasUsuario')?.invalid &&
                         formularioMiembro.get('aliasUsuario')?.touched){
@@ -525,16 +386,19 @@
                 <button class="btn btn-secondary" data-bs-dismiss="modal">
                     Cancelar
                 </button>
-                <button class="btn btn-primary" [disabled]="formularioMiembro.invalid" (click)="modoModal === 'agregar' ? agregarColaborador() : modificarPermisos()">
+                <button class="btn btn-primary" [disabled]="formularioMiembro.invalid"
+                    (click)="modoModal === 'agregar' ? agregarColaborador() : modificarPermisos()">
                     {{ modoModal === 'agregar' ? 'Agregar' : 'Guardar cambios'}}</button>
             </div>
         </div>
     </div>
 </div>
 @if(menuVisible && usuarioSeleccionado){
-    <div class="dropdown-menu show" (click)="$event.stopPropagation()" [style.left.px]="menuX" [style.top.px]="menuY" style="position: fixed;">
-        <button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado.aliasUsuario)">Ver Perfil</button>
-        <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button" (click)="abrirModalEditar(usuarioSeleccionado)">Cambiar permisos</button>
-        <button class="dropdown-item text-danger" type="button" (click)="eliminarMiembro()">Quitar del tablero</button>
-    </div>
+<div class="dropdown-menu show" (click)="$event.stopPropagation()" [style.left.px]="menuX" [style.top.px]="menuY"
+    style="position: fixed;">
+    <button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado.aliasUsuario)">Ver Perfil</button>
+    <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button"
+        (click)="abrirModalEditar(usuarioSeleccionado)">Cambiar permisos</button>
+    <button class="dropdown-item text-danger" type="button" (click)="eliminarMiembro()">Quitar del tablero</button>
+</div>
 }

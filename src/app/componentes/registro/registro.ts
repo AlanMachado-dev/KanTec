@@ -15,6 +15,7 @@ export class Registro {
   constructor(private http: Http, private _cdr: ChangeDetectorRef) { }
 
   imagenSeleccionada!: File;
+  imagenPreview: string | ArrayBuffer | null = null;
   extPermitidas = ['image/jpg', 'image/jpeg', 'image/png'];
   formBuilder = inject(FormBuilder);
   private router = inject(Router);
@@ -63,16 +64,57 @@ export class Registro {
       }
     });
   }
+  dragActivo = false;
+
+  onDragEnter(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = true;
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = false;
+
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      this.processFileSelected(event.dataTransfer.files[0]);
+    }
+  }
 
   onFileSelected(event: any) {
-    this.imagenSeleccionada = event.target.files[0];
+    const file = event.target.files[0];
+    if (file) {
+      this.processFileSelected(file);
+    }
+  }
+
+  processFileSelected(file: File) {
+    this.imagenSeleccionada = file;
     console.log(this.imagenSeleccionada.type);
     if (!this.extPermitidas.includes(this.imagenSeleccionada.type)) {
       this.errorMessage = "Tipo de imagen no permitida!"
       this.mostrarError = true;
+      this.imagenPreview = null;
       this._cdr.detectChanges();
     } else {
       this.mostrarError = false;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagenPreview = reader.result;
+        this._cdr.detectChanges(); // Forzar renderizado en Angular
+      };
+      reader.readAsDataURL(this.imagenSeleccionada);
+
       this._cdr.detectChanges();
     }
   }

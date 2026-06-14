@@ -23,10 +23,10 @@
             <img src="{{imagenUsu}}" (error)="onImageError($event)" alt="img" height="30px" width="30px" class="rounded-circle" style="object-fit: cover;">
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item fw-bold" (click)="verPerfil()">{{usuario?.alias}}</a></li>
+            <li><a class="dropdown-item fw-bold" (click)="verPerfil()" type="button">{{usuario?.alias}}</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" routerLink="/home">Inicio</a></li>
-            <li><a class="dropdown-item" (click)="crearTablero()">Crear Tablero</a></li>
+            <li><a class="dropdown-item" (click)="crearTablero()" type="button">Crear Tablero</a></li>
             <li><a class="dropdown-item" (click)="cargarInvitaciones()" data-bs-toggle="modal" type="button" data-bs-target="#modalInvitaciones">Mis Invitaciones</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" href="" (click)="cerrarSesion()">Cerrar Sesion</a></li>

@@ -1,3 +1,22 @@
+<style>
+    .divImagen {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        border: 1px dashed #7daee6;
+        border-radius: 10px;
+        padding-block: 24px;
+        transition: all 0.2s ease;
+    }
+
+    .divImagen--drag-active {
+        border: 1px dashed #0056b3;
+        background-color: #cce5ff;
+        opacity: 0.5;
+    }
+</style>
+
 <div class="row bg-primary min-vh-100 d-flex justify-content-center align-items-center p-2">
     <div class="col-4"></div>
     <div class="col-4 bg-light rounded p-4">
@@ -16,7 +35,7 @@
                     Mínimo de 8 caracteres requerido.
                     }
                     @if(registroForm.get('alias')?.errors?.['maxlength']) {
-                        Máximo de caracteres debe ser 30.
+                    Máximo de caracteres debe ser 30.
                     }
                     @if(registroForm.get('alias')?.errors?.['pattern']) {
                         Carácteres permitidos: a-z A-Z 0-9 _ñ.
@@ -24,43 +43,44 @@
                 </div>
                 }
             </div>
-            
+
             <div class="container border rounded bg-secondary-subtle my-3">
-            <div>
-                <label for="password" class="form-label mt-2">Contraseña</label>
-                <input type="password" formControlName="password" class="form-control" id="password"
-                    [class.is-invalid]="registroForm.get('password')?.invalid && registroForm.get('password')?.touched">
-                @if(registroForm.get('password')?.invalid && registroForm.get('password')?.touched){
-                <div class="invalid-feedback">
-                    @if(registroForm.get('password')?.errors?.['required']) {
-                    La contraseña es obligatoria.
-                    }
-                    @if(registroForm.get('password')?.errors?.['minlength']) {
-                    Mínimo de 8 caracteres requerido.
-                    }
-                </div>
-                }
-            </div>
-            <div class="mb-3">
-                <label for="confirmPassword" class="form-label mt-2">Confirmar Contraseña</label>
-                <input type="password" formControlName="confirmPassword" class="form-control" id="confirmPassword"
-                    [class.is-invalid]="(registroForm.get('confirmPassword')?.invalid || registroForm.errors?.['noMatch']) && registroForm.get('confirmPassword')?.touched">
-                @if(registroForm.get('confirmPassword')?.touched){
-                <div class="invalid-feedback">
-                    @if(registroForm.get('confirmPassword')?.errors?.['required']) {
-                    Confirmar la contraseña es obligatorio.
-                    }
-                    @if(registroForm.get('confirmPassword')?.errors?.['noMatch']) {
-                    Las contraseñas no coinciden.
+                <div>
+                    <label for="password" class="form-label mt-2">Contraseña</label>
+                    <input type="password" formControlName="password" class="form-control" id="password"
+                        [class.is-invalid]="registroForm.get('password')?.invalid && registroForm.get('password')?.touched">
+                    @if(registroForm.get('password')?.invalid && registroForm.get('password')?.touched){
+                    <div class="invalid-feedback">
+                        @if(registroForm.get('password')?.errors?.['required']) {
+                        La contraseña es obligatoria.
+                        }
+                        @if(registroForm.get('password')?.errors?.['minlength']) {
+                        Mínimo de 8 caracteres requerido.
+                        }
+                    </div>
                     }
                 </div>
-                }
-            </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label mt-2">Confirmar Contraseña</label>
+                    <input type="password" formControlName="confirmPassword" class="form-control" id="confirmPassword"
+                        [class.is-invalid]="(registroForm.get('confirmPassword')?.invalid || registroForm.errors?.['noMatch']) && registroForm.get('confirmPassword')?.touched">
+                    @if(registroForm.get('confirmPassword')?.touched){
+                    <div class="invalid-feedback">
+                        @if(registroForm.get('confirmPassword')?.errors?.['required']) {
+                        Confirmar la contraseña es obligatorio.
+                        }
+                        @if(registroForm.get('confirmPassword')?.errors?.['noMatch']) {
+                        Las contraseñas no coinciden.
+                        }
+                    </div>
+                    }
+                </div>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Correo electronico</label>
-                <input type="email" #emailInput (blur)="afterEmail(emailInput.value)" formControlName="email" class="form-control" id="email"
+                <input type="email" #emailInput (blur)="afterEmail(emailInput.value)" formControlName="email"
+                    class="form-control" id="email"
                     [class.is-invalid]="registroForm.get('email')?.invalid && registroForm.get('email')?.touched">
                 @if(registroForm.get('email')?.invalid && registroForm.get('email')?.touched){
                 <div class="invalid-feedback">
@@ -68,10 +88,10 @@
                     El email es obligatorio.
                     }
                     @if(registroForm.get('email')?.errors?.['email']) {
-                        Debe ingresar un email válido.
+                    Debe ingresar un email válido.
                     }
                     @if(registroForm.get('email')?.errors?.['maxlength']) {
-                        Máximo de caracteres debe ser 60.
+                    Máximo de caracteres debe ser 60.
                     }
                 </div>
                 }
@@ -86,7 +106,7 @@
                     El nombre es obligatorio.
                     }
                     @if(registroForm.get('nombre')?.errors?.['maxlength']) {
-                        Máximo de caracteres debe ser 50.
+                    Máximo de caracteres debe ser 50.
                     }
                     @if(registroForm.get('nombre')?.errors?.['pattern']) {
                         Los nombres solo pueden tener letras y espacios.
@@ -94,11 +114,43 @@
                 </div>
                 }
             </div>
-            <div class="mb-3">
-                <label for="imagen" class="form-label">Imagen de Perfil</label>
-                <input type="file" (change)="onFileSelected($event)" formControlName="imagen"
-                    class="form-control bg-secondary" id="imagen" accept="image/*">
+
+
+            <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo"
+                (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event)" (click)="fileInput.click()" style="cursor: pointer;">
+
+                @if (!imagenPreview) {
+                <p class="mb-0 text-center text-muted">Arrastra tu foto de perfil aquí o haz clic para seleccionar</p>
+                } @else {
+                <div class="text-center">
+                    <img [src]="imagenPreview" alt="Previsualización" class="img-thumbnail mb-2"
+                        style="max-height: 120px; object-fit: cover;" />
+                    <p class="mb-0 text-success small fw-bold">¡Imagen cargada con éxito!</p>
+                    <p class="text-muted small mb-0">(Haz clic o arrastra otra para cambiarla)</p>
+                </div>
+                }
+
+                <input id="imagen" type="file" #fileInput hidden (change)="onFileSelected($event)"
+                    accept="image/png, image/jpeg, image/jpg" />
             </div>
+
+
+            <!-- <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo"
+                (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event)" (click)="">
+                <p>Arrastra tus archivos aquí o haz clic para seleccionar</p>
+                <input id="imagen" type="file" hidden (change)="onFileSelected($event)" />
+            </div> -->
+
+
+            <!-- <div class="mb-3 divImagen" id="divImagen">
+                <label for="imagen" class="form-label">Imagen de Perfil</label>
+                <input type="file" style="display: none;" (change)="onFileSelected($event)" [class.divImagen--drag-active]="dragActivo"
+                    (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+                    (drop)="onDrop($event)" formControlName="imagen" class="form-control bg-secondary" id="imagen"
+                    accept="image/*">
+            </div> -->
             @if(mostrarError){
             <div class="alert alert-danger m-2 p-2 text-center" role="alert">
                 {{errorMessage}}
@@ -109,11 +161,11 @@
                 <button type="submit" [disabled]="!registroForm.valid || mostrarError"
                     class="btn btn-outline-primary mt-3 w-100 h-25 fw-bold">Registrate</button>
                 }@else {
-                    <!-- <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" disabled>Cargando...</button> -->
-                    <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" type="button" disabled>
-                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                        <span role="status"> Cargando...</span>
-                    </button>
+                <!-- <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" disabled>Cargando...</button> -->
+                <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status"> Cargando...</span>
+                </button>
                 }
             </div>
 

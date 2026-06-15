@@ -60,8 +60,6 @@ match(true) {
     $partes[1] === 'tableros' && isset($partes[2])  && !isset($partes[3])
         && $method === 'DELETE' => $tablero->delete($partes[2]),
     $partes[1] === 'tableros' && !isset($partes[2]) 
-        && $method === 'GET' => $tablero->getAll(),
-    $partes[1] === 'tableros' && !isset($partes[2]) 
         && $method === 'POST' => $tablero->create(),
     $partes[1] === 'tableros' && $partes[2] === 'usuario' && isset($partes[3]) && !isset($partes[4]) 
         && $method === 'GET' => $tablero->getTableros($partes[3]),
@@ -76,8 +74,8 @@ match(true) {
         && $method === 'PUT' => $tablero->actualizarPermisosMiembro(),
     $partes[1] === 'colaboradores' && $partes[2] === 'misColaboraciones' && isset($partes[3]) && !isset($partes[4])
         && $method === 'GET' => $tablero->misColaboraciones($partes[3]),
-    $partes[1] === 'colaboradores' && isset($partes[2]) && !isset($partes[3]) 
-        && $method === 'GET' => $tablero->colaboradoresTablero($partes[2]),
+    $partes[1] === 'colaboradores' && $partes[2] === 'tablero' && isset($partes[3]) && !isset($partes[4])
+        && $method === 'GET' => $tablero->colaboradoresTablero($partes[3]),
     $partes[1] === 'colaboradores' && $partes[2] === 'invitaciones' && isset($partes[3]) && !isset($partes[4])
         && $method === 'GET' => $tablero->getInvitaciones($partes[3]),
     $partes[1] === 'colaboradores' && $partes[2] === 'invitacion' && !isset($partes[3])

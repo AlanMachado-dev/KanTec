@@ -29,6 +29,8 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/tableros/id
     public function getOne(string $id): void
     {
+        $token = verificarToken();
+
         $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
         $stmt->execute([$id]);
         $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -36,6 +38,16 @@ class tableroAPI
         if ($tablero === false || empty($tablero)) {
             respond(404, ["error" => "Tablero no encontrado"]);
         }
+        $alias = $token['alias'];
+        $stmt = $this->db->prepare("SELECT * FROM pertenece WHERE aliasUsuario = ? AND idTablero = ?");
+        $stmt->execute([$alias, $id]);
+
+        $colaboracionSolicitante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$colaboracionSolicitante) {
+            respond(403, ["error" => "No tiene permisos para consultar este tablero"]);
+        }
+
 
         respond(200, $tablero);
     }
@@ -44,6 +56,8 @@ class tableroAPI
     public function create(): void
     {
         $body = json_decode(file_get_contents("php://input"), true);
+
+        $token = verificarToken();
 
         if (empty($body['alias'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
@@ -54,6 +68,10 @@ class tableroAPI
 
         if ($user === false || empty($user)) {
             respond(404, ["error" => "Usuario no encontrado"]);
+        }
+
+        if ($body['alias'] != $token['alias']) {
+            respond(403, ["error" => "No puedes crear un tablero en nombre de otro usuario."]);
         }
 
         date_default_timezone_set('America/Montevideo');
@@ -95,6 +113,8 @@ class tableroAPI
     {
         $body = json_decode(file_get_contents("php://input"), true);
 
+        $token = verificarToken();
+
         if (!$body) {
             respond(400, ["error" => "Body inválido o vacío"]);
         }
@@ -104,11 +124,18 @@ class tableroAPI
 
         $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
-        // Si se intenta actualizar el tablero y los datos son iguales el $stmt->rowCount() === 0 va a tirar error de tablero no encontrado
-        // y eso esta mal deberia simplemente decir que esta actualizado aunque no haya cambios supongo
         if (!$tablero) {
             respond(404, ["error" => "Tablero no encontrado"]);
+        }
+
+        $alias = $token['alias'];
+        $stmt = $this->db->prepare("SELECT * FROM pertenece WHERE aliasUsuario = ? AND idTablero = ?");
+        $stmt->execute([$alias, $id]);
+
+        $colaboracionSolicitante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$colaboracionSolicitante || (int)$colaboracionSolicitante['tipoRelacion'] != (int)0) {
+            respond(403, ["error" => "No tiene permisos para editar este tablero"]);
         }
 
         //Cambio para que se pueda actualizar el tablero sin necesidad de actualizar todas las cosas del tablero
@@ -128,12 +155,28 @@ class tableroAPI
     // DELETE http://localhost/kantecAPI/api/tableros/1
     public function delete(string $id): void
     {
-        $stmt = $this->db->prepare("DELETE FROM tablero WHERE id = ?");
-        $stmt->execute([$id]);
+        $token = verificarToken();
 
-        if ($stmt->rowCount() === 0) {
+        $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
+        $stmt->execute([$id]);
+        $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($tablero === false || empty($tablero)) {
             respond(404, ["error" => "Tablero no encontrado"]);
         }
+
+        $alias = $token['alias'];
+        $stmt = $this->db->prepare("SELECT * FROM pertenece WHERE aliasUsuario = ? AND idTablero = ?");
+        $stmt->execute([$alias, $id]);
+
+        $colaboracionSolicitante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$colaboracionSolicitante || (int)$colaboracionSolicitante['tipoRelacion'] != (int)0) {
+            respond(403, ["error" => "No tiene permisos para borrar este tablero"]);
+        }
+
+        $stmt = $this->db->prepare("DELETE FROM tablero WHERE id = ?");
+        $stmt->execute([$id]);
 
         respond(200, ["mensaje" => "Tablero eliminado"]);
     }
@@ -149,6 +192,12 @@ class tableroAPI
             respond(404, ["error" => "Usuario no encontrado"]);
         }
 
+        $token = verificarToken();
+
+        if ($token['alias'] != $alias) {
+            respond(403, ["error" => "No puedes ver las colaboraciones que no son tuyas"]);
+        }
+
         $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT idTablero from pertenece where aliasUsuario = ? AND tipoRelacion != 0)");
         $stmt->execute([$alias]);
         respond(200, $stmt->fetchAll());
@@ -157,6 +206,26 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/colaboradores/idTablero
     public function colaboradoresTablero(string $id): void
     {
+        $token = verificarToken();
+
+        $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
+        $stmt->execute([$id]);
+        $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($tablero === false || empty($tablero)) {
+            respond(404, ["error" => "Tablero no encontrado"]);
+        }
+
+        $alias = $token['alias'];
+        $stmt = $this->db->prepare("SELECT * FROM pertenece WHERE aliasUsuario = ? AND idTablero = ?");
+        $stmt->execute([$alias, $id]);
+
+        $colaboracionSolicitante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$colaboracionSolicitante) {
+            respond(403, ["error" => "No tiene permisos para consultar colaboradores de este tablero"]);
+        }
+
         $stmt = $this->db->prepare("SELECT p.aliasUsuario, p.tipoRelacion, u.imagen from pertenece p JOIN perfil u ON u.alias = p.aliasUsuario where idTablero = ?");
         $stmt->execute([$id]);
 
@@ -164,9 +233,11 @@ class tableroAPI
     }
 
     // POST http://localhost/kantecAPI/api/colaboradores/invitar
-    public function agregarColaborador(): void 
+    public function agregarColaborador(): void
     {
         $body = json_decode(file_get_contents("php://input"), true);
+
+        $token = verificarToken();
 
         if (!isset($body['idTablero']) || !isset($body['aliasUsuario']) || !isset($body['tipoRelacion'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
@@ -208,6 +279,15 @@ class tableroAPI
             respond(409, ["codigo" => "INVITACION_PENDIENTE", "error" => "El usuario ya tiene una invitación pendiente"]);
         }
 
+        $alias = $token['alias'];
+        $stmt = $this->db->prepare("SELECT * FROM pertenece WHERE aliasUsuario = ? AND idTablero = ?");
+        $stmt->execute([$alias, $body['idTablero']]);
+        $colaboracionSolicitante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$colaboracionSolicitante || (int)$colaboracionSolicitante['tipoRelacion'] != (int)0) {
+            respond(403, ["error" => "No tiene permisos para modificar colaboradores de este tablero"]);
+        }
+
         $stmt = $this->db->prepare("INSERT INTO invitacion (idTablero, aliasInvitado, aliasCreador, tipoRelacion, notificado) VALUES (? ,? ,? ,? , false)");
         $stmt->execute([$body['idTablero'], $body['aliasUsuario'], $tablero['aliasCreador'], $body['tipoRelacion']]);
 
@@ -219,6 +299,20 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/colaboradores/invitaciones/alias
     public function getInvitaciones(string $alias)
     {
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt->execute([$alias]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($usuario === false || empty($usuario)) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+        }
+
+        $token = verificarToken();
+
+        if ($token['alias'] != $alias) {
+            respond(403, ["error" => "No puedes ver las invitaciones que no son tuyas"]);
+        }
+
         $stmt = $this->db->prepare("SELECT i.idTablero, i.aliasCreador, t.titulo as tituloTablero, i.tipoRelacion FROM invitacion i JOIN tablero t ON t.id = i.idTablero WHERE i.aliasInvitado = ?");
         $stmt->execute([$alias]);
 
@@ -230,14 +324,20 @@ class tableroAPI
     {
         $body = json_decode(file_get_contents("php://input"), true);
 
+        $token = verificarToken();
+
         if (!isset($body['idTablero']) || !isset($body['aliasUsuario']) || !isset($body['acepto'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
+        }
+        $alias = $token['alias'];
+        if ($alias != $body['aliasUsuario']) {
+            respond(403, ["error" => "No puedes aceptar invitaciones de otros usuarios."]);
         }
         if ($body['acepto'] == 1) {
             $stmt = $this->db->prepare(
                 "SELECT * FROM invitacion WHERE idTablero = ? AND aliasInvitado = ?"
             );
-            $stmt->execute([ $body['idTablero'], $body['aliasUsuario'] ]);
+            $stmt->execute([$body['idTablero'], $body['aliasUsuario']]);
 
             $invitacion = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -271,8 +371,11 @@ class tableroAPI
     }
 
     // DELETE http://localhost/kantecAPI/api/colaboradores/miembro
-    public function eliminarMiembro(){
+    public function eliminarMiembro()
+    {
         $body = json_decode(file_get_contents("php://input"), true);
+
+        $token = verificarToken();
 
         if (!isset($body['idTablero']) || !isset($body['aliasUsuario'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
@@ -303,6 +406,16 @@ class tableroAPI
         if ($colaboracion['tipoRelacion'] == 0) {
             respond(400, ['error' => 'No se puede eliminar al creador del tablero']);
         }
+
+        $alias = $token['alias'];
+        $stmt = $this->db->prepare("SELECT * FROM pertenece WHERE aliasUsuario = ? AND idTablero = ?");
+        $stmt->execute([$alias, $body['idTablero']]);
+        $colaboracionSolicitante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$colaboracionSolicitante || (int)$colaboracionSolicitante['tipoRelacion'] != (int)0) {
+            respond(403, ["error" => "No tiene permisos para modificar colaboradores de este tablero"]);
+        }
+
         $stmt = $this->db->prepare("DELETE from pertenece where idTablero = ? AND aliasUsuario = ?");
         $stmt->execute([$body['idTablero'], $body['aliasUsuario']]);
 
@@ -312,14 +425,19 @@ class tableroAPI
     }
 
     // PUT http://localhost/kantecAPI/api/colaboradores/permisos
-    public function actualizarPermisosMiembro(){
+    public function actualizarPermisosMiembro()
+    {
         $body = json_decode(file_get_contents("php://input"), true);
+
+        $token = verificarToken();
 
         if (!isset($body['idTablero']) || !isset($body['aliasUsuario']) || !isset($body['tipoRelacion'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
         }
 
-        if($body['tipoRelacion'] != 1 && $body['tipoRelacion'] != 2){
+        $alias = $token['alias']; //Agregar control a todas las operaciones que necesiten un usuario iniciado.
+
+        if ($body['tipoRelacion'] != 1 && $body['tipoRelacion'] != 2) {
             respond(400, ['error' => 'Tipo de relación inválido']);
         }
 
@@ -347,17 +465,25 @@ class tableroAPI
             respond(404, ["error" => "Usuario no colabora con este tablero"]);
         }
 
-        if ($colaboracion['tipoRelacion'] == 0){
+        if ($colaboracion['tipoRelacion'] == 0) {
             respond(400, ['error' => 'No se puede modificar al creador del tablero']);
         }
 
-        if((int)$colaboracion['tipoRelacion'] == (int)$body['tipoRelacion']){
+        if ((int)$colaboracion['tipoRelacion'] == (int)$body['tipoRelacion']) {
             respond(409, ['error' => 'El usuario ya tiene ese permiso']);
             exit();
         }
 
+        $stmt = $this->db->prepare("SELECT * FROM pertenece WHERE aliasUsuario = ? AND idTablero = ?");
+        $stmt->execute([$alias, $body['idTablero']]);
+        $colaboracionSolicitante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$colaboracionSolicitante || (int)$colaboracionSolicitante['tipoRelacion'] != (int)0) {
+            respond(403, ["error" => "No tiene permisos para modificar colaboradores de este tablero"]);
+        }
+
         $stmt = $this->db->prepare("UPDATE pertenece set tipoRelacion = ? WHERE idTablero = ? AND aliasUsuario = ?");
-        $stmt->execute([$body['tipoRelacion'],$body['idTablero'], $body['aliasUsuario']]);
+        $stmt->execute([$body['tipoRelacion'], $body['idTablero'], $body['aliasUsuario']]);
 
         respond(200, [
             "mensaje" => "Permisos actualizados"

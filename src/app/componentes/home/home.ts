@@ -331,6 +331,7 @@ export class Home {
               text: "No se pudo borrar el tablero. Inténtalo de nuevo.",
               icon: "error"
             });
+            console.log(error);
           }
         });
       }

@@ -134,18 +134,28 @@ export class Http {
   }
 
   //tableros//
-  getTablerosAlias(alias: string): Observable<TableroInterfaz[]> {
-    return this.http.get<TableroInterfaz[]>(`${this.url}tableros/usuario/${alias}`);
+  getTablerosAlias(alias: string): Observable<TableroInterfaz[]>{
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.get<TableroInterfaz[]>(`${this.url}tableros/usuario/${alias}`, { headers });
     // return this.http.get<TableroInterfaz[]>(`http://localhost/kantecAPI/api/tableros/usuario/${alias}`);
 
   }
 
-  crearTablero(alias: string): Observable<any> {
-    return this.http.post<any>(this.url + "tableros", { alias: alias });
+
+  crearTablero(alias: string): Observable<any>{
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.post<any>(this.url+"tableros", {alias: alias},{headers});
   }
 
-  getTablero(idTablero: string): Observable<TableroInterfaz> {
-    return this.http.get<TableroInterfaz>(`${this.url}tableros/${idTablero}`);
+  getTablero(idTablero: string): Observable<TableroInterfaz>{
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.get<TableroInterfaz>(`${this.url}tableros/${idTablero}`,{headers});
   }
 
   private tableroCreado = new Subject<void>();
@@ -164,42 +174,69 @@ export class Http {
   }
 
   actualizarTablero(idTablero: string, body: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
     return this.http.put<any>(`${this.url}tableros/${idTablero}`,
-      body
+      body,{headers}
     );
   }
 
   borrarTablero(idTablero: string): Observable<any> {
-    return this.http.delete<any>(`${this.url}tableros/${idTablero}`);
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.delete<any>(`${this.url}tableros/${idTablero}` , {headers});
   }
 
   //colaboraciones//
 
-  getTablerosColaborados(alias: string): Observable<TableroInterfaz[]> {
-    return this.http.get<TableroInterfaz[]>(`${this.url}colaboradores/misColaboraciones/${alias}`);
+  getTablerosColaborados(alias: string): Observable<TableroInterfaz[]>{
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.get<TableroInterfaz[]>(`${this.url}colaboradores/misColaboraciones/${alias}`,{headers});
   }
 
   getColaboradoresDeTablero(idTablero: string): Observable<Colaborador[]> {
-    return this.http.get<Colaborador[]>(`${this.url}colaboradores/${idTablero}`);
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.get<Colaborador[]>(`${this.url}colaboradores/tablero/${idTablero}`,{headers});
   }
   getInvitaciones(alias: string): Observable<Invitacion[]> {
-    return this.http.get<Invitacion[]>(`${this.url}colaboradores/invitaciones/${alias}`);
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.get<Invitacion[]>(`${this.url}colaboradores/invitaciones/${alias}`,{headers});
   }
 
   contestarInvitacion(aliasUsuario: string, idTablero: string, acepto: number): Observable<any> {
-    return this.http.put<any>(this.url + "colaboradores/invitacion/", { aliasUsuario: aliasUsuario, idTablero: idTablero, acepto: acepto });
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.put<any>(this.url+"colaboradores/invitacion/", { aliasUsuario: aliasUsuario, idTablero: idTablero, acepto: acepto },{headers});
   }
 
   invitarColaborador(idTablero: string, body: any): Observable<any> {
-    return this.http.post<any>(this.url + "colaboradores/invitar", { idTablero: idTablero, tipoRelacion: body.tipoRelacion, aliasUsuario: body.aliasUsuario });
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.post<any>(this.url+"colaboradores/invitar", {idTablero: idTablero, tipoRelacion: body.tipoRelacion, aliasUsuario: body.aliasUsuario},{headers});
   }
 
   eliminarMiembro(idTablero: string, aliasUsuario: string): Observable<any> {
-    return this.http.delete<any>(this.url + "colaboradores/miembro", { body: { idTablero: idTablero, aliasUsuario: aliasUsuario } });
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.delete<any>(this.url+"colaboradores/miembro",{ headers,body:{idTablero: idTablero, aliasUsuario: aliasUsuario}});
   }
 
   modificarPermisos(idTablero: string, aliasUsuario: string, tipoRelacion: number): Observable<any> {
-    return this.http.put<any>(this.url + "colaboradores/permisos", { idTablero: idTablero, aliasUsuario: aliasUsuario, tipoRelacion: tipoRelacion });
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.put<any>(this.url + "colaboradores/permisos", { idTablero: idTablero, aliasUsuario: aliasUsuario , tipoRelacion: tipoRelacion},{headers});
   }
   //tarea//
   crearTarea(idTablero: string, columna: number, posicion: number): Observable<any> {

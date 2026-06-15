@@ -156,17 +156,34 @@
     .largoNombreTarea{
         width: 65%;
     }
+
+    .avatar-extra {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #495057;
+        border: 2px solid #adb5bd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
 </style>
 
 <div class="w-100 bg-black p-3 d-flex">
-    <h5 class="text-white">{{miTablero?.titulo}} by {{miTablero?.aliasCreador}}</h5>
+    <h5 class="text-white mb-0">{{miTablero?.titulo}} by {{miTablero?.aliasCreador}}</h5>
+    @if(esEspectador){
+    <small class="text-warning ms-2">• Modo Espectador</small>
+    }
     <div class="ms-auto d-flex align-items-center gap-2">
         @if(miTablero?.aliasCreador === aliasLogueado){
         <span class="text-white ms-auto" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button"
             (click)="abrirModalAgregar()">[+]</span>
         }
 
-        @for(colaborador of colaboradoresTablero; track colaborador.aliasUsuario){
+        @for(colaborador of colaboradoresTablero.slice(0,maxColaboradoresVisibles); track colaborador.aliasUsuario){
 
         <div class="avatar-contenedor dropdown" [ngClass]="{'creador': colaborador.tipoRelacion === 0, 'contribuidor': colaborador.tipoRelacion === 1, 
             'espectador': colaborador.tipoRelacion === 2 }">
@@ -186,6 +203,11 @@
 
         </div>
 
+        }
+        @if(colaboradoresTablero.length > maxColaboradoresVisibles){
+            <div class="avatar-extra" [title]="(colaboradoresTablero.length - maxColaboradoresVisibles) + ' colaboradores más'">
+                +{{colaboradoresTablero.length - maxColaboradoresVisibles}}
+            </div>
         }
     </div>
 </div>

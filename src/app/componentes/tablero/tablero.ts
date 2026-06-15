@@ -33,6 +33,8 @@ export class Tablero implements OnInit, AfterViewInit {
   rutaImagenes !: string;
   miTablero: TableroInterfaz | null = null;
   esEspectador: boolean = false;
+  private avisoEspectadorMostrado : boolean = false;
+  maxColaboradoresVisibles: number = 8;
   private intervaloColaboradores: any;
   usuarioSeleccionado: Colaborador | null = null;
   modoModal: 'agregar' | 'editar' = 'agregar';
@@ -95,7 +97,7 @@ export class Tablero implements OnInit, AfterViewInit {
             });
 
           this.recargarColaboradores();
-
+          this.actualizarLimiteColaboradores();
           this.intervaloColaboradores = setInterval(() => { //pueden hacer algo parecido para recargar tareas supongo
             this.recargarColaboradores();
           }, 5000);
@@ -374,27 +376,40 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
   recargarColaboradores(): void {
     if(this.idTablero){
       this.http.getColaboradoresDeTablero(this.idTablero)
-        .subscribe(colaboradores => {
+        .subscribe({ next: (colaboradores) => {
           this.colaboradoresTablero = colaboradores;
-          this.cdr.detectChanges();
           if (this.colaboradoresTablero) {
             const miColaboracion = this.colaboradoresTablero.find(
               c => c.aliasUsuario === this.aliasLogueado);
             this.esEspectador = miColaboracion?.tipoRelacion === 2;
-            if(!miColaboracion){
+            this.cdr.detectChanges();
+            if (this.esEspectador && !this.avisoEspectadorMostrado) {
+              this.avisoEspectadorMostrado = true;
               Swal.fire({
                 toast: true,
-                position: 'top-end',
+                position: 'bottom-end',
                 icon: 'info',
-                title: 'Ya no tienes acceso a este tablero',
+                title: 'Viendo el tablero como espectador',
                 showConfirmButton: false,
                 timer: 3000
               });
-
-              this.router.navigate(['/home']);
             }
           }
-        })
+        }, error: (err) => {
+          if(err.status === 403) {
+            this.router.navigate(['/home']);
+
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'info',
+              title: 'Ya no tienes acceso a este tablero',
+              showConfirmButton: false,
+              timer: 3000
+            });
+          }
+        }
+      })
         
     }
   }
@@ -511,11 +526,25 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
       this.verPerfil(colaborador.aliasUsuario);
       return;
     }
-    console.log(colaborador);
     this.usuarioSeleccionado = colaborador;
-    console.log(this.usuarioSeleccionado);
   }
 
+  private actualizarLimiteColaboradores(): void {
+    const ancho = window.innerWidth;
+
+    if (ancho < 768) {
+      this.maxColaboradoresVisibles = 3;
+    } else if (ancho < 1200) {
+      this.maxColaboradoresVisibles = 5;
+    } else {
+      this.maxColaboradoresVisibles = 8;
+    }
+    this.cdr.detectChanges();
+  }
+  @HostListener('window:resize')
+  onResize(): void {
+    this.actualizarLimiteColaboradores();
+  }
   ////// EDITAR TAREA //////
 
   formularioTarea: FormGroup = this.fb.group({

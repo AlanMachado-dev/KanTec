@@ -114,11 +114,11 @@ match(true) {
     $partes[1] === 'asignacion' &&
         $method === 'POST' => $asignacion->create(),    
     $partes[1] === 'asignacion' &&
-        $method === 'DELETE' => $asignacion->delete(),    
-    $partes[1] === 'asignacion' && $partes[2] === 'alias' &&
-        $method === 'GET' => $asignacion->getAsignacionesPorAlias(),    
-    $partes[1] === 'asignacion' && $partes[2] === 'tarea' &&
-        $method === 'GET' => $asignacion->getAsignacionesPorTarea(),
+        $method === 'DELETE' => $asignacion->delete(),        
+//    $partes[1] === 'asignacion' &&
+//        $method === 'GET' => $asignacion->getAsignacionesPorAlias($partes[2], $partes[3]),
+    $partes[1] === 'asignacion' &&
+        $method === 'GET' => $asignacion->getAsignacionesPorTarea($partes[2], $partes[3]),
 
     default => respond(404, ["error" => "Ruta no encontrada"])
 };

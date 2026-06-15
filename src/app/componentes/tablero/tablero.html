@@ -106,17 +106,7 @@
         background-color: papayawhip;
         color: black;
 
-        &::before {
-            content: '';
-            width: 12px;
-            height: 12px;
-            background: #333;
-            border-radius: 50%;
-            position: absolute;
-            top: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+
 
         &:active {
             cursor: grabbing;
@@ -178,21 +168,23 @@
 
         @for(colaborador of colaboradoresTablero; track colaborador.aliasUsuario){
 
-            <div class="avatar-contenedor dropdown" [ngClass]="{'creador': colaborador.tipoRelacion === 0, 'contribuidor': colaborador.tipoRelacion === 1, 
+        <div class="avatar-contenedor dropdown" [ngClass]="{'creador': colaborador.tipoRelacion === 0, 'contribuidor': colaborador.tipoRelacion === 1, 
             'espectador': colaborador.tipoRelacion === 2 }">
-                <img [src]="rutaImagenes + colaborador.imagen" [alt]="colaborador.aliasUsuario" 
-                [title]="colaborador.aliasUsuario + ' - ' + getRol(colaborador.tipoRelacion)" type="button" 
-                (click)="abrirMenuUsuario(colaborador)" class="rounded-circle dropdown-toggle" width="32" height="32" data-bs-toggle="dropdown" data-bs-target="#menuUsuario"
-                >
-                
-                <div class="dropdown-menu" style="position: fixed;" id="menuUsuario">
-                    <li><button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver Perfil</button></li>
-                    <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button"
-                        (click)="abrirModalEditar()">Cambiar permisos</button></li>
-                    <li><button class="dropdown-item text-danger" type="button" (click)="eliminarMiembro()">Quitar del tablero</button></li>
-                </div>
-                
+            <img [src]="rutaImagenes + colaborador.imagen" [alt]="colaborador.aliasUsuario"
+                [title]="colaborador.aliasUsuario + ' - ' + getRol(colaborador.tipoRelacion)" type="button"
+                (click)="abrirMenuUsuario(colaborador)" class="rounded-circle dropdown-toggle" width="32" height="32"
+                data-bs-toggle="dropdown" data-bs-target="#menuUsuario">
+
+            <div class="dropdown-menu" style="position: fixed;" id="menuUsuario">
+                <li><button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver
+                        Perfil</button></li>
+                <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#agregarColaborador"
+                        type="button" (click)="abrirModalEditar()">Cambiar permisos</button></li>
+                <li><button class="dropdown-item text-danger" type="button" (click)="eliminarMiembro()">Quitar del
+                        tablero</button></li>
             </div>
+
+        </div>
 
         }
     </div>
@@ -216,9 +208,30 @@
                         [style.cursor]="esEspectador ? 'pointer' : 'grab'">
 
                         <div class="postit-usuarios">
-                            <span class="postit-usuario">[usuario1]</span>
-                            <span class="postit-usuario">[usuario2]</span>
-                            <!-- para que se vean los usuarios bien hay que modificar el css probablemente -->
+                            @for(asignado of tarea.asignaciones; track asignado.aliasUsuario){
+
+                            <div class="avatar-contenedor dropdown" [ngClass]="{'creador': asignado.tipoRelacion === 0, 'contribuidor': asignado.tipoRelacion === 1, 
+            'espectador': asignado.tipoRelacion === 2 }">
+                                <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
+                                    [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)"
+                                    type="button" (click)="abrirMenuUsuario(asignado)"
+                                    class="rounded-circle dropdown-toggle" width="32" height="32"
+                                    data-bs-toggle="dropdown" data-bs-target="#menuUsuario">
+
+                                <div class="dropdown-menu" style="position: fixed;" id="menuUsuario">
+                                    <li><button class="dropdown-item"
+                                            (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver
+                                            Perfil</button></li>
+                                    <li><button class="dropdown-item" data-bs-toggle="modal"
+                                            data-bs-target="#agregarColaborador" type="button"
+                                            (click)="abrirModalEditar()">Cambiar permisos</button></li>
+                                    <li><button class="dropdown-item text-danger" type="button"
+                                            (click)="eliminarMiembro()">Quitar del tablero</button></li>
+                                </div>
+
+                            </div>
+
+                            }
                         </div>
                         
                         <p class="fw-bold float-start largoNombreTarea">{{tarea.nombre}}</p>
@@ -327,8 +340,27 @@
 
                 </div>
                 <div class="mt-5">
-                    <p class="mb-4">Miembros Asignados:</p>
-                    <p class="text-info">[usuario1] [usuario2] [+]</p>
+                    <p class="mb-4">Miembros del tablero:</p>
+                    @for(asignado of colaboradoresTablero; track asignado.aliasUsuario){
+                        
+                    <div class="avatar-contenedor dropdown" [ngClass]="{'creador': asignado.tipoRelacion === 0, 'contribuidor': asignado.tipoRelacion === 1, 'espectador': asignado.tipoRelacion === 2 }">
+                        <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
+                            [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)" type="button"
+                            (click)="abrirMenuAsignacion(asignado)" class="rounded-circle dropdown-toggle" width="32"
+                            height="32" data-bs-toggle="dropdown" data-bs-target="#menuUsuario">
+
+                        <div class="dropdown-menu" style="position: fixed;" id="menuUsuario">
+                            <li><button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver
+                                    Perfil</button></li>
+                            <li><button class="dropdown-item" type="button"
+                                    (click)="postAsignacion(usuarioSeleccionado!.aliasUsuario)">Asignar a la tarea</button></li>                                    
+                            <li><button class="dropdown-item text-danger" type="button"
+                                    (click)="deleteAsignacion(usuarioSeleccionado!.aliasUsuario)">Quitar asignacion</button></li>
+                        </div>
+
+                    </div>
+
+                    }
                 </div>
             </div>
 

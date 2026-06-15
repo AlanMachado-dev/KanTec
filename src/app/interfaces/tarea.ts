@@ -1,3 +1,5 @@
+import { Colaborador } from "./colaborador";
+
 export interface Tarea {
     idTarea: number;
     nombre: string;
@@ -6,4 +8,5 @@ export interface Tarea {
     fechaInicio: string;
     prioridad: number;
     fechaCreacion: string;
+    asignaciones?: Colaborador[]; 
 }

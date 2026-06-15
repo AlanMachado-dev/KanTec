@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, computed, ElementRef, HostListener, inject, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Http } from '../../services/http';
 import flatpickr from "flatpickr";
@@ -83,9 +83,11 @@ export class Tablero implements OnInit, AfterViewInit {
         this.idTablero = this.ruta.snapshot.paramMap.get('id');
         this.cargarTareas();
         this.cdr.detectChanges();
+        /*
         this.intervaloTareas = setInterval(() => {
           this.cargarTareas();
         },1000);
+        */
         if(this.idTablero){
           this.http.getTablero(this.idTablero)
             .subscribe(tablero => {
@@ -172,8 +174,8 @@ export class Tablero implements OnInit, AfterViewInit {
             if(tarea.prioridad == null){
               tarea.prioridad = 0;
             }
+            this.cargarColaboradoresDeTarea(tarea);
           }
-          this.cdr.detectChanges();
         }
       })
     } 
@@ -684,5 +686,61 @@ calcularDiasRestantes(fechaFinal: any): number | null {
     return 'text-success fw-semibold';
   }
 
+
+  /////EDITAR ASIGNACION /////
+    abrirMenuAsignacion(colaborador: Colaborador){
+    /*
+    if(this.aliasLogueado != this.miTablero?.aliasCreador || this.aliasLogueado == colaborador.aliasUsuario){
+      this.verPerfil(colaborador.aliasUsuario);
+      return;
+    }
+    */
+    console.log(colaborador);
+    this.usuarioSeleccionado = colaborador;
+    console.log(this.usuarioSeleccionado);
+  }
+
+  postAsignacion(alias: string) {
+    const tablero = this.idTablero || "";
+    
+    console.log("ID TAREAAAAAA"+this.formularioTarea.value.idTarea);
+    this.http.postAsignacion(tablero, this.formularioTarea.value.idTarea, alias)
+      .subscribe({
+        next: (respuesta) => {
+          setTimeout(() => {
+            this.cargarTareas(); 
+          }, 0);
+        }
+      });
+  }
+
+    deleteAsignacion(alias: string) {
+    const tablero = this.idTablero || "";
+    
+    this.http.deleteAsignacion(tablero, this.formularioTarea.value.idTarea, alias)
+      .subscribe({
+        next: (respuesta) => {
+          setTimeout(() => {
+            this.cargarTareas(); 
+          }, 0);
+        }
+      });
+  }
+
+  cargarColaboradoresDeTarea(tarea: Tarea) {
+    const tablero = this.idTablero || "";
+    this.http.getColaboradoresPorTarea(tablero,tarea.idTarea).subscribe({
+      next: (aliasAsignados: string[]) => {
+        const colaboradoresFiltrados = this.colaboradoresTablero.filter(colab => 
+          aliasAsignados.includes(colab.aliasUsuario)
+        );
+        tarea.asignaciones = colaboradoresFiltrados;
+        console.log("ALGO PASO "+colaboradoresFiltrados);
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  
 }
 

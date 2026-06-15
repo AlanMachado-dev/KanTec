@@ -47,6 +47,7 @@ export class Registro {
         Validators.email
       ]
     }],
+    confirmEmail: ['', [Validators.required, this.matchEmail.bind(this)]],
     nombre: ['', {
       validators: [
         Validators.required,
@@ -111,7 +112,7 @@ export class Registro {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagenPreview = reader.result;
-        this._cdr.detectChanges(); // Forzar renderizado en Angular
+        this._cdr.detectChanges(); 
       };
       reader.readAsDataURL(this.imagenSeleccionada);
 
@@ -153,6 +154,7 @@ export class Registro {
 
   onSubmit() {
     this.registroForm.get('confirmPassword')?.updateValueAndValidity();
+    this.registroForm.get('confirmEmail')?.updateValueAndValidity();
     if (this.registroForm.invalid) return;
     this.loading = true;
     this.mostrarError = false; 
@@ -223,6 +225,13 @@ export class Registro {
     const password = this.registroForm.get('password')?.value;
     const confirmPassword = control.value;
     return password === confirmPassword ? null : { noMatch: true };
+  }
+
+  matchEmail(control: AbstractControl): ValidationErrors | null {
+    if (!this.registroForm) return null;
+    const email = this.registroForm.get('email')?.value;
+    const confirmEmail = control.value;
+    return email === confirmEmail ? null : { noMatch: true };
   }
 
 }

@@ -18,66 +18,211 @@
 </style>
 
 <div class="row bg-primary min-vh-100 d-flex justify-content-center align-items-center p-2">
-    <div class="col-4"></div>
-    <div class="col-4 bg-light rounded p-4">
+    <div class="col-3"></div>
+    <div class="col-6 bg-light rounded p-4">
         <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
-            <div class="mb-3">
-                <label for="alias" class="form-label">Alias de usuario</label>
-                <input type="text" #aliasInput (blur)="afterAlias(aliasInput.value)" formControlName="alias"
-                    class="form-control" id="alias"
-                    [class.is-invalid]="registroForm.get('alias')?.invalid && registroForm.get('alias')?.touched">
-                @if(registroForm.get('alias')?.invalid && registroForm.get('alias')?.touched){
-                <div class="invalid-feedback">
-                    @if(registroForm.get('alias')?.errors?.['required']) {
-                    El alias es obligatorio.
-                    }
-                    @if(registroForm.get('alias')?.errors?.['minlength']) {
-                    Mínimo de 8 caracteres requerido.
-                    }
-                    @if(registroForm.get('alias')?.errors?.['maxlength']) {
-                    Máximo de caracteres debe ser 30.
-                    }
-                    @if(registroForm.get('alias')?.errors?.['pattern']) {
-                        Carácteres permitidos: a-z A-Z 0-9 _ñ.
-                    }
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="mb-1">
+                        <label for="alias" class="form-label">Alias de usuario</label>
+                        <input type="text" #aliasInput (blur)="afterAlias(aliasInput.value)" formControlName="alias"
+                            class="form-control" id="alias"
+                            [class.is-invalid]="registroForm.get('alias')?.invalid && registroForm.get('alias')?.touched">
+                        @if(registroForm.get('alias')?.invalid && registroForm.get('alias')?.touched){
+                        <div class="invalid-feedback">
+                            @if(registroForm.get('alias')?.errors?.['required']) {
+                            El alias es obligatorio.
+                            }
+                            @if(registroForm.get('alias')?.errors?.['minlength']) {
+                            Mínimo de 8 caracteres requerido.
+                            }
+                            @if(registroForm.get('alias')?.errors?.['maxlength']) {
+                            Máximo de caracteres debe ser 30.
+                            }
+                            @if(registroForm.get('alias')?.errors?.['pattern']) {
+                                Carácteres permitidos: a-z A-Z 0-9 _ñ.
+                            }
+                        </div>
+                        }
+                    </div>
                 </div>
-                }
+                <div class="col-6">
+                    <div class="mb-1">
+                        <label for="nombre" class="form-label">Nombre Completo</label>
+                        <input type="text" formControlName="nombre" class="form-control" id="nombre"
+                            [class.is-invalid]="registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched">
+                        @if(registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched){
+                        <div class="invalid-feedback">
+                            @if(registroForm.get('nombre')?.errors?.['required']) {
+                            El nombre es obligatorio.
+                            }
+                            @if(registroForm.get('nombre')?.errors?.['maxlength']) {
+                            Máximo de caracteres debe ser 50.
+                            }
+                            @if(registroForm.get('nombre')?.errors?.['pattern']) {
+                                Los nombres solo pueden tener letras y espacios.
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+                
+                
             </div>
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="container border rounded bg-secondary-subtle my-3">
+                        <div>
+                            <label for="password" class="form-label mt-2">Contraseña</label>
+                            <input type="password" formControlName="password" class="form-control" id="password"
+                                [class.is-invalid]="registroForm.get('password')?.invalid && registroForm.get('password')?.touched">
+                            @if(registroForm.get('password')?.invalid && registroForm.get('password')?.touched){
+                            <div class="invalid-feedback">
+                                @if(registroForm.get('password')?.errors?.['required']) {
+                                La contraseña es obligatoria.
+                                }
+                                @if(registroForm.get('password')?.errors?.['minlength']) {
+                                Mínimo de 8 caracteres requerido.
+                                }
+                            </div>
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label mt-2">Confirmar Contraseña</label>
+                            <input type="password" formControlName="confirmPassword" class="form-control" id="confirmPassword"
+                                [class.is-invalid]="(registroForm.get('confirmPassword')?.invalid || registroForm.errors?.['noMatch']) 
+                                    && registroForm.get('confirmPassword')?.touched">
+                            @if(registroForm.get('confirmPassword')?.touched){
+                            <div class="invalid-feedback">
+                                @if(registroForm.get('confirmPassword')?.errors?.['required']) {
+                                Confirmar la contraseña es obligatorio.
+                                }
+                                @if(registroForm.get('confirmPassword')?.errors?.['noMatch']) {
+                                Las contraseñas no coinciden.
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="container border rounded bg-secondary-subtle my-3">
+                        <div>
+                            <label for="email" class="form-label mt-2">Correo electronico</label>
+                            <input type="email" #emailInput (blur)="afterEmail(emailInput.value)" formControlName="email"
+                                class="form-control" id="email"
+                                [class.is-invalid]="registroForm.get('email')?.invalid && registroForm.get('email')?.touched">
+                            @if(registroForm.get('email')?.invalid && registroForm.get('email')?.touched){
+                            <div class="invalid-feedback">
+                                @if(registroForm.get('email')?.errors?.['required']) {
+                                El email es obligatorio.
+                                }
+                                @if(registroForm.get('email')?.errors?.['email']) {
+                                Debe ingresar un email válido.
+                                }
+                                @if(registroForm.get('email')?.errors?.['maxlength']) {
+                                Máximo de caracteres debe ser 60.
+                                }
+                            </div>
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmEmail" class="form-label mt-2">Confirmar Correo electronico</label>
+                            <input type="email" formControlName="confirmEmail" class="form-control" id="confirmEmail"
+                                [class.is-invalid]="(registroForm.get('confirmEmail')?.invalid || registroForm.errors?.['noMatch'])
+                                && registroForm.get('confirmEmail')?.touched">
+                            @if(registroForm.get('confirmEmail')?.touched){
+                            <div class="invalid-feedback">
+                                @if(registroForm.get('confirmEmail')?.errors?.['required']) {
+                                Confirmar el correo es obligatorio.
+                                }
+                                @if(registroForm.get('confirmEmail')?.errors?.['noMatch']) {
+                                Los correos no coinciden.
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-8">
+                    <div id="divImagen" class="divImagen mb-2" [class.divImagen--drag-active]="dragActivo"
+                        (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+                        (drop)="onDrop($event)" (click)="fileInput.click()" style="cursor: pointer;">
 
-            <div class="container border rounded bg-secondary-subtle my-3">
-                <div>
-                    <label for="password" class="form-label mt-2">Contraseña</label>
-                    <input type="password" formControlName="password" class="form-control" id="password"
-                        [class.is-invalid]="registroForm.get('password')?.invalid && registroForm.get('password')?.touched">
-                    @if(registroForm.get('password')?.invalid && registroForm.get('password')?.touched){
-                    <div class="invalid-feedback">
-                        @if(registroForm.get('password')?.errors?.['required']) {
-                        La contraseña es obligatoria.
+                        @if (!imagenPreview) {
+                        <p class="mb-0 text-center text-muted">Arrastra tu foto de perfil aquí o haz clic para seleccionar</p>
+                        } @else {
+                        <div class="text-center">
+                            <img [src]="imagenPreview" alt="Previsualización" class="img-thumbnail mb-2"
+                                style="max-height: 120px; object-fit: cover;" />
+                            <p class="mb-0 text-success small fw-bold">¡Imagen cargada con éxito!</p>
+                            <p class="text-muted small mb-0">(Haz clic o arrastra otra para cambiarla)</p>
+                        </div>
                         }
-                        @if(registroForm.get('password')?.errors?.['minlength']) {
-                        Mínimo de 8 caracteres requerido.
-                        }
+
+                        <input id="imagen" type="file" #fileInput hidden (change)="onFileSelected($event)"
+                            accept="image/png, image/jpeg, image/jpg" />
+                    </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    @if(mostrarError){
+                    <div class="alert alert-danger m-2 p-2 text-center" role="alert">
+                        {{errorMessage}}
                     </div>
                     }
                 </div>
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label mt-2">Confirmar Contraseña</label>
-                    <input type="password" formControlName="confirmPassword" class="form-control" id="confirmPassword"
-                        [class.is-invalid]="(registroForm.get('confirmPassword')?.invalid || registroForm.errors?.['noMatch']) && registroForm.get('confirmPassword')?.touched">
-                    @if(registroForm.get('confirmPassword')?.touched){
-                    <div class="invalid-feedback">
-                        @if(registroForm.get('confirmPassword')?.errors?.['required']) {
-                        Confirmar la contraseña es obligatorio.
-                        }
-                        @if(registroForm.get('confirmPassword')?.errors?.['noMatch']) {
-                        Las contraseñas no coinciden.
+                <div class="col-1"></div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div>
+                        @if (!loading) {
+                        <button type="submit" [disabled]="!registroForm.valid || mostrarError"
+                            class="btn btn-outline-primary btn-lg text-center mt-1 w-100 h-25 fw-bold">Registrate</button>
+                        }@else {
+                        <!-- <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" disabled>Cargando...</button> -->
+                        <button class="btn btn-secondary btn-lg text-center mt-1 w-100 h-25 fw-bold" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                            <span role="status"> Cargando...</span>
+                        </button>
                         }
                     </div>
-                    }
                 </div>
             </div>
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <hr>
+                    <div class="form-text p-2">¿Ya tienes cuenta?</div>
+                    <!-- <a routerLink="/ingreso" class="btn btn-primary w-100 h-25 fw-bold">Iniciar Sesion</a> -->
+                    <button class="btn btn-primary w-100 fw-bold" routerLink="/ingreso">Iniciar Sesion</button>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            
+            
 
-            <div class="mb-3">
+            
+
+
+
+
+
+
+            
+
+            
+
+            
+
+            <!-- <div class="mb-3">
                 <label for="email" class="form-label">Correo electronico</label>
                 <input type="email" #emailInput (blur)="afterEmail(emailInput.value)" formControlName="email"
                     class="form-control" id="email"
@@ -95,45 +240,11 @@
                     }
                 </div>
                 }
-            </div>
-            <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre Completo</label>
-                <input type="text" formControlName="nombre" class="form-control" id="nombre"
-                    [class.is-invalid]="registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched">
-                @if(registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched){
-                <div class="invalid-feedback">
-                    @if(registroForm.get('nombre')?.errors?.['required']) {
-                    El nombre es obligatorio.
-                    }
-                    @if(registroForm.get('nombre')?.errors?.['maxlength']) {
-                    Máximo de caracteres debe ser 50.
-                    }
-                    @if(registroForm.get('nombre')?.errors?.['pattern']) {
-                        Los nombres solo pueden tener letras y espacios.
-                    }
-                </div>
-                }
-            </div>
+            </div> -->
+            
 
 
-            <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo"
-                (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
-                (drop)="onDrop($event)" (click)="fileInput.click()" style="cursor: pointer;">
-
-                @if (!imagenPreview) {
-                <p class="mb-0 text-center text-muted">Arrastra tu foto de perfil aquí o haz clic para seleccionar</p>
-                } @else {
-                <div class="text-center">
-                    <img [src]="imagenPreview" alt="Previsualización" class="img-thumbnail mb-2"
-                        style="max-height: 120px; object-fit: cover;" />
-                    <p class="mb-0 text-success small fw-bold">¡Imagen cargada con éxito!</p>
-                    <p class="text-muted small mb-0">(Haz clic o arrastra otra para cambiarla)</p>
-                </div>
-                }
-
-                <input id="imagen" type="file" #fileInput hidden (change)="onFileSelected($event)"
-                    accept="image/png, image/jpeg, image/jpg" />
-            </div>
+            
 
 
             <!-- <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo"
@@ -151,28 +262,8 @@
                     (drop)="onDrop($event)" formControlName="imagen" class="form-control bg-secondary" id="imagen"
                     accept="image/*">
             </div> -->
-            @if(mostrarError){
-            <div class="alert alert-danger m-2 p-2 text-center" role="alert">
-                {{errorMessage}}
-            </div>
-            }
-            <div>
-                @if (!loading) {
-                <button type="submit" [disabled]="!registroForm.valid || mostrarError"
-                    class="btn btn-outline-primary mt-3 w-100 h-25 fw-bold">Registrate</button>
-                }@else {
-                <!-- <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" disabled>Cargando...</button> -->
-                <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" type="button" disabled>
-                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                    <span role="status"> Cargando...</span>
-                </button>
-                }
-            </div>
-
-            <hr>
-            <div class="form-text p-2">¿Ya tienes cuenta?</div>
-            <a routerLink="/ingreso" class="btn btn-primary  w-100 h-25 fw-bold">Iniciar Sesion</a>
+            
         </form>
     </div>
-    <div class="col-4"></div>
+    <div class="col-3"></div>
 </div>

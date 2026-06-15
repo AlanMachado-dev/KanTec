@@ -526,7 +526,7 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     }],
     descripcion: ['', {
       validators: [
-        Validators.maxLength(50)
+        Validators.maxLength(300)
       ]
     }],
     fechaInicio: ['', {
@@ -563,9 +563,14 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
   }
 
   guardarCambiosTarea(){
+    this.formularioTarea.get('nombre')?.updateValueAndValidity();
+    this.formularioTarea.get('descripcion')?.updateValueAndValidity();
+    
     if(this.esEspectador){
       return;
     }
+    if(this.formularioTarea.invalid) return;
+
     const body = this.formularioTarea.value;
 
     if(!this.idTablero){return;}

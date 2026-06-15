@@ -162,6 +162,10 @@
         pointer-events: none;
         opacity: 0.8;
     }
+
+    .largoNombreTarea{
+        width: 65%;
+    }
 </style>
 
 <div class="w-100 bg-black p-3 d-flex">
@@ -205,7 +209,7 @@
 
                 <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
-                    <div class="postit mt-3 animate__animated animate__bounceInUp" type="button"
+                    <div class="postit mt-3" type="button"
                         data-bs-toggle="offcanvas" data-bs-target="#post-it-info" aria-controls="post-it-info"
                         [draggable]="!esEspectador" (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
                         (dragend)="!esEspectador && onDragEnd($event)" (click)="seleccionarTarea(tarea)"
@@ -216,8 +220,8 @@
                             <span class="postit-usuario">[usuario2]</span>
                             <!-- para que se vean los usuarios bien hay que modificar el css probablemente -->
                         </div>
-
-                        <p class="fw-bold float-start">{{tarea.nombre}}</p>
+                        
+                        <p class="fw-bold float-start largoNombreTarea">{{tarea.nombre}}</p>
 
                         <div>
                             @if (tarea.prioridad === 1) {

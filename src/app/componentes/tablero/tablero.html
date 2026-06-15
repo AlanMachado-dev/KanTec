@@ -205,9 +205,9 @@
 
                 <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
-                    <div class="postit mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
-                        aria-controls="post-it-info" [draggable]="!esEspectador"
-                        (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
+                    <div class="postit mt-3 animate__animated animate__bounceInUp" type="button"
+                        data-bs-toggle="offcanvas" data-bs-target="#post-it-info" aria-controls="post-it-info"
+                        [draggable]="!esEspectador" (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
                         (dragend)="!esEspectador && onDragEnd($event)" (click)="seleccionarTarea(tarea)"
                         [style.cursor]="esEspectador ? 'pointer' : 'grab'">
 
@@ -217,10 +217,7 @@
                             <!-- para que se vean los usuarios bien hay que modificar el css probablemente -->
                         </div>
 
-                        <div>
-                            <!-- <span class="float-end">dias restantes para [inicio || fin] [dias]</span> -->
-                            <!--probablemente habria que hacerlo de otra forma mas linda, sin tanto texto y acomodar cuando funcione-->
-                        </div>
+                        <p class="fw-bold float-start">{{tarea.nombre}}</p>
 
                         <div>
                             @if (tarea.prioridad === 1) {
@@ -249,8 +246,17 @@
                             }
                         </div>
 
-                        <p class="fw-bold">{{tarea.nombre}}</p>
+                        <br style="clear: both;">
+
                         <p>{{tarea.descripcion}}</p>
+
+                        <div class="d-flex mt-2">
+                            <span class="ms-auto" style="font-size: 12px;"
+                                [ngClass]="obtenerClaseVencimiento(tarea.fechaFinal)">
+                                {{ obtenerTextoVencimiento(tarea.fechaFinal) }}
+                            </span>
+                        </div>
+
                     </div>
                     }
                 </div>

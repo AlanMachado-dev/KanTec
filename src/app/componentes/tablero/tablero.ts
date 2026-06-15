@@ -620,5 +620,64 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     });
   }
 
+  ////// CÁLCULO DE VENCIMIENTO //////
+
+calcularDiasRestantes(fechaFinal: any): number | null {
+    if (!fechaFinal) return null;
+
+    const fechaLimpia = fechaFinal.substring(0, 10); //esto porque la fecha viene con la hora me quedo solo con AAAA-MM-DD
+    
+    const partes = fechaLimpia.split('-');
+    if (partes.length !== 3) return null;
+
+    const anio = Number(partes[0]);
+    const mes = Number(partes[1]);
+    const dia = Number(partes[2]);
+
+    if (isNaN(anio) || isNaN(mes) || isNaN(dia)) return null;
+
+    const vencimiento = new Date(anio, mes - 1, dia);
+    vencimiento.setHours(0, 0, 0, 0);
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const diferenciaTiempo = vencimiento.getTime() - hoy.getTime();
+    return Math.round(diferenciaTiempo / (1000 * 60 * 60 * 24));
+  }
+
+  obtenerTextoVencimiento(fechaFinal: string): string {
+    const dias = this.calcularDiasRestantes(fechaFinal);
+    
+    if (dias === null){
+      return 'Sin fecha Asignada';
+    }
+    if (dias < 0){
+      return `Vencida hace ${Math.abs(dias)} ${Math.abs(dias) === 1 ? 'día' : 'días'}`;
+    }
+    if (dias === 0){
+      return 'Vence hoy';
+    }
+    if (dias === 1){
+      return 'Vence mañana';
+    }
+    return `Quedan ${dias} días`;
+  }
+
+  obtenerClaseVencimiento(fechaFinal: string): string {
+    const dias = this.calcularDiasRestantes(fechaFinal);
+    
+    if (dias === null){
+      return 'text-muted';
+    }
+    if (dias < 0){
+      return 'text-danger fw-bold';
+    }
+    if (dias === 0 || dias === 1){
+      return 'text-warning fw-bold';
+    }
+    return 'text-success fw-semibold';
+  }
+
 }
 

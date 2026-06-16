@@ -25,6 +25,10 @@ class usuarioAPI {
             respond(401, ["error" => "Contraseña incorrecta"]);
         }
 
+        if($user['verificado'] === 0){
+            respond(401, ["error" => "Usuario no verificado"]);
+        }
+
         $payload = [
             'alias' => $user['alias'],
             'exp' => time() + (60 * 60) //tiempo que dura el token (1h)
@@ -68,8 +72,8 @@ class usuarioAPI {
         $passhash = password_hash($body['password'], PASSWORD_DEFAULT);
 
         $stmt = $this->db->prepare(
-            "INSERT INTO usuario (alias, password) VALUES (?, ?)"
-        );
+            "INSERT INTO usuario (alias, password, verificado) VALUES (?, ?, 1)"
+        ); //cuando se añada verifiacion de mail el 1 pasa a ser 0
         $stmt->execute([$body['alias'], $passhash]);
 
                 $stmt = $this->db->prepare(

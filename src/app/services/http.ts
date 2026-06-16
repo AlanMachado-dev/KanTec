@@ -84,6 +84,9 @@ export class Http {
   registrarUsuario(usuario: Usuario): Observable<any> {
     return this.http.post<Usuario>(this.url + "usuarios", usuario).pipe(
       switchMap(() => this.inicioSesion(usuario)));
+
+    // return this.http.post<Usuario>(this.url + "usuarios", usuario);
+      // al añadir verificacion por mail cambiar por este
   }
 
   existeUsuario(alias: string): Observable<any> {
@@ -103,6 +106,21 @@ export class Http {
 
   borrarUsuario(alias: string): Observable<any> {
     return this.http.delete<any>(`${this.url}usuarios/${alias}`);
+  }
+
+  enviarCodigo(alias: string, email: string, nombre: string): Observable<any> {
+    return this.http.post<any>(`${this.url}usuarios/codigo/enviar`, {
+      "alias": alias,
+      "email": email,
+      "nombre": nombre
+    });
+  }
+
+  verificarCodigo(alias: string, codigo: number): Observable<any>{
+    return this.http.post<any>(`${this.url}usuarios/codigo/verificar`, {
+      "alias": alias,
+      "codigo": codigo
+    });
   }
 
   private perfilModificado = new Subject<void>();

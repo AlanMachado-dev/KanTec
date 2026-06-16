@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from "@angular/router";
 import { Http } from '../../services/http';
 import Swal from 'sweetalert2';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-registro',
@@ -14,6 +15,8 @@ export class Registro {
 
   constructor(private http: Http, private _cdr: ChangeDetectorRef) { }
 
+  @ViewChild('modalCodigo') modalRef!: ElementRef;
+
   imagenSeleccionada!: File;
   imagenPreview: string | ArrayBuffer | null = null;
   extPermitidas = ['image/jpg', 'image/jpeg', 'image/png'];
@@ -23,6 +26,10 @@ export class Registro {
   mostrarError = false;
   loading = false;
   errorMessage?: string;
+
+  mostrarErrorVerificar = false;
+  loadingVerificar = false;
+  errorMessageVerificar?: string;
 
   registroForm = this.formBuilder.group({
     alias: ['', {
@@ -57,6 +64,7 @@ export class Registro {
     }],
     imagen: ['',]
   })
+
   ngOnInit(): void {
     this.http.sesionActiva$.subscribe(logueado => {
       this.http.getAliasDelToken() || "";
@@ -212,12 +220,59 @@ export class Registro {
             this.http.guardarToken(response.token);
             this.loading = false;
             this.router.navigate(['/home']);
+
+            // al añadir verificacion por mail cambiar por este:
+            // this.http.enviarCodigo(usuario.alias, usuario.email, usuario.nombre).subscribe({
+            //   next: () => {
+            //     const modal = new bootstrap.Modal(this.modalRef.nativeElement);
+            //     modal.show();
+            //   }
+            // })
           },
           error: (err) => this.manejarErrorGlobal(err)
         });
       },
       error: (err) => this.manejarErrorGlobal(err)
     });
+  }
+
+  codigoForm = this.formBuilder.group({
+    codigo: ['', {
+      validators: [
+        Validators.required,
+        Validators.pattern('[0-9]{6}')
+      ]
+    }]
+  })
+
+  confirmarCodigo(): void{
+    this.loadingVerificar = true;
+    this.mostrarErrorVerificar = false;
+
+    let alias = this.registroForm.value.alias;
+    let codigo = Number(this.codigoForm.value.codigo);
+
+    if(!alias || !codigo) return;
+
+    this.http.verificarCodigo(alias, codigo).subscribe({
+      next: () => {
+        let credenciales = {"alias": alias, "password": this.registroForm.value.password};
+        this.http.inicioSesion(credenciales).subscribe({
+          next: (response) => {
+            this.http.guardarToken(response.token);
+            this.loadingVerificar = false;
+            this.router.navigate(['/home']);
+          },
+          error: (err) => console.log(err)
+        })
+      },
+      error: (err) => {
+        this.loadingVerificar = false;
+        this.errorMessageVerificar = "Código inválido o expirado";
+        this.mostrarErrorVerificar = true;
+        console.log(err);
+      } 
+    })
   }
 
   matchPassword(control: AbstractControl): ValidationErrors | null {

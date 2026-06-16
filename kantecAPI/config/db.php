@@ -40,8 +40,9 @@ class Database{
     private function crearTablas(): void {
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS usuario (
-                alias    VARCHAR(30)  NOT NULL PRIMARY KEY,
-                password VARCHAR(100) NOT NULL   
+                alias       VARCHAR(30)  NOT NULL PRIMARY KEY,
+                password    VARCHAR(100) NOT NULL,   
+                verificado  BOOLEAN      NOT NULL
             )
         ");
         $this->conn->exec("
@@ -70,13 +71,13 @@ class Database{
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS tablero (
-            id BINARY(16) PRIMARY KEY,
-            titulo VARCHAR(50) NOT NULL,
-            descripcion VARCHAR(300),
-            fechaCreacion DATETIME NOT NULL ,
-            imagen VARCHAR(40) NULL,
-            color VARCHAR(7),
-            aliasCreador VARCHAR(30), FOREIGN KEY (aliasCreador) REFERENCES usuario(alias)
+                id              BINARY(16) PRIMARY KEY,
+                titulo          VARCHAR(50) NOT NULL,
+                descripcion     VARCHAR(300),
+                fechaCreacion   DATETIME NOT NULL ,
+                imagen          VARCHAR(40) NULL,
+                color           VARCHAR(7),
+                aliasCreador    VARCHAR(30), FOREIGN KEY (aliasCreador) REFERENCES usuario(alias)
             )
         ");
         $this->conn->exec("
@@ -131,6 +132,13 @@ class Database{
                 FOREIGN KEY (alias)             REFERENCES usuario(alias),
 
                 PRIMARY KEY(idTarea,idTablero,alias)
+            )
+        ");
+        $this->conn->exec("
+            CREATE TABLE IF NOT EXISTS verificacion (
+                alias       VARCHAR(30) NOT NULL,
+                codigo      INTEGER     NOT NULL,
+                expiracion  DATETIME    NOT NULL
             )
         ");
     }

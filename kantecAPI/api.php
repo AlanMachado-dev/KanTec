@@ -8,6 +8,8 @@ require_once 'api/tareaAPI.php';
 require_once 'api/imagenesAPI.php';
 require_once 'api/utilidadesAPI.php';
 require_once 'api/asignacionAPI.php';
+require_once 'api/mailAPI.php';
+
 
 
 
@@ -32,6 +34,8 @@ $imagenes = new imagenesAPI();
 $utilidades = new utilidadesAPI();
 
 $asignacion = new asignacionAPI();
+
+$mail = new mailAPI();
 
 match(true) {
     //ruta usuarios
@@ -117,6 +121,12 @@ match(true) {
 //        $method === 'GET' => $asignacion->getAsignacionesPorAlias($partes[2], $partes[3]),
     $partes[1] === 'asignacion' &&
         $method === 'GET' => $asignacion->getAsignacionesPorTarea($partes[2], $partes[3]),
+
+    //ruta mail
+    $partes[1] === 'usuarios' && $partes[2] === 'codigo' && $partes[3] === 'enviar' && !isset($partes[4]) 
+        && $method === 'POST' => $mail->enviarCodigo(),
+    $partes[1] === 'usuarios' && $partes[2] === 'codigo' && $partes[3] === 'verificar' && !isset($partes[4]) 
+        && $method === 'POST' => $mail->verificarCodigo(),
 
     default => respond(404, ["error" => "Ruta no encontrada"])
 };

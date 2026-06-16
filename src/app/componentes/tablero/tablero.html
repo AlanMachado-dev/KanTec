@@ -153,7 +153,7 @@
         opacity: 0.8;
     }
 
-    .largoNombreTarea{
+    .largoNombreTarea {
         width: 65%;
     }
 
@@ -205,9 +205,10 @@
 
         }
         @if(colaboradoresTablero.length > maxColaboradoresVisibles){
-            <div class="avatar-extra" [title]="(colaboradoresTablero.length - maxColaboradoresVisibles) + ' colaboradores más'">
-                +{{colaboradoresTablero.length - maxColaboradoresVisibles}}
-            </div>
+        <div class="avatar-extra"
+            [title]="(colaboradoresTablero.length - maxColaboradoresVisibles) + ' colaboradores más'">
+            +{{colaboradoresTablero.length - maxColaboradoresVisibles}}
+        </div>
         }
     </div>
 </div>
@@ -223,39 +224,33 @@
 
                 <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
-                    <div class="postit mt-3" type="button"
-                        data-bs-toggle="offcanvas" data-bs-target="#post-it-info" aria-controls="post-it-info"
-                        [draggable]="!esEspectador" (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
+                    <div class="postit mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                        aria-controls="post-it-info" [draggable]="!esEspectador"
+                        (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
                         (dragend)="!esEspectador && onDragEnd($event)" (click)="seleccionarTarea(tarea)"
                         [style.cursor]="esEspectador ? 'pointer' : 'grab'">
+                        @if (tarea.asignaciones && tarea.asignaciones.length > 0) {
+                        <div class="mb-4">
+                            <div class="postit-usuarios">
+                                @for(asignado of colaboradoresTablero; track asignado.aliasUsuario){
+                                    
+                                    <!-- 1. Validamos si el alias de este colaborador está incluido en las asignaciones de la tarea -->
+                                    @if (tarea.asignaciones.includes(asignado.aliasUsuario)) {
+                                        <div class="avatar-contenedor" [ngClass]="{
+                                            'creador': asignado.tipoRelacion === 0, 
+                                            'contribuidor': asignado.tipoRelacion === 1, 
+                                            'espectador': asignado.tipoRelacion === 2 
+                                        }">
+                                            <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
+                                                [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)"
+                                                class="rounded-circle " width="32" height="32">
+                                        </div>
+                                    }
 
-                        <div class="postit-usuarios">
-                            @for(asignado of tarea.asignaciones; track asignado.aliasUsuario){
-
-                            <div class="avatar-contenedor dropdown" [ngClass]="{'creador': asignado.tipoRelacion === 0, 'contribuidor': asignado.tipoRelacion === 1, 
-            'espectador': asignado.tipoRelacion === 2 }">
-                                <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
-                                    [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)"
-                                    type="button" (click)="abrirMenuUsuario(asignado)"
-                                    class="rounded-circle dropdown-toggle" width="32" height="32"
-                                    data-bs-toggle="dropdown" data-bs-target="#menuUsuario">
-
-                                <div class="dropdown-menu" style="position: fixed;" id="menuUsuario">
-                                    <li><button class="dropdown-item"
-                                            (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver
-                                            Perfil</button></li>
-                                    <li><button class="dropdown-item" data-bs-toggle="modal"
-                                            data-bs-target="#agregarColaborador" type="button"
-                                            (click)="abrirModalEditar()">Cambiar permisos</button></li>
-                                    <li><button class="dropdown-item text-danger" type="button"
-                                            (click)="eliminarMiembro()">Quitar del tablero</button></li>
-                                </div>
-
+                                }
                             </div>
-
-                            }
                         </div>
-                        
+                        }
                         <p class="fw-bold float-start largoNombreTarea">{{tarea.nombre}}</p>
 
                         <div>
@@ -364,8 +359,9 @@
                 <div class="mt-5">
                     <p class="mb-4">Miembros del tablero:</p>
                     @for(asignado of colaboradoresTablero; track asignado.aliasUsuario){
-                        
-                    <div class="avatar-contenedor dropdown" [ngClass]="{'creador': asignado.tipoRelacion === 0, 'contribuidor': asignado.tipoRelacion === 1, 'espectador': asignado.tipoRelacion === 2 }">
+
+                    <div class="avatar-contenedor dropdown"
+                        [ngClass]="{'creador': asignado.tipoRelacion === 0, 'contribuidor': asignado.tipoRelacion === 1, 'espectador': asignado.tipoRelacion === 2 }">
                         <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
                             [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)" type="button"
                             (click)="abrirMenuAsignacion(asignado)" class="rounded-circle dropdown-toggle" width="32"
@@ -375,7 +371,8 @@
                             <li><button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver
                                     Perfil</button></li>
                             <li><button class="dropdown-item" type="button"
-                                    (click)="postAsignacion(usuarioSeleccionado!.aliasUsuario)">Asignar a la tarea</button></li>                                    
+                                    (click)="postAsignacion(usuarioSeleccionado!.aliasUsuario)">Asignar a la
+                                    tarea</button></li>
                             <li><button class="dropdown-item text-danger" type="button"
                                     (click)="deleteAsignacion(usuarioSeleccionado!.aliasUsuario)">Quitar asignacion</button></li>
                         </div>
@@ -403,7 +400,8 @@
                         Tarea</button>
                 </div>
                 <div class="col-8">
-                    <button type="button" class="btn btn-primary w-100" [disabled]="this.formularioTarea.invalid" (click)="guardarCambiosTarea()">Guardar</button>
+                    <button type="button" class="btn btn-primary w-100" [disabled]="this.formularioTarea.invalid"
+                        (click)="guardarCambiosTarea()">Guardar</button>
                 </div>
             </div>
         </div>

@@ -88,7 +88,7 @@ export class Tablero implements OnInit, AfterViewInit {
         /*
         this.intervaloTareas = setInterval(() => {
           this.cargarTareas();
-        },1000);
+        },5000);
         */
         if(this.idTablero){
           this.http.getTablero(this.idTablero)
@@ -176,11 +176,10 @@ export class Tablero implements OnInit, AfterViewInit {
             if(tarea.prioridad == null){
               tarea.prioridad = 0;
             }
-            this.cargarColaboradoresDeTarea(tarea);
           }
         }
       })
-    } 
+    }
   }
 
   guardarTareas(): void{
@@ -731,45 +730,42 @@ calcularDiasRestantes(fechaFinal: any): number | null {
 
   postAsignacion(alias: string) {
     const tablero = this.idTablero || "";
-    
-    console.log("ID TAREAAAAAA"+this.formularioTarea.value.idTarea);
     this.http.postAsignacion(tablero, this.formularioTarea.value.idTarea, alias)
       .subscribe({
-        next: (respuesta) => {
+        next: () => {
           setTimeout(() => {
-            this.cargarTareas(); 
+            this.cargarTareas();
           }, 0);
         }
       });
   }
 
-    deleteAsignacion(alias: string) {
-    const tablero = this.idTablero || "";
-    
-    this.http.deleteAsignacion(tablero, this.formularioTarea.value.idTarea, alias)
-      .subscribe({
-        next: (respuesta) => {
-          setTimeout(() => {
-            this.cargarTareas(); 
-          }, 0);
-        }
-      });
+  deleteAsignacion(alias: string) {
+  const tablero = this.idTablero || "";
+  
+  this.http.deleteAsignacion(tablero, this.formularioTarea.value.idTarea, alias)
+    .subscribe({
+      next: (respuesta) => {
+        setTimeout(() => {
+          this.cargarTareas();
+        }, 0);
+      }
+    });
   }
-
+/*
   cargarColaboradoresDeTarea(tarea: Tarea) {
     const tablero = this.idTablero || "";
-    this.http.getColaboradoresPorTarea(tablero,tarea.idTarea).subscribe({
+    
+    this.http.getColaboradoresPorTarea(tablero, tarea.idTarea).subscribe({
       next: (aliasAsignados: string[]) => {
-        const colaboradoresFiltrados = this.colaboradoresTablero.filter(colab => 
-          aliasAsignados.includes(colab.aliasUsuario)
-        );
-        tarea.asignaciones = colaboradoresFiltrados;
-        console.log("ALGO PASO "+colaboradoresFiltrados);
+        // 1. Asignamos directamente el arreglo de strings (los alias) a la tarea
+        tarea.asignaciones = aliasAsignados;
+        
+        console.log("ALGO PASO, Alias asignados: " + aliasAsignados.join(', '));
       },
       error: (err) => console.error(err)
     });
   }
-
+*/
   
 }
-

@@ -8,5 +8,5 @@ export interface Tarea {
     fechaInicio: string;
     prioridad: number;
     fechaCreacion: string;
-    asignaciones?: Colaborador[]; 
+    asignaciones?: string[]; 
 }

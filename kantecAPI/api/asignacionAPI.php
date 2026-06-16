@@ -32,18 +32,18 @@ class asignacionAPI
         respond(200, $asignaciones);
     }
 */
-public function getAsignacionesPorTarea(string $idTablero, string $idTarea): void {
-    $stmt = $this->db->prepare(
-        "SELECT alias FROM asignacion WHERE idTarea = ? AND idTablero = ?"
-    );
-    $stmt->execute([$idTarea, $idTablero]);
-    $asignaciones = $stmt->fetchAll();
-    if ($asignaciones === false) {
-        $asignaciones = [];
+    public function getAsignacionesPorTarea(string $idTablero, string $idTarea): void {
+        $stmt = $this->db->prepare(
+            "SELECT alias FROM asignacion WHERE idTarea = ? AND idTablero = ?"
+        );
+        $stmt->execute([$idTarea, $idTablero]);
+        $asignaciones = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        if ($asignaciones === false) {
+            $asignaciones = [];
+        }
+        
+        respond(200, $asignaciones);
     }
-    
-    respond(200, $asignaciones);
-}
 
     public function delete(): void{
         $body = json_decode(file_get_contents("php://input"), true);

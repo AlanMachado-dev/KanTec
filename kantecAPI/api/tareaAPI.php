@@ -21,10 +21,45 @@ class tareaAPI
     // GET http://localhost/kantecAPI/api/tareas/tablero/idTablero/columna
     public function getTareasColumna(string $idTablero, int $columna): void
     {   
-        $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? AND columna = ? ORDER BY posicion");
+        $sql = "SELECT 
+                    t.idTarea,
+                    t.idTablero,
+                    t.nombre,
+                    t.descripcion,
+                    t.fechaCreacion,
+                    t.fechaInicio,
+                    t.fechaFinal,
+                    t.posicion,
+                    t.columna,
+                    t.prioridad,
+                    IF(COUNT(a.alias) = 0, JSON_ARRAY(), JSON_ARRAYAGG(a.alias)) AS asignaciones
+                FROM 
+                    tarea t
+                LEFT JOIN 
+                    asignacion a ON t.idTarea = a.idTarea AND t.idTablero = a.idTablero
+                WHERE 
+                    t.idTablero = ? AND t.columna = ?
+                GROUP BY 
+                    t.idTarea, t.idTablero
+                ORDER BY 
+                    t.posicion";
+
+        $stmt = $this->db->prepare($sql);
         $stmt->execute([$idTablero, $columna]);
-        respond(200, $stmt->fetchAll());
+        
+        // Recuperamos los datos
+        $tareas = $stmt->fetchAll();
+
+        // Opcional: Decodificar el JSON en PHP para que sea un array nativo y no un string
+        foreach ($tareas as &$tarea) {
+            if (isset($tarea['asignaciones'])) {
+                $tarea['asignaciones'] = json_decode($tarea['asignaciones'], true);
+            }
+        }
+
+        respond(200, $tareas);
     }
+
 
     // GET http://localhost/kantecAPI/api/tareas/idTablero/idTarea
     public function getOne(string $idTablero, string $idTarea): void

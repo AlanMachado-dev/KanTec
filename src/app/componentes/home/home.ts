@@ -225,6 +225,13 @@ export class Home {
         descripcion: tablero.descripcion,
         color: tablero.color
       });
+      this.archivoSeleccionado = null;
+      if(tablero.imagen){
+        this.imagenPreview = this.rutaImagenes + tablero.imagen;
+      }else{
+        this.imagenPreview = null;
+      }
+      this.cdr.detectChanges();
     }else{
       this.http.getColaboradoresDeTablero(tablero.id)
         .subscribe(colaboradores => {
@@ -238,20 +245,61 @@ export class Home {
   }
 
   archivoSeleccionado: File | null = null;
+  imagenPreview: string | ArrayBuffer | null = null;
+  dragActivo = false;
+
+  onDragEnter(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = true;
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = false;
+
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      this.procesarImagen(event.dataTransfer.files[0]);
+    }
+  }
 
   onImagenSeleccionada(event: Event): void {
     const input = event.target as HTMLInputElement;
 
     if(input.files?.length){
-      this.archivoSeleccionado = input.files[0];
-      if(!this.extPermitidas.includes(this.archivoSeleccionado.type)){
-        this.mostrarError = true;
-        this.cdr.detectChanges();
-      } else {
-        this.mostrarError = false;
-        this.cdr.detectChanges();
-      }
+      this.procesarImagen(input.files[0]);  
     }
+  }
+
+  procesarImagen(file :File): void {
+    this.archivoSeleccionado = file;
+
+    if(!this.extPermitidas.includes(file.type)){
+      this.mostrarError = true;
+      this.imagenPreview = null;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.mostrarError = false;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.imagenPreview = reader.result;
+      this.cdr.detectChanges();
+    };
+
+    reader.readAsDataURL(file);
   }
 
   guardarCambiosTablero(): void {

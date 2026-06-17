@@ -50,6 +50,22 @@
         white-space: pre-wrap;
         overflow-wrap: break-word;
     }
+    .divImagen {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        border: 1px dashed #7daee6;
+        border-radius: 10px;
+        padding-block: 24px;
+        transition: all 0.2s ease;
+    }
+
+    .divImagen--drag-active {
+        border: 1px dashed #0056b3;
+        background-color: #cce5ff;
+        opacity: 0.5;
+    }
 </style>
 
 <div class="d-flex align-items-center my-4 p-2">
@@ -174,17 +190,25 @@
                 }
             </div>
 
-            <div class="float-start border-bottom">
-                <label for="imagen" class="form-label">Imagen del Tablero</label>
-                <input type="file"  class="form-control bg-secondary" (change)="onImagenSeleccionada($event)"
-                accept="image/*">
-                @if(mostrarError){
-                    <div class="alert alert-danger m-2 p-2 text-center" role="alert">
-                        Tipo de imagen no permitida!
+            <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo"
+            (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)" (click)="fileInput.click()" style="cursor: pointer;">
+                @if(!imagenPreview) {
+                    <p class="mb-0 text-center text-muted">Arrastra una imagen aquí o haz clic para seleccionar</p>
+                }@else {
+                    <div class="text-center">
+                        <img [src]="imagenPreview" alt="Previsualización" class="img-thumbnail mb-2" style="max-height: 120px; object-fit: cover;">
+                        <p class="mb-0 text-success small fw-bold">¡Imagen cargada con éxito!</p>
+                        <p class="text-muted small mb-0">(Haz clic o arrastra otra para cambiarla)</p>
                     </div>
-                }
+                    }
+                    <input #fileInput type="file" hidden (change)="onImagenSeleccionada($event)" accept="image/png, image/jpeg, image/jpg">
             </div>
-
+            @if(mostrarError){
+            <div class="alert alert-danger m-2 p-2 text-center" role="alert">
+                Tipo de imagen no permitida!
+            </div>
+            }
             <br style="clear: both;">
             <div class=" me-5">
                 <p>Color de Fondo:</p>

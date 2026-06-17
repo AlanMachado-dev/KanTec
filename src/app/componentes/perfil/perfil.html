@@ -1,3 +1,21 @@
+<style>
+    .divImagen {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        border: 1px dashed #7daee6;
+        border-radius: 10px;
+        padding-block: 24px;
+        transition: all 0.2s ease;
+    }
+
+    .divImagen--drag-active {
+        border: 1px dashed #0056b3;
+        background-color: #cce5ff;
+        opacity: 0.5;
+    }
+</style>
 <div class="flex m-5">
     <div class="row">
         <div class="w-auto bg-body-secondary mx-auto">
@@ -105,10 +123,23 @@
                 </div>
                 }
             </div>
-            <div class="mb-3">
-                <label for="imagen" class="form-label">Imagen de Perfil</label>
-                <input type="file" (change)="onFileSelected($event)" class="form-control bg-secondary" id="imagen"
-                    accept="image/*">
+            <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo" (dragenter)="onDragEnter($event)"
+                (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)"
+                (click)="fileInput.click()" style="cursor: pointer;">
+            
+                @if (!imagenPreview) {
+                <p class="mb-0 text-center text-muted">Arrastra tu foto de perfil aquí o haz clic para seleccionar</p>
+                } @else {
+                <div class="text-center">
+                    <img [src]="imagenPreview" alt="Previsualización" class="img-thumbnail mb-2"
+                        style="max-height: 120px; object-fit: cover;" />
+                    <p class="mb-0 text-success small fw-bold">¡Imagen cargada con éxito!</p>
+                    <p class="text-muted small mb-0">(Haz clic o arrastra otra para cambiarla)</p>
+                </div>
+                }
+            
+                <input id="imagen" type="file" #fileInput hidden (change)="onFileSelected($event)"
+                    accept="image/png, image/jpeg, image/jpg" />
             </div>
             @if(mostrarError){
             <div class="alert alert-danger m-2 p-2 text-center" role="alert">
@@ -118,7 +149,7 @@
             <div>
                 @if (!loading) {
                 <button type="submit"
-                    [disabled]="!formularioUsuario.valid || formularioUsuario.pristine || mostrarError"
+                    [disabled]="!formularioUsuario.valid || (formularioUsuario.pristine && !imagenSeleccionada) || mostrarError"
                     class="btn btn-outline-primary mt-3 w-100 h-25 fw-bold">Actualizar Perfil</button>
                 }@else {
                 <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" type="button" disabled>

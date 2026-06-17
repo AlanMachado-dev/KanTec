@@ -45,6 +45,8 @@ export class Perfil implements OnInit, OnDestroy {
         next: (response) => {
           this.usuario = response;
           this.imagenUsu = this.http.getRutaBaseImg() + this.usuario.imagen;
+
+          this.imagenPreview = this.usuario.imagen ? this.http.getRutaBaseImg() + this.usuario.imagen : null;
           if (this.http.getAliasDelToken() === alias) {
             this.usuPropio = true;
           }
@@ -100,20 +102,61 @@ export class Perfil implements OnInit, OnDestroy {
     }]
 
   })
+  imagenPreview: string | ArrayBuffer | null = null;
+  dragActivo = false;
+
+  onDragEnter(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = true;
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    this.dragActivo = false;
+
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      this.procesarImagen(event.dataTransfer.files[0]);
+    }
+  }
 
   onFileSelected(event: any) {
-    this.imagenSeleccionada = event.target.files[0];
-    if (!this.extPermitidas.includes(this.imagenSeleccionada.type)) {
+    const file = event.target.files[0];
+    if(file){
+      this.procesarImagen(file);
+    }
+  }
+
+  procesarImagen(file: File): void {
+    this.imagenSeleccionada = file;
+
+    if (!this.extPermitidas.includes(file.type)) {
       this.errorMessage = "Tipo de imagen no permitida!"
       this.mostrarError = true;
+      this.imagenPreview = null;
       this._cdr.detectChanges();
-      event.target.value = '';
-    } else {
-      this.mostrarError = false;
-      this.formularioUsuario.get('imagen')?.setValue(this.imagenSeleccionada.name);
-      this.formularioUsuario.get('imagen')?.markAsDirty();
-      this._cdr.detectChanges();
+      return;
     }
+
+    this.mostrarError = false;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.imagenPreview = reader.result;
+      this._cdr.detectChanges();
+    };
+
+    reader.readAsDataURL(file);
   }
 
   onSubmit() {

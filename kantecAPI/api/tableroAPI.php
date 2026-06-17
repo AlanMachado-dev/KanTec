@@ -212,9 +212,10 @@ class tableroAPI
             respond(403, ["error" => "No puedes ver las colaboraciones que no son tuyas"]);
         }
 
-        $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT p.idTablero from 
+        $stmt = $this->db->prepare("SELECT * from tablero t JOIN usuario u ON t.aliasCreador = u.alias where u.activo = true AND id IN (SELECT p.idTablero from 
 pertenece p JOIN usuario u ON p.aliasUsuario = u.alias where aliasUsuario = ? AND tipoRelacion != 0)");
         $stmt->execute([$alias]);
+
         respond(200, $stmt->fetchAll());
     }
 

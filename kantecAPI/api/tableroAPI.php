@@ -11,16 +11,30 @@ class tableroAPI
         $this->db->query("SET sql_mode=''");
     }
 
-    // GET http://localhost/kantecAPI/api/tableros
-    public function getAll(): void
-    {
-        $stmt = $this->db->query("SELECT * FROM tablero");
-        respond(200, $stmt->fetchAll());
-    }
+    // // GET http://localhost/kantecAPI/api/tableros
+    // public function getAll(): void
+    // {
+    //     $stmt = $this->db->query("SELECT * FROM tablero");
+    //     respond(200, $stmt->fetchAll());
+    // }
 
     // GET http://localhost/kantecAPI/api/tableros/usuario/Luqui86
     public function getTableros(string $alias): void
     {
+        $token = verificarToken();
+
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
+        $stmt->execute([$alias]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user === false || empty($user)) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+        }
+
+        if ($alias != $token['alias']) {
+            respond(403, ["error" => "No puedes consultar los tableros de otro usuario."]);
+        }
+
         $stmt = $this->db->prepare("SELECT * FROM tablero WHERE aliasCreador = ? ORDER BY fechaCreacion");
         $stmt->execute([$alias]);
         respond(200, $stmt->fetchAll());
@@ -62,7 +76,7 @@ class tableroAPI
         if (empty($body['alias'])) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
         }
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
         $stmt->execute([$body['alias']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -184,7 +198,7 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/colaboradores/misColaboraciones/alias
     public function misColaboraciones(string $alias): void
     {
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
         $stmt->execute([$alias]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -198,7 +212,8 @@ class tableroAPI
             respond(403, ["error" => "No puedes ver las colaboraciones que no son tuyas"]);
         }
 
-        $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT idTablero from pertenece where aliasUsuario = ? AND tipoRelacion != 0)");
+        $stmt = $this->db->prepare("SELECT * from tablero where id IN (SELECT p.idTablero from 
+pertenece p JOIN usuario u ON p.aliasUsuario = u.alias where aliasUsuario = ? AND tipoRelacion != 0)");
         $stmt->execute([$alias]);
         respond(200, $stmt->fetchAll());
     }
@@ -226,7 +241,16 @@ class tableroAPI
             respond(403, ["error" => "No tiene permisos para consultar colaboradores de este tablero"]);
         }
 
-        $stmt = $this->db->prepare("SELECT p.aliasUsuario, p.tipoRelacion, u.imagen from pertenece p JOIN perfil u ON u.alias = p.aliasUsuario where idTablero = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE activo = true AND alias = (SELECT aliasCreador FROM tablero WHERE id = ?)");
+        $stmt->execute([$id]);
+        $creadorActivo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($creadorActivo === false || empty($creadorActivo)) {
+            respond(403, ["error" => "Tablero no tiene a su creador activo."]);
+        }
+
+        $stmt = $this->db->prepare("SELECT p.aliasUsuario, p.tipoRelacion, pe.imagen from pertenece p JOIN perfil pe JOIN usuario u 
+        ON pe.alias = p.aliasUsuario AND u.alias = p.aliasUsuario where p.idTablero = ? AND u.activo = true;");
         $stmt->execute([$id]);
 
         respond(200, $stmt->fetchAll());
@@ -255,7 +279,7 @@ class tableroAPI
             respond(404, ["error" => "Tablero no encontrado"]);
         }
 
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
         $stmt->execute([$body['aliasUsuario']]);
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -299,7 +323,7 @@ class tableroAPI
     // GET http://localhost/kantecAPI/api/colaboradores/invitaciones/alias
     public function getInvitaciones(string $alias)
     {
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
         $stmt->execute([$alias]);
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -388,7 +412,7 @@ class tableroAPI
             respond(404, ["error" => "Tablero no encontrado"]);
         }
 
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
         $stmt->execute([$body['aliasUsuario']]);
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -449,7 +473,7 @@ class tableroAPI
             respond(404, ["error" => "Tablero no encontrado"]);
         }
 
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
         $stmt->execute([$body['aliasUsuario']]);
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 

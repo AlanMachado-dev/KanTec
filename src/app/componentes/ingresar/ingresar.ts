@@ -71,6 +71,7 @@ export class Ingresar implements OnInit{
           this.mostrarError = true;
           this.loading = false;
           this._cdr.detectChanges();
+          //Deberia salir un error de que el usuario esta inactivo en vez de este mismo error en todos los casos CULPA DE MATTHEW FREIRE RODRIGUEZ
         }
       })
     }

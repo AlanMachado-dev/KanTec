@@ -42,7 +42,8 @@ class Database{
             CREATE TABLE IF NOT EXISTS usuario (
                 alias       VARCHAR(30)  NOT NULL PRIMARY KEY,
                 password    VARCHAR(100) NOT NULL,   
-                verificado  BOOLEAN      NOT NULL
+                verificado  BOOLEAN      NOT NULL,
+                activo BOOLEAN NOT NULL DEFAULT TRUE
             )
         ");
         $this->conn->exec("
@@ -53,19 +54,6 @@ class Database{
             imagen   VARCHAR(40) NULL,
             fecNac   DATE        NULL,
             fecReg   DATE        NULL,
-            bio      VARCHAR(100)NULL    
-            )
-        ");
-        $this->conn->exec("
-            CREATE TABLE IF NOT EXISTS usuarioPerfilBorrado (
-            alias    VARCHAR(30) PRIMARY KEY,
-            password VARCHAR(100)NOT NULL,   
-            email    VARCHAR(60) NOT NULL,
-            nombre   VARCHAR(50) NOT NULL,
-            imagen   VARCHAR(40) NULL,
-            fecNac   DATE        NULL,
-            fecReg   DATE        NULL,
-            fecBor   DATE        NULL,
             bio      VARCHAR(100)NULL    
             )
         ");

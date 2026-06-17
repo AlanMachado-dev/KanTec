@@ -14,6 +14,15 @@ class asignacionAPI
         $idTablero = $body['idTablero'];
         $idTarea =  $body['idTarea'];
         $alias = $body['alias'];
+
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
+        $stmt->execute([$alias]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user === false || empty($user)) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+        }
+
         $stmt = $this->db->prepare(
             "INSERT INTO asignacion (idTablero,idTarea,alias,fecHorAsig) VALUES (?,?,?,NOW())"
         );
@@ -34,7 +43,7 @@ class asignacionAPI
 */
     public function getAsignacionesPorTarea(string $idTablero, string $idTarea): void {
         $stmt = $this->db->prepare(
-            "SELECT alias FROM asignacion WHERE idTarea = ? AND idTablero = ?"
+            "SELECT alias FROM asignacion a NATURAL JOIN usuario u WHERE a.idTarea = ? AND a.idTablero = ? AND u.activo = true"
         );
         $stmt->execute([$idTarea, $idTablero]);
         $asignaciones = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -50,7 +59,7 @@ class asignacionAPI
         $idTablero = $body['idTablero'];
         $idTarea =  $body['idTarea'];
         $alias = $body['alias'];
-        $stmt = $this->db->prepare("DELETE FROM asignacion WHERE idTablero = ? AND idTarea = ? AND alias= ?");
+        $stmt = $this->db->prepare("DELETE FROM asignacion a NATURAL JOIN usuario u WHERE a.idTablero = ? AND a.idTarea = ? AND a.alias = ? AND u.activo = true");
         $stmt->execute([$idTablero, $idTarea, $alias]);
     }
 }

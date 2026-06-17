@@ -32,11 +32,13 @@ class tareaAPI
                     t.posicion,
                     t.columna,
                     t.prioridad,
-                    IF(COUNT(a.alias) = 0, JSON_ARRAY(), JSON_ARRAYAGG(a.alias)) AS asignaciones
+                    IF(COUNT(u.alias) = 0, JSON_ARRAY(), JSON_ARRAYAGG(u.alias)) AS asignaciones
                 FROM 
                     tarea t
                 LEFT JOIN 
                     asignacion a ON t.idTarea = a.idTarea AND t.idTablero = a.idTablero
+                LEFT JOIN
+                    usuario u ON a.alias = u.alias AND u.activo = TRUE
                 WHERE 
                     t.idTablero = ? AND t.columna = ?
                 GROUP BY 

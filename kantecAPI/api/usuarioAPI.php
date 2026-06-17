@@ -18,7 +18,11 @@ class usuarioAPI {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user === false || empty($user)) {
-            respond(404, ["error" => "Usuario no encontrado"]);
+            respond(404, ["error" => "Usuario no encontrado", "codigo" => "NOT_FOUND"]);
+        }
+
+        if($user['activo'] === 0){
+            respond(404, ["error" => "Usuario inactivo." , "codigo" => "INACTIVO"]);
         }
 
         if(!password_verify($body['password'], $user['password'])){
@@ -50,7 +54,7 @@ class usuarioAPI {
 
     // GET http://localhost/kantecAPI/api/usuarios/itsmafiu
     public function getOne(string $alias): void {
-        $stmt = $this->db->prepare("SELECT * FROM usuario NATURAL JOIN perfil WHERE usuario.alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario NATURAL JOIN perfil WHERE usuario.alias = ? AND usuario.activo = true");
         $stmt->execute([$alias]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -93,7 +97,7 @@ class usuarioAPI {
             respond(400, ["error" => "Body inválido o vacío"]);
         }
 
-        $stmt = $this->db->prepare("SELECT * FROM perfil WHERE alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario u NATURAL JOIN perfil p WHERE p.alias = ? AND u.activo = true");
         $stmt->execute([$alias]);
         $perfil = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$perfil) {
@@ -118,7 +122,7 @@ class usuarioAPI {
     public function delete(string $alias): void {
     //$tokenData = verificarToken();
 
-    $stmt = $this->db->prepare("SELECT * FROM usuario NATURAL JOIN perfil WHERE usuario.alias = ?");
+    $stmt = $this->db->prepare("SELECT * FROM usuario NATURAL JOIN perfil WHERE usuario.alias = ? AND usuario.activo = true");
     $stmt->execute([$alias]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
@@ -127,35 +131,11 @@ class usuarioAPI {
         return; 
     }
 
-    $query = $this->db->prepare("DELETE FROM pertenece WHERE aliasUsuario = ?");
-    $query->execute([$alias]);
-    
-    $query = $this->db->prepare("DELETE FROM tablero WHERE aliasCreador = ?");
-    $query->execute([$alias]);
-
-    $query = $this->db->prepare("DELETE FROM asignacion WHERE alias = ?");
-    $query->execute([$alias]);
-
-
     $query = $this->db->prepare(
-        "INSERT INTO usuarioPerfilBorrado (alias, password, email, nombre, imagen, fecNac, fecReg, bio, fecBor) VALUES (?, ?, ?, ?, ?, ? , ?, ? ,CURRENT_DATE())"
+        "UPDATE usuario SET activo = false WHERE alias = ?"
     );
 
-    $query->execute([
-        $alias,
-        $user['password'],
-        $user['email'],
-        $user['nombre'],
-        $user['imagen'],
-        $user['fecNac'],
-        $user['fecReg'],
-        $user['bio']
-    ]);
-
-    $stmt = $this->db->prepare("DELETE FROM perfil WHERE alias = ?");
-    $stmt->execute([$alias]);
-    $stmt = $this->db->prepare("DELETE FROM usuario WHERE alias = ?");
-    $stmt->execute([$alias]);
+    $query->execute([$alias]);
 
     respond(200, ["mensaje" => "Usuario eliminado con éxito"]);
 }
@@ -164,7 +144,7 @@ class usuarioAPI {
     // GET http://localhost/kantecAPI/api/usuarios/existe/alias
     public function existe(string $alias): void {
 
-        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
         $stmt->execute([$alias]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user !== false && !empty($user)) {
@@ -172,7 +152,7 @@ class usuarioAPI {
             return; 
         }
 
-        $stmt = $this->db->prepare("SELECT * FROM usuarioPerfilBorrado WHERE alias = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = false");
         $stmt->execute([$alias]);
         $userBorrado = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($userBorrado !== false && !empty($userBorrado)) {
@@ -186,15 +166,14 @@ class usuarioAPI {
     // GET http://localhost/kantecAPI/api/usuarios/existeEmail/email
     public function existeEmail(string $email): void {
 
-        $stmt = $this->db->prepare("SELECT * FROM perfil WHERE email = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario u NATURAL JOIN perfil p WHERE p.email = ? AND u.activo = true");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user !== false && !empty($user)) {
             respond(200, ["existe" => "true"]);
             return; 
         }
-
-        $stmt = $this->db->prepare("SELECT * FROM usuarioPerfilBorrado WHERE email = ?");
+        $stmt = $this->db->prepare("SELECT * FROM usuario u NATURAL JOIN perfil p WHERE p.email = ? AND u.activo = false");
         $stmt->execute([$email]);
         $userBorrado = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($userBorrado !== false && !empty($userBorrado)) {

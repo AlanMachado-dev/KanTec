@@ -17,20 +17,10 @@ class utilidadesAPI {
             DELETE FROM pertenece WHERE idTablero = OLD.id;
             DELETE FROM invitacion WHERE idTablero = OLD.id;
             DELETE FROM tarea WHERE idTablero = OLD.id;
+            DELETE FROM asignacion WHERE idTablero = OLD.id;
         END
     ");
-
-        $this->db->exec("
-        CREATE TRIGGER eliminarRelacionesUsuario BEFORE DELETE
-        ON usuario FOR EACH ROW
-        BEGIN
-            DELETE FROM tablero WHERE aliasCreador = OLD.alias;
-            DELETE FROM pertenece WHERE aliasUsuario = OLD.alias;
-            DELETE FROM invitacion WHERE aliasInvitado = OLD.alias OR aliasCreador = OLD.alias;
-        END
-        ");
-
-        respond(201, ['mensaje' => 'Triggers creados con exito?']);
+        respond(201, ['mensaje' => 'Triggers creados con exito']);
     }
 
     // GET http://localhost/kantecAPI/api/utilidad/token

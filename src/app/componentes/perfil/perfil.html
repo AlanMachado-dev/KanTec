@@ -21,9 +21,9 @@
         <div class="w-auto bg-body-secondary mx-auto">
             @if (usuario) {
             <div class="row border border-1 border-dark-subtle rounded">
-                <div class="text-center col-6">
+                <div class="col-6 d-flex justify-content-center align-items-center">
                     <img src="{{imagenUsu}}" (error)="onImageError($event)" alt="img" height="300px" width="300px"
-                        class="rounded-circle border border-2 border-dark-subtle my-3" style="object-fit: cover;">
+                        class="rounded-circle border border-2 border-dark-subtle my-3 mx-3" style="object-fit: cover;">
                 </div>
                 <div class="text-center d-flex flex-column border-start border-3 col-6">
                     <div class="row mt-4">

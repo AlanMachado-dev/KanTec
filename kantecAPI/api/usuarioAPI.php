@@ -26,11 +26,12 @@ class usuarioAPI {
         }
 
         if(!password_verify($body['password'], $user['password'])){
-            respond(401, ["error" => "Contraseña incorrecta"]);
+            respond(401, ["error" => "Contraseña incorrecta" , "codigo" => "INCORRECT_PASS"]);
         }
 
+        $verificado = true;
         if($user['verificado'] === 0){
-            respond(401, ["error" => "Usuario no verificado"]);
+            $verificado = false;
         }
 
         $payload = [
@@ -42,7 +43,8 @@ class usuarioAPI {
 
         respond(200, [
             "mensaje" => "Login correcto",
-            "token" => $token
+            "token" => $token,
+            "verificado" => $verificado
             ]);
     }
 

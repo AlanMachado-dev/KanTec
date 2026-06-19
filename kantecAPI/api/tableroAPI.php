@@ -1,14 +1,17 @@
 <?php
 require_once 'config/db.php';
+require_once 'mailApi.php';
 
 class tableroAPI
 {
     private PDO $db;
+    //private mailAPI $mailer;
 
     public function __construct()
     {
         $this->db = (new Database())->getConnection();
-        $this->db->query("SET sql_mode=''");
+        $this->db->query("SET sql_mode=''");    
+       // $this->mailer = new mailAPI();
     }
 
     // // GET http://localhost/kantecAPI/api/tableros
@@ -313,11 +316,21 @@ pertenece p JOIN usuario u ON p.aliasUsuario = u.alias where aliasUsuario = ? AN
             respond(403, ["error" => "No tiene permisos para modificar colaboradores de este tablero"]);
         }
 
+        $stmt = $this->db->prepare("SELECT email FROM perfil WHERE alias = ? ");
+        $stmt->execute([$body['aliasUsuario']]);
+        $emailInvitado = $stmt->fetchColumn();
+
+        if(!$emailInvitado){
+            respond(404, ["error" => "Email del usuario no encontrado"]);
+        }
+
         $stmt = $this->db->prepare("INSERT INTO invitacion (idTablero, aliasInvitado, aliasCreador, tipoRelacion, notificado) VALUES (? ,? ,? ,? , false)");
         $stmt->execute([$body['idTablero'], $body['aliasUsuario'], $tablero['aliasCreador'], $body['tipoRelacion']]);
 
+        //$mailEnviado = $this->mailer->enviarInvitacion($emailInvitado,$alias,$tablero['titulo'],$body['tipoRelacion']);
+
         respond(201, [
-            "mensaje" => "Miembro invitado"
+            "mensaje" => "Miembro invitado"//, "mailEnviado" => $mailEnviado
         ]);
     }
 

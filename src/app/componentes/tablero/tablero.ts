@@ -102,6 +102,7 @@ export class Tablero implements OnInit, AfterViewInit {
               title: 'Revisa la seccion "Mis invitaciones".'
             });
             this.http.marcarComoVistas().subscribe();
+            this.avisoEspectadorMostrado = true;
           }
         })
         /*

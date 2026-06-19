@@ -162,6 +162,32 @@ class mailAPI {
 
     }
 
+    //Esta va a ser una funcion que llamara tableroAPI en agregarColaborador
+    public function enviarInvitacion(string $email, string $aliasInvitador, string $tituloTablero, int $tipoRelacion): bool{
+        $rol = match($tipoRelacion){
+            1 => 'Contribuidor',
+            2 => 'Espectador',
+            default => 'Colaborador'
+        };
+
+        $subject = 'Invitacion a tablero - Kantec';
+
+        $body = "
+        <div style='font-family: Arial, sans-serif; max-width: 500px; margin: auto;'>
+            <h2>Has recibido una invitación</h2>
+
+            <p><strong>{$aliasInvitador}</strong> te invitó al tablero:</p>
+
+            <h3>{$tituloTablero}</h3>
+
+            <p>Rol asignado: <strong>{$rol}</strong></p>
+
+            <p>Ingresa a KanTec para aceptar o rechazar la invitación.</p>
+        </div>
+        ";
+
+        return $this->send($email,$subject,$body);
+    }
 }
 
 ?>

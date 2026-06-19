@@ -84,6 +84,10 @@ match(true) {
         && $method === 'GET' => $tablero->getInvitaciones($partes[3]),
     $partes[1] === 'colaboradores' && $partes[2] === 'invitacion' && !isset($partes[3])
         && $method === 'PUT' => $tablero->aceptarInvitacion(),
+    $partes[1] === 'colaboradores' && $partes[2] === 'notificaciones' && !isset($partes[3])
+        && $method === 'GET' => $tablero->mostrarNotificacionPendiente(),
+    $partes[1] === 'colaboradores' && $partes[2] === 'notificaciones' && !isset($partes[3]) 
+        && $method === 'PUT' => $tablero->marcarNotificado(),
 
     //ruta tareas
 

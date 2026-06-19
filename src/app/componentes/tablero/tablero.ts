@@ -85,6 +85,25 @@ export class Tablero implements OnInit, AfterViewInit {
         this.idTablero = this.ruta.snapshot.paramMap.get('id');
         this.cargarTareas();
         this.cdr.detectChanges();
+        this.http.notificarInvitacion().subscribe(resp => {
+          if(resp.tieneNuevas){
+            Swal.mixin({
+              toast: true,
+              position: 'bottom-end',
+              showConfirmButton: false,
+              timer: 5000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              }
+            }).fire({
+              icon: 'info',
+              title: 'Revisa la seccion "Mis invitaciones".'
+            });
+            this.http.marcarComoVistas().subscribe();
+          }
+        })
         /*
         this.intervaloTareas = setInterval(() => {
           this.cargarTareas();
@@ -94,6 +113,7 @@ export class Tablero implements OnInit, AfterViewInit {
           this.http.getTablero(this.idTablero)
             .subscribe(tablero => {
               this.miTablero = tablero;
+              this.cdr.detectChanges();
             });
 
           this.recargarColaboradores();
@@ -390,7 +410,8 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
                 icon: 'info',
                 title: 'Viendo el tablero como espectador',
                 showConfirmButton: false,
-                timer: 3000
+                timer: 3000,
+                timerProgressBar: true
               });
             }
           }
@@ -404,7 +425,8 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
               icon: 'info',
               title: 'Ya no tienes acceso a este tablero',
               showConfirmButton: false,
-              timer: 3000
+              timer: 3000,
+              timerProgressBar: true
             });
           }
         }

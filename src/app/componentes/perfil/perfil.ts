@@ -40,7 +40,28 @@ export class Perfil implements OnInit, OnDestroy {
       // const alias = this.http.getAliasDelToken();
       const alias = this.ruta.snapshot.paramMap.get('alias');
       if (!alias) return;
-
+      this.http.notificarInvitacion().subscribe(resp => {
+        if(resp.tieneNuevas){
+          Swal.mixin({
+            toast: true,
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          }).fire({
+            icon: 'info',
+            title: 'Revisa la seccion "Mis invitaciones".'
+          });
+           
+          this.http.marcarComoVistas().subscribe();
+          
+        }
+      })
+      
       this.http.getUsuario(alias).subscribe({
         next: (response) => {
           this.usuario = response;

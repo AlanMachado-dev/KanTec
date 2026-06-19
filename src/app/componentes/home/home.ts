@@ -67,6 +67,27 @@ export class Home {
       if(logueado){
         this.cargarTableros();
         this.cargarTablerosColaboraciones();
+        this.http.notificarInvitacion().subscribe(resp => {
+          if(resp.tieneNuevas){
+            Swal.mixin({
+              toast: true,
+              position: 'bottom-end',
+              showConfirmButton: false,
+              timer: 5000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+              }
+            }).fire({
+              icon: 'info',
+              title: 'Revisa la seccion "Mis invitaciones".'
+            });
+              
+            this.http.marcarComoVistas().subscribe();
+            
+          }
+        })
       }else{
         this.tableros = [];
         this.aliasUsuario = "";

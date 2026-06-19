@@ -59,8 +59,39 @@
         }
         @else{
           @for(invitacion of misInvitaciones; track $index){
-          
-            {{invitacion.aliasCreador}} te invito a {{invitacion.tituloTablero}} como
+            
+            <div class="card mb-3">
+              <div class="card-body">
+
+                <h6 class="card-title mb-2">
+                  {{invitacion.tituloTablero}}
+                </h6>
+
+                <p class="card-text mb-2">
+                  <strong>{{invitacion.aliasCreador}}</strong>
+                  te invitó a colaborar en este tablero.
+                </p>
+                <div class="d-flex justify-content-between align-items-end mt-3">
+                  <div>
+                    @if(invitacion.tipoRelacion === 1){
+                    <span class="badge bg-success">Contribuidor</span>
+                    } @else {
+                    <span class="badge bg-secondary">Espectador</span>
+                    }
+                  </div>
+                  <div class="mt-3">
+                    <button class="btn btn-success btn-sm me-2" (click)="contestarInvitacion(invitacion.idTablero,1)">
+                      Aceptar
+                    </button>
+                    <button class="btn btn-danger btn-sm" (click)="contestarInvitacion(invitacion.idTablero,-1)">
+                      Rechazar
+                    </button>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            <!-- {{invitacion.aliasCreador}} te invito a {{invitacion.tituloTablero}} como
             @if(invitacion.tipoRelacion === 1) {
             <span class="badge bg-success ms-2">Contribuidor</span>
             }
@@ -69,7 +100,7 @@
             }
             <div class="ms-3 badge bg-success" type="button" (click)="contestarInvitacion(invitacion.idTablero,1)">Aceptar</div>
             <div class="ms-3 badge bg-danger" type="button" (click)="contestarInvitacion(invitacion.idTablero,-1)">Rechazar</div>
-            <br>
+            <br> -->
           }
         }
       </div>

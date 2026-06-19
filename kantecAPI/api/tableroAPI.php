@@ -514,4 +514,49 @@ pertenece p JOIN usuario u ON p.aliasUsuario = u.alias where aliasUsuario = ? AN
             "mensaje" => "Permisos actualizados"
         ]);
     }
+
+    // GET http://localhost/kantecAPI/api/colaboradores/notificaciones
+    public function mostrarNotificacionPendiente(){
+        $token = verificarToken();
+
+        $alias = $token['alias'];
+
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
+        $stmt->execute([$alias]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($usuario === false || empty($usuario)) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+        }
+
+        $stmt = $this->db->prepare("SELECT * FROM invitacion WHERE aliasInvitado = ? AND notificado = false LIMIT 1");
+        $stmt->execute([$alias]);
+        $tienePendientes = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if($tienePendientes){
+            respond(200, ["tieneNuevas" => true]);
+        }else {
+            respond (200 , ["tieneNuevas" => false]);
+        }
+
+    }
+    // PUT http://localhost/kantecAPI/api/colaboradores/notificaciones
+    public function marcarNotificado()
+    {
+        $token = verificarToken();
+
+        $alias = $token['alias'];
+
+        $stmt = $this->db->prepare("SELECT * FROM usuario WHERE alias = ? AND activo = true");
+        $stmt->execute([$alias]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($usuario === false || empty($usuario)) {
+            respond(404, ["error" => "Usuario no encontrado"]);
+        }
+        $stmt = $this->db->prepare("UPDATE invitacion SET notificado = true WHERE aliasInvitado = ? AND notificado = false");
+        $stmt->execute([$alias]);
+
+        respond(200, ["Notificaciones marcadas como vistas"]);
+    }
 }

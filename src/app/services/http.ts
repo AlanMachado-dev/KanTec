@@ -243,6 +243,20 @@ export class Http {
     return this.http.post<any>(this.url+"colaboradores/invitar", {idTablero: idTablero, tipoRelacion: body.tipoRelacion, aliasUsuario: body.aliasUsuario},{headers});
   }
 
+  notificarInvitacion(): Observable<{ tieneNuevas: boolean}> {
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.get<{ tieneNuevas: boolean }>(this.url+"colaboradores/notificaciones",{headers});
+  }
+
+  marcarComoVistas(): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.getToken()
+    });
+    return this.http.put<any>(this.url + "colaboradores/notificaciones",{} ,{ headers });
+  }
+
   eliminarMiembro(idTablero: string, aliasUsuario: string): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': 'Bearer ' + this.getToken()

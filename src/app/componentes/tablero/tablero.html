@@ -172,13 +172,14 @@
     }
 </style>
 
+@if(miTablero){
 <div class="w-100 bg-black p-3 d-flex">
-    <h5 class="text-white mb-0">{{miTablero?.titulo}} by {{miTablero?.aliasCreador}}</h5>
+    <h5 class="text-white mb-0">{{miTablero.titulo}} by {{miTablero.aliasCreador}}</h5>
     @if(esEspectador){
     <small class="text-warning ms-2">• Modo Espectador</small>
     }
     <div class="ms-auto d-flex align-items-center gap-2">
-        @if(miTablero?.aliasCreador === aliasLogueado){
+        @if(miTablero.aliasCreador === aliasLogueado){
         <span class="text-white ms-auto" data-bs-toggle="modal" data-bs-target="#agregarColaborador" type="button"
             (click)="abrirModalAgregar()">[+]</span>
         }
@@ -212,7 +213,13 @@
         }
     </div>
 </div>
-
+}@else{
+    <div class="w-100 bg-black p-3 text-center">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+    </div>
+}
 <div class="board-wrapper">
     <div class="board">
         <div class="row columns-row">

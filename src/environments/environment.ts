@@ -1,4 +1,5 @@
 export const environment = {
-    apiUrl: 'https://midominio.com/api/v1',
+    apiUrl: 'http://kantec.tec.seis/kantecAPI/api/',
+    apiUrlImagenes: 'http://kantec.tec.seis/kantecAPI/imagenes/',
     ambiente: 'Produccion'
 };

@@ -17,6 +17,7 @@ export class Http {
   constructor(private http: HttpClient) { }
 
   private url: string = environment.apiUrl;
+  private urlImagenes: string = environment.apiUrlImagenes;
 
   private sesionActiva = new BehaviorSubject<boolean>(this.estaLogueado());
   //BehaviorSubject es una variable que avisa a los que estes suscritos cuando cambia de valor
@@ -148,7 +149,7 @@ export class Http {
   }
 
   public getRutaBaseImg(): string {
-    return "http://localhost/kantecAPI/imagenes/";
+    return this.urlImagenes;
   }
 
   //tableros//

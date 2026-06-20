@@ -214,11 +214,11 @@
     </div>
 </div>
 }@else{
-    <div class="w-100 bg-black p-3 text-center">
-        <div class="spinner-border text-light" role="status">
-            <span class="visually-hidden">Cargando...</span>
-        </div>
+<div class="w-100 bg-black p-3 text-center">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Cargando...</span>
     </div>
+</div>
 }
 <div class="board-wrapper">
     <div class="board">
@@ -240,19 +240,19 @@
                         <div class="mb-3">
                             <div class="postit-usuarios">
                                 @for(asignado of colaboradoresTablero; track asignado.aliasUsuario){
-                                    
-                                    <!-- 1. Validamos si el alias de este colaborador está incluido en las asignaciones de la tarea -->
-                                    @if (tarea.asignaciones.includes(asignado.aliasUsuario)) {
-                                        <div class="avatar-contenedor" [ngClass]="{
+
+                                <!-- 1. Validamos si el alias de este colaborador está incluido en las asignaciones de la tarea -->
+                                @if (tarea.asignaciones.includes(asignado.aliasUsuario)) {
+                                <div class="avatar-contenedor" [ngClass]="{
                                             'creador': asignado.tipoRelacion === 0, 
                                             'contribuidor': asignado.tipoRelacion === 1, 
                                             'espectador': asignado.tipoRelacion === 2 
                                         }">
-                                            <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
-                                                [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)"
-                                                class="rounded-circle " width="32" height="32">
-                                        </div>
-                                    }
+                                    <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
+                                        [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)"
+                                        class="rounded-circle " width="32" height="32">
+                                </div>
+                                }
 
                                 }
                             </div>
@@ -281,8 +281,8 @@
                             }
                             @if (tarea.prioridad === 4) {
                             <div class="d-flex float-end">
-                                <div class="mt-auto p-2 rounded-5 bg-primary"
-                                    style="font-size: 9px; font-weight: bold;">Prioridad Mínima</div>
+                                <div class="mt-auto p-2 rounded-5 bg-info" style="font-size: 9px; font-weight: bold;">
+                                    Prioridad Mínima</div>
                             </div>
                             }
                         </div>
@@ -309,7 +309,7 @@
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="post-it-info" aria-labelledby="[id Tarea]"
     style="--bs-offcanvas-width: 600px;">
-    <form [formGroup]="formularioTarea">
+    <form [formGroup]="formularioTarea" class="d-flex flex-column h-100">
         <div class="offcanvas-header">
             <input type="text" formControlName="nombre" [readOnly]="esEspectador" class="form-control form-control-lg"
                 [class.is-invalid]="formularioTarea.get('nombre')?.invalid && formularioTarea.get('nombre')?.touched">
@@ -343,7 +343,7 @@
             </div>
 
             <div class="float-start">
-                <p>Prioridad: ({{this.formularioTarea.value.prioridad}})</p>
+                <p>Prioridad:</p>
                 <div class="btn-group" [class.pe-none]="esEspectador" role="group"
                     aria-label="Basic mixed styles example">
                     <input type="radio" class="btn-check" formControlName="prioridad" name="prioridad" id="btnradio1"
@@ -352,7 +352,7 @@
 
                     <input type="radio" class="btn-check" formControlName="prioridad" name="prioridad" id="btnradio2"
                         value="2" autocomplete="off">
-                    <label class="btn btn-warning" for="btnradio2">2</label>
+                    <label class="btn btn-warning text-white" for="btnradio2">2</label>
 
                     <input type="radio" class="btn-check" formControlName="prioridad" name="prioridad" id="btnradio3"
                         value="3" autocomplete="off">
@@ -363,11 +363,38 @@
                     <label class="btn btn-primary" for="btnradio4">4</label>
 
                 </div>
+
+                @if (this.formularioTarea.value.prioridad == 1) {
+                <div class="mt-3">
+                    <span>Actual: <span class="p-2 rounded-5 bg-danger ms-2 text-white"
+                            style="font-size: 11px; font-weight: bold;">Alta</span></span>
+                </div>
+                }
+                @if (this.formularioTarea.value.prioridad == 2) {
+                <div class="mt-3">
+                    <span>Actual: <span class="p-2 rounded-5 bg-warning ms-2 text-white"
+                            style="font-size: 11px; font-weight: bold;">Media</span></span>
+                </div>
+                }
+                @if (this.formularioTarea.value.prioridad == 3) {
+                <div class="mt-3">
+                    <span>Actual: <span class="p-2 rounded-5 bg-success ms-2 text-white"
+                            style="font-size: 11px; font-weight: bold;">Baja</span></span>
+                </div>
+                }
+                @if (this.formularioTarea.value.prioridad == 4) {
+                <div class="mt-3">
+                    <span>Actual: <span class="p-2 rounded-5 bg-info ms-2 text-white"
+                            style="font-size: 11px; font-weight: bold;">Minima</span></span>
+                </div>
+                }
+
+
                 <div class="mt-5">
                     <p class="mb-4">Miembros del tablero:</p>
                     @for(asignado of colaboradoresTablero; track asignado.aliasUsuario){
 
-                    <div class="avatar-contenedor dropdown"
+                    <div class="avatar-contenedor dropdown me-1"
                         [ngClass]="{'creador': asignado.tipoRelacion === 0, 'contribuidor': asignado.tipoRelacion === 1, 'espectador': asignado.tipoRelacion === 2 }">
                         <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
                             [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)" type="button"
@@ -381,7 +408,8 @@
                                     (click)="postAsignacion(usuarioSeleccionado!.aliasUsuario)">Asignar a la
                                     tarea</button></li>
                             <li><button class="dropdown-item text-danger" type="button"
-                                    (click)="deleteAsignacion(usuarioSeleccionado!.aliasUsuario)">Quitar asignacion</button></li>
+                                    (click)="deleteAsignacion(usuarioSeleccionado!.aliasUsuario)">Quitar
+                                    asignacion</button></li>
                         </div>
 
                     </div>

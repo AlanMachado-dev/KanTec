@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { DatePipe } from '@angular/common';
+import flatpickr from 'flatpickr';
+import { Spanish } from 'flatpickr/dist/l10n/es';
 
 @Component({
   selector: 'app-perfil',
@@ -71,6 +73,12 @@ export class Perfil implements OnInit, OnDestroy {
           if (this.http.getAliasDelToken() === alias) {
             this.usuPropio = true;
           }
+
+          this.formularioUsuario.patchValue({
+            nombre: response.nombre,
+            fecNac: response.fecNac,
+            bio: response.bio,
+          });
           this._cdr.detectChanges();
         },
         error: (err) => {
@@ -88,6 +96,20 @@ export class Perfil implements OnInit, OnDestroy {
     this.usuPropio = false;
   }
 
+  ngAfterViewInit(): void {
+    flatpickr("#calendario-nacimiento", {
+      locale: Spanish,
+      altInput: true,
+      altFormat: "j \\d\\e F Y",
+      dateFormat: "Y-m-d", 
+    
+      onChange: (selectedDates, dateStr, instance) => {
+        this.formularioUsuario.patchValue({
+          fecNac: instance.formatDate(selectedDates[0], 'Y-m-d')
+        })
+      }
+    });
+  }
 
   imagenSeleccionada!: File;
   extPermitidas = ['image/jpg', 'image/jpeg', 'image/png'];
@@ -101,12 +123,6 @@ export class Perfil implements OnInit, OnDestroy {
 
 
   formularioUsuario = this.formBuilder.group({
-    email: ['', {
-      validators: [
-        Validators.maxLength(60),
-        Validators.email
-      ]
-    }],
     nombre: ['', {
       validators: [
         Validators.maxLength(50)

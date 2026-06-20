@@ -328,7 +328,7 @@
         </div>
         <hr class="m-0">
 
-        <div class="offcanvas-body">
+        <div class="offcanvas-body flex-grow-1">
             <div class="mb-3">
                 <label for="descripcion" class="form-label">Descripcion:</label>
                 <textarea class="form-control" rows="5" [readOnly]="esEspectador" formControlName="descripcion"
@@ -428,7 +428,7 @@
         </div>
 
         @if(!esEspectador){
-        <div class="p-3 border-top">
+        <div class="p-3 border-top mt-auto">
             <div class="row">
                 <div class="col-4">
                     <button type="button" class="btn btn-outline-danger w-100" (click)="confirmarBorrarTarea()">Borrar

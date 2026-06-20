@@ -89,7 +89,7 @@ export class Ingresar implements OnInit{
         error: (err) => {
           console.log(err);
           console.log("Usuario o contraseña incorrecta!");
-          switch(err.codigo){
+          switch(err.error.codigo){
             case "INACTIVO":
               this.errorMessage = "Usuario inactivo!";
               break;

@@ -1,10 +1,17 @@
 <?php
 
 class Database{
+    //desarrollo
     private $host = "localhost";
     private $db = "kantec";
     private $user = "tecnologo";
     private $pass = "tecnologo";
+    //produccion
+    // private $host = "localhost";
+    // private $db = "kant_equiposeis";
+    // private $user = "kant_usuario";
+    // private $pass = "equiposeis";
+    
     private $conn;
 
     public function getConnection(): PDO{

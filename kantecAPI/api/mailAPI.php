@@ -14,7 +14,7 @@ class mailAPI {
 
     public function __construct() {
         // Al crear un Mailer, cargamos la configuración
-        $this->config = require __DIR__ . '/../config/mail.php';
+        $this->config = require __DIR__ . '/../config/mailConfig.php';
         $this->db = (new Database())->getConnection();
         $this->db->query("SET sql_mode=''");
     }

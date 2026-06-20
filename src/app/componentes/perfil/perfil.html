@@ -78,22 +78,6 @@
     <div class="offcanvas-body">
         <form [formGroup]="formularioUsuario" (ngSubmit)="onSubmit()">
             <div class="mb-3">
-                <label for="email" class="form-label">Correo electronico</label>
-                <input type="email" placeholder="{{usuario?.email}}" #emailInput (blur)="afterEmail(emailInput.value)"
-                    formControlName="email" class="form-control" id="email"
-                    [class.is-invalid]="formularioUsuario.get('email')?.invalid && formularioUsuario.get('email')?.touched">
-                @if(formularioUsuario.get('email')?.invalid && formularioUsuario.get('email')?.touched){
-                <div class="invalid-feedback">
-                    @if(formularioUsuario.get('email')?.errors?.['email']) {
-                    Debe ingresar un email válido.
-                    }
-                    @if(formularioUsuario.get('email')?.errors?.['maxlength']) {
-                    Máximo de caracteres debe ser 60.
-                    }
-                </div>
-                }
-            </div>
-            <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre Completo</label>
                 <input type="text" placeholder="{{usuario?.nombre}}" formControlName="nombre" class="form-control"
                     id="nombre"
@@ -108,8 +92,10 @@
             </div>
             <div class="mb-3">
                 <label for="fecNac" class="form-label">Fecha de Nacimiento</label>
-                <input type="date" placeholder="{{usuario?.fecNac}}" formControlName="fecNac" class="form-control"
-                    id="fecNac">
+                <!-- <input type="date" placeholder="{{usuario?.fecNac}}" formControlName="fecNac" class="form-control"
+                    id="fecNac"> -->
+                <input type="text" id="calendario-nacimiento" name="calendario" class="form-control me-5"
+                placeholder="{{formularioUsuario.value.fecNac}}">
             </div>
             <div class="mb-3">
                 <label for="bio" class="form-label">Biografia</label>

@@ -1,11 +1,11 @@
 <?php
 require_once 'config/db.php';
-require_once 'mailApi.php';
+require_once 'mailAPI.php';
 
 class tableroAPI
 {
     private PDO $db;
-    //private mailAPI $mailer;
+    private mailAPI $mailer;
 
     public function __construct()
     {
@@ -327,7 +327,7 @@ pertenece p JOIN usuario u ON p.aliasUsuario = u.alias where aliasUsuario = ? AN
         $stmt = $this->db->prepare("INSERT INTO invitacion (idTablero, aliasInvitado, aliasCreador, tipoRelacion, notificado) VALUES (? ,? ,? ,? , false)");
         $stmt->execute([$body['idTablero'], $body['aliasUsuario'], $tablero['aliasCreador'], $body['tipoRelacion']]);
 
-        //$mailEnviado = $this->mailer->enviarInvitacion($emailInvitado,$alias,$tablero['titulo'],$body['tipoRelacion']);
+        $mailEnviado = $this->mailer->enviarInvitacion($emailInvitado,$alias,$tablero['titulo'],$body['tipoRelacion']);
 
         respond(201, [
             "mensaje" => "Miembro invitado"//, "mailEnviado" => $mailEnviado

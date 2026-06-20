@@ -105,7 +105,6 @@ export class Tablero implements OnInit, AfterViewInit {
             this.avisoEspectadorMostrado = true;
           }
         })
-        /*
         this.intervaloTareas = setInterval(() => {
           this.cargarTareas();
         },5000);

@@ -109,7 +109,6 @@ export class Tablero implements OnInit, AfterViewInit {
         this.intervaloTareas = setInterval(() => {
           this.cargarTareas();
         },5000);
-        */
         if(this.idTablero){
           this.http.getTablero(this.idTablero)
             .subscribe(tablero => {

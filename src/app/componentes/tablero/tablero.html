@@ -1,8 +1,8 @@
 <style>
     .postit-usuarios {
         position: absolute;
-        top: -12px;
-        left: 12px;
+        top: -16px;
+        left: 10px;
 
         display: flex;
         gap: 4px;
@@ -237,7 +237,7 @@
                         (dragend)="!esEspectador && onDragEnd($event)" (click)="seleccionarTarea(tarea)"
                         [style.cursor]="esEspectador ? 'pointer' : 'grab'">
                         @if (tarea.asignaciones && tarea.asignaciones.length > 0) {
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <div class="postit-usuarios">
                                 @for(asignado of colaboradoresTablero; track asignado.aliasUsuario){
                                     

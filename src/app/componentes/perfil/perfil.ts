@@ -20,8 +20,9 @@ export class Perfil implements OnInit, OnDestroy {
   imagenUsu: string | null = null;
   usuPropio: boolean = false;
 
-
   constructor(private http: Http, private router: Router, private ruta: ActivatedRoute, private _cdr: ChangeDetectorRef) { }
+
+  private fpInstance: any;
 
   ngOnInit(): void {
     let detener = false;
@@ -75,9 +76,9 @@ export class Perfil implements OnInit, OnDestroy {
           }
 
           this.formularioUsuario.patchValue({
-            nombre: response.nombre,
-            fecNac: response.fecNac,
-            bio: response.bio,
+            nombre: this.usuario.nombre,
+            fecNac: this.usuario.fecNac,
+            bio: this.usuario.bio,
           });
           this._cdr.detectChanges();
         },
@@ -97,16 +98,19 @@ export class Perfil implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    flatpickr("#calendario-nacimiento", {
+    this.fpInstance = flatpickr("#calendario-nacimiento", {
       locale: Spanish,
       altInput: true,
       altFormat: "j \\d\\e F Y",
       dateFormat: "Y-m-d", 
+      maxDate: "today",
     
       onChange: (selectedDates, dateStr, instance) => {
         this.formularioUsuario.patchValue({
           fecNac: instance.formatDate(selectedDates[0], 'Y-m-d')
         })
+        this.formularioUsuario.markAsTouched();
+        this.formularioUsuario.markAsDirty();
       }
     });
   }
@@ -125,13 +129,12 @@ export class Perfil implements OnInit, OnDestroy {
   formularioUsuario = this.formBuilder.group({
     nombre: ['', {
       validators: [
-        Validators.maxLength(50)
+        Validators.maxLength(50),
+        Validators.required
       ]
     }],
     imagen: ['',],
-    fecNac: ['',
-      Validators.max('2010-1-1' as any)
-    ],
+    fecNac: ['',],
     bio: ['', {
       validators: [
         Validators.maxLength(100)
@@ -190,10 +193,16 @@ export class Perfil implements OnInit, OnDestroy {
 
     reader.onload = () => {
       this.imagenPreview = reader.result;
+      this.formularioUsuario.markAsTouched();
+      this.formularioUsuario.markAsDirty();
       this._cdr.detectChanges();
     };
 
     reader.readAsDataURL(file);
+  }
+
+  editarPerfil(): void{
+    this.fpInstance?.setDate(this.formularioUsuario.value.fecNac, false);
   }
 
   onSubmit() {

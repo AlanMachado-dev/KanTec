@@ -48,7 +48,9 @@
                         @if (usuPropio) {
                         <div class="col">
                             <button class="btn btn-primary" data-bs-toggle="offcanvas"
-                                data-bs-target="#offcanvasUsuario">Editar Perfil</button>
+                                data-bs-target="#offcanvasUsuario"
+                                aria-controls="offcanvasUsuario"
+                                (click)="editarPerfil()">Editar Perfil</button>
                         </div>
                         <div class="col">
                             <button class="btn btn-outline-danger" (click)="confirmarBorrado()">
@@ -70,79 +72,83 @@
 </div>
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasUsuario" aria-labelledby="offcanvasUsuarioLabel">
-    <div class="offcanvas-header">
+    <div class="offcanvas-header border-bottom">
         <h5 class="offcanvas-title" id="offcanvasUsuarioLabel">{{usuario?.alias}}</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" id="btnCerrarOffCanvas"
             aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <form [formGroup]="formularioUsuario" (ngSubmit)="onSubmit()">
-            <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre Completo</label>
-                <input type="text" placeholder="{{usuario?.nombre}}" formControlName="nombre" class="form-control"
-                    id="nombre"
-                    [class.is-invalid]="formularioUsuario.get('nombre')?.invalid && formularioUsuario.get('nombre')?.touched">
-                @if(formularioUsuario.get('nombre')?.invalid && formularioUsuario.get('nombre')?.touched){
-                <div class="invalid-feedback">
-                    @if(formularioUsuario.get('nombre')?.errors?.['maxLength']) {
-                    Máximo 50 caracteres.
+        <form [formGroup]="formularioUsuario" (ngSubmit)="onSubmit()" class="d-flex flex-column h-100">
+            <div class="offcanvas-body flex-grow-1">
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre Completo</label>
+                    <input type="text" formControlName="nombre" class="form-control" id="nombre"
+                        [class.is-invalid]="formularioUsuario.get('nombre')?.invalid && formularioUsuario.get('nombre')?.touched">
+                    @if(formularioUsuario.get('nombre')?.invalid && formularioUsuario.get('nombre')?.touched){
+                    <div class="invalid-feedback">
+                        @if(formularioUsuario.get('nombre')?.errors?.['maxLength']) {
+                        Máximo 50 caracteres.
+                        }
+                    </div>
                     }
                 </div>
-                }
-            </div>
-            <div class="mb-3">
-                <label for="fecNac" class="form-label">Fecha de Nacimiento</label>
-                <!-- <input type="date" placeholder="{{usuario?.fecNac}}" formControlName="fecNac" class="form-control"
-                    id="fecNac"> -->
-                <input type="text" id="calendario-nacimiento" name="calendario" class="form-control me-5"
-                placeholder="{{formularioUsuario.value.fecNac}}">
-            </div>
-            <div class="mb-3">
-                <label for="bio" class="form-label">Biografia</label>
-                <textarea formControlName="bio" placeholder="{{usuario?.bio}}" class="form-control" id="bio"
-                    [class.is-invalid]="formularioUsuario.get('bio')?.invalid && formularioUsuario.get('bio')?.touched"></textarea>
-                @if(formularioUsuario.get('bio')?.invalid && formularioUsuario.get('bio')?.touched){
-                <div class="invalid-feedback">
-                    @if(formularioUsuario.get('bio')?.errors?.['maxlength']) {
-                    Máximo 100 caracteres.
+                <div class="mb-3">
+                    <label for="fecNac" class="form-label">Fecha de Nacimiento</label>
+                    <!-- <input type="date" placeholder="{{usuario?.fecNac}}" formControlName="fecNac" class="form-control"
+                        id="fecNac"> -->
+                    <input type="text" id="calendario-nacimiento" name="calendario" class="form-control me-5">
+                </div>
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Biografia</label>
+                    <textarea formControlName="bio" class="form-control" id="bio"
+                        [class.is-invalid]="formularioUsuario.get('bio')?.invalid && formularioUsuario.get('bio')?.touched"></textarea>
+                    @if(formularioUsuario.get('bio')?.invalid && formularioUsuario.get('bio')?.touched){
+                    <div class="invalid-feedback">
+                        @if(formularioUsuario.get('bio')?.errors?.['maxlength']) {
+                        Máximo 100 caracteres.
+                        }
+                    </div>
                     }
                 </div>
-                }
-            </div>
-            <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo" (dragenter)="onDragEnter($event)"
-                (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)"
-                (click)="fileInput.click()" style="cursor: pointer;">
-            
-                @if (!imagenPreview) {
-                <p class="mb-0 text-center text-muted">Arrastra tu foto de perfil aquí o haz clic para seleccionar</p>
-                } @else {
-                <div class="text-center">
-                    <img [src]="imagenPreview" alt="Previsualización" class="img-thumbnail mb-2"
-                        style="max-height: 120px; object-fit: cover;" />
-                    <p class="mb-0 text-success small fw-bold">¡Imagen cargada con éxito!</p>
-                    <p class="text-muted small mb-0">(Haz clic o arrastra otra para cambiarla)</p>
+                <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo" (dragenter)="onDragEnter($event)"
+                    (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)"
+                    (click)="fileInput.click()" style="cursor: pointer;">
+                
+                    @if (!imagenPreview) {
+                    <p class="mb-0 text-center text-muted">Arrastra tu foto de perfil aquí o haz clic para seleccionar</p>
+                    } @else {
+                    <div class="text-center">
+                        <img [src]="imagenPreview" alt="Previsualización" class="img-thumbnail mb-2"
+                            style="max-height: 120px; object-fit: cover;" />
+                        <p class="mb-0 text-success small fw-bold">¡Imagen cargada con éxito!</p>
+                        <p class="text-muted small mb-0">(Haz clic o arrastra otra para cambiarla)</p>
+                    </div>
+                    }
+                
+                    <input id="imagen" type="file" #fileInput hidden (change)="onFileSelected($event)"
+                        accept="image/png, image/jpeg, image/jpg" />
+                </div>
+                @if(mostrarError){
+                <div class="alert alert-danger m-2 p-2 text-center" role="alert">
+                    {{errorMessage}}
                 </div>
                 }
-            
-                <input id="imagen" type="file" #fileInput hidden (change)="onFileSelected($event)"
-                    accept="image/png, image/jpeg, image/jpg" />
             </div>
-            @if(mostrarError){
-            <div class="alert alert-danger m-2 p-2 text-center" role="alert">
-                {{errorMessage}}
-            </div>
-            }
-            <div>
-                @if (!loading) {
-                <button type="submit"
-                    [disabled]="!formularioUsuario.valid || (formularioUsuario.pristine && !imagenSeleccionada) || mostrarError"
-                    class="btn btn-outline-primary mt-3 w-100 h-25 fw-bold">Actualizar Perfil</button>
-                }@else {
-                <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" type="button" disabled>
-                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                    <span role="status">Cargando...</span>
-                </button>
-                }
+            <div class="p-3 border-top mt-auto">
+                <div class="row">
+                    <div class="col">
+                        @if (!loading) {
+                        <button type="submit"
+                            [disabled]="formularioUsuario.invalid || (formularioUsuario.pristine) || mostrarError"
+                            class="btn btn-outline-primary mt-1 w-100 fw-bold">Actualizar Perfil</button>
+                        }@else {
+                        <button class="btn btn-secondary text-center mt-1 w-100 fw-bold" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                            <span role="status">Cargando...</span>
+                        </button>
+                        }
+                    </div>
+                </div>
             </div>
         </form>
     </div>

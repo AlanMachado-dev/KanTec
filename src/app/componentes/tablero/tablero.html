@@ -398,18 +398,21 @@
                         [ngClass]="{'creador': asignado.tipoRelacion === 0, 'contribuidor': asignado.tipoRelacion === 1, 'espectador': asignado.tipoRelacion === 2 }">
                         <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
                             [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)" type="button"
-                            (click)="abrirMenuAsignacion(asignado)" class="rounded-circle dropdown-toggle" width="32"
-                            height="32" data-bs-toggle="dropdown" data-bs-target="#menuUsuario">
-
+                            (click)="abrirMenuAsignacion(asignado)" class="rounded-circle dropdown-toggle" width="32" height="32"
+                            data-bs-toggle="dropdown" data-bs-target="#menuUsuario">
+                        
                         <div class="dropdown-menu" style="position: fixed;" id="menuUsuario">
                             <li><button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver
                                     Perfil</button></li>
-                            <li><button class="dropdown-item" type="button"
-                                    (click)="postAsignacion(usuarioSeleccionado!.aliasUsuario)">Asignar a la
+                        
+                            @if (!tareaSelecionada?.asignaciones?.includes(asignado.aliasUsuario)) {
+                            <li><button class="dropdown-item" type="button" (click)="postAsignacion(usuarioSeleccionado!.aliasUsuario)">Asignar
+                                    a la
                                     tarea</button></li>
+                            }@else{
                             <li><button class="dropdown-item text-danger" type="button"
-                                    (click)="deleteAsignacion(usuarioSeleccionado!.aliasUsuario)">Quitar
-                                    asignacion</button></li>
+                                    (click)="deleteAsignacion(usuarioSeleccionado!.aliasUsuario)">Quitar asignacion</button></li>
+                            }
                         </div>
 
                     </div>

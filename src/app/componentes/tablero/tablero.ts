@@ -595,7 +595,10 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     prioridad: [''],
   });
 
+  tareaSelecionada: Tarea | null = null;
   seleccionarTarea(tarea: Tarea): void{
+    this.tareaSelecionada = tarea;
+    this.tareaSelecionada.asignaciones;
     this.formularioTarea.patchValue({
       idTarea: tarea.idTarea,
       nombre: tarea.nombre,

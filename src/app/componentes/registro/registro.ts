@@ -167,17 +167,12 @@ export class Registro {
         usuario.imagen = respuestaImg.ruta;
         this.http.registrarUsuario(usuario).subscribe({
           next: (response) => {
-            this.http.guardarToken(response.token);
-            this.loading = false;
-            this.router.navigate(['/home']);
-
-            // al añadir verificacion por mail cambiar por este:
-            // this.http.enviarCodigo(usuario.alias, usuario.email, usuario.nombre).subscribe({
-            //   next: () => {
-            //     const modal = new bootstrap.Modal(this.modalRef.nativeElement);
-            //     modal.show();
-            //   }
-            // })
+            const modal = new bootstrap.Modal(this.modalRef.nativeElement);
+            modal.show();
+            this.http.enviarCodigo(usuario.alias, usuario.email, usuario.nombre).subscribe({
+              next: () => {
+              }
+            })
           },
           error: (err) => this.manejarErrorGlobal(err)
         });
@@ -211,6 +206,10 @@ export class Registro {
           next: (response) => {
             this.http.guardarToken(response.token);
             this.loadingVerificar = false;
+            
+            const modal = bootstrap.Modal.getInstance(this.modalRef.nativeElement);
+            modal.hide();
+            
             this.router.navigate(['/home']);
           },
           error: (err) => console.log(err)

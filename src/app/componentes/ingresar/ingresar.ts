@@ -69,12 +69,13 @@ export class Ingresar implements OnInit{
           if(response.verificado === false){
             if(!this.usuarioForm.value.alias) return;
             
+            const modal = new bootstrap.Modal(this.modalRef.nativeElement);
+            modal.show();
+
             this.http.getUsuario(this.usuarioForm.value.alias).subscribe({
               next: (usuario) => {
                 this.http.enviarCodigo(usuario.alias, usuario.email, usuario.nombre).subscribe({
                   next: () => {
-                    const modal = new bootstrap.Modal(this.modalRef.nativeElement);
-                    modal.show();
                   }
                 })
               },
@@ -131,6 +132,12 @@ export class Ingresar implements OnInit{
           next: (response) => {
             this.http.guardarToken(response.token);
             this.loadingVerificar = false;
+
+            const modal = bootstrap.Modal.getInstance(this.modalRef.nativeElement);
+            modal.hide();
+            // const btnCerrar = document.getElementById('cerrarVerificacion');
+            // btnCerrar?.click();
+            
             this.router.navigate(['/home']);
           },
           error: (err) => console.log(err)
@@ -140,6 +147,7 @@ export class Ingresar implements OnInit{
         this.loadingVerificar = false;
         this.errorMessageVerificar = "Código inválido o expirado";
         this.mostrarErrorVerificar = true;
+        this._cdr.detectChanges();
         console.log(err);
       } 
     })

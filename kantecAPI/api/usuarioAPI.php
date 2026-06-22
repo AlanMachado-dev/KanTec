@@ -78,7 +78,7 @@ class usuarioAPI {
         $passhash = password_hash($body['password'], PASSWORD_DEFAULT);
 
         $stmt = $this->db->prepare(
-            "INSERT INTO usuario (alias, password, verificado) VALUES (?, ?, 1)"
+            "INSERT INTO usuario (alias, password, verificado) VALUES (?, ?, 0)"
         ); //cuando se añada verifiacion de mail el 1 pasa a ser 0
         $stmt->execute([$body['alias'], $passhash]);
 

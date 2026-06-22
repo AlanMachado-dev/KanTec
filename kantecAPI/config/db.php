@@ -132,6 +132,7 @@ class Database{
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS verificacion (
                 alias       VARCHAR(30) NOT NULL,
+                email       VARCHAR(60) NOT NULL,
                 codigo      INTEGER     NOT NULL,
                 expiracion  DATETIME    NOT NULL
             )

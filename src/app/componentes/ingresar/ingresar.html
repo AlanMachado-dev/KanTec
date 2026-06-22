@@ -37,12 +37,12 @@
         data-bs-target="#modalCodigo">prueba codigo</button> -->
 </div>
 
-<div class="modal fade" #modalCodigo id="modalCodigo" tabindex="-1" aria-labelledby="modalCodigoLabel" aria-hidden="true">
+<div class="modal fade" #modalCodigo id="modalCodigo" tabindex="-1" aria-labelledby="modalCodigoLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="modalCodigoLabel">Verificar Usuario</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cerrarVerificacion" ></button> -->
       </div>
       <div class="modal-body">
         <form [formGroup]="codigoForm">
@@ -66,7 +66,7 @@
       </div>
       <div class="modal-footer">
         @if(mostrarErrorVerificar){
-            <div class="alert alert-danger m-2 p-2 text-center" role="alert">
+            <div class="alert alert-danger m-2 p-2 text-center me-auto" role="alert">
                 {{errorMessageVerificar}}
             </div>
             }

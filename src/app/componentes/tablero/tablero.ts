@@ -735,12 +735,12 @@ calcularDiasRestantes(fechaFinal: any): number | null {
       return 'text-muted';
     }
     if (dias < 0){
-      return 'text-danger fw-bold';
+      return 'text-danger fw-bold bg-danger-subtle';
     }
     if (dias === 0 || dias === 1){
-      return 'text-warning fw-bold';
+      return 'text-warning fw-bold bg-warning-subtle';
     }
-    return 'text-success fw-semibold';
+    return 'text-success fw-semibold bg-success-subtle';
   }
 
 

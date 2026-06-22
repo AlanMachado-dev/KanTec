@@ -57,19 +57,17 @@
 
                 <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
-                        <div class="postit mt-3" 
-                        [ngClass]="{
+                    <div class="postit mt-3" [ngClass]="{
                             'red': tarea.prioridad === 1,
                             'yellow': tarea.prioridad === 2,
                             'green': tarea.prioridad === 3,                            
                             'cyan': tarea.prioridad === 4
-                        }" 
-                        type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                        }" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
                         aria-controls="post-it-info" [draggable]="!esEspectador"
                         (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
                         (dragend)="!esEspectador && onDragEnd($event)" (click)="seleccionarTarea(tarea)"
                         [style.cursor]="esEspectador ? 'pointer' : 'grab'">
-                        
+
                         @if (tarea.asignaciones && tarea.asignaciones.length > 0) {
                         <div class="mb-3">
                             <div class="postit-usuarios">
@@ -91,7 +89,7 @@
                                 }
                             </div>
                         </div>
-                        
+
                         }
                         <p class="fw-bold float-start largoNombreTarea">{{tarea.nombre}}</p>
 
@@ -126,13 +124,49 @@
 
                         <p>{{tarea.descripcion}}</p>
 
+                        @if (col.id !== 3) {
                         <div class="d-flex mt-2">
-                            <span class="ms-auto" style="font-size: 12px;"
-                                [ngClass]="obtenerClaseVencimiento(tarea.fechaFinal)">
-                                {{ obtenerTextoVencimiento(tarea.fechaFinal) }}
-                            </span>
+                            <div class="ms-auto p-2 rounded-5" [ngClass]="obtenerClaseVencimiento(tarea.fechaFinal)">
+                                <span style="font-size: 11px;">
+                                    {{ obtenerTextoVencimiento(tarea.fechaFinal) }}
+                                </span>
+                            </div>
                         </div>
+                        }@else {
+                        <div class="d-flex mt-2">
 
+                            @switch (tarea.prioridad) {
+                            @case (1) {
+                            <div class="ms-auto p-2 rounded-5 bg-danger-subtle text-danger">
+                                <span style="font-size: 11px;">
+                                    <i>Tarea Realizada</i>
+                                </span>
+                            </div>
+                            }
+                            @case (2) {
+                            <div class="ms-auto p-2 rounded-5 bg-warning-subtle text-warning">
+                                <span style="font-size: 11px;">
+                                    <i>Tarea Realizada</i>
+                                </span>
+                            </div>
+                            }
+                            @case (3) {
+                            <div class="ms-auto p-2 rounded-5 bg-success-subtle text-success">
+                                <span style="font-size: 11px;">
+                                    <i>Tarea Realizada</i>
+                                </span>
+                            </div>
+                            }
+                            @case (4) {
+                            <div class="ms-auto p-2 rounded-5 bg-light text-info">
+                                <span style="font-size: 11px;">
+                                    <i>Tarea Realizada</i>
+                                </span>
+                            </div>
+                            }
+                            }
+                        </div>
+                        }
                     </div>
                     }
                 </div>
@@ -233,20 +267,22 @@
                         [ngClass]="{'creador': asignado.tipoRelacion === 0, 'contribuidor': asignado.tipoRelacion === 1, 'espectador': asignado.tipoRelacion === 2 }">
                         <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
                             [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)" type="button"
-                            (click)="abrirMenuAsignacion(asignado)" class="rounded-circle dropdown-toggle" width="32" height="32"
-                            data-bs-toggle="dropdown" data-bs-target="#menuUsuario">
-                        
+                            (click)="abrirMenuAsignacion(asignado)" class="rounded-circle dropdown-toggle" width="32"
+                            height="32" data-bs-toggle="dropdown" data-bs-target="#menuUsuario">
+
                         <div class="dropdown-menu" style="position: fixed;" id="menuUsuario">
                             <li><button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver
                                     Perfil</button></li>
-                        
+
                             @if (!tareaSelecionada?.asignaciones?.includes(asignado.aliasUsuario)) {
-                            <li><button class="dropdown-item" type="button" (click)="postAsignacion(usuarioSeleccionado!.aliasUsuario)">Asignar
+                            <li><button class="dropdown-item" type="button"
+                                    (click)="postAsignacion(usuarioSeleccionado!.aliasUsuario)">Asignar
                                     a la
                                     tarea</button></li>
                             }@else{
                             <li><button class="dropdown-item text-danger" type="button"
-                                    (click)="deleteAsignacion(usuarioSeleccionado!.aliasUsuario)">Quitar asignacion</button></li>
+                                    (click)="deleteAsignacion(usuarioSeleccionado!.aliasUsuario)">Quitar
+                                    asignacion</button></li>
                             }
                         </div>
 
@@ -296,8 +332,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal"></button>
             </div>
             <div class="modal-body">
-                
-                
+
+
                 <form [formGroup]="formularioMiembro">
                     <div class="mb-3">
                         <label for="aliasUsuario" class="form-label">Alias</label>
@@ -344,7 +380,7 @@
                 </button>
                 }
             </div>
-            
+
         </div>
     </div>
 

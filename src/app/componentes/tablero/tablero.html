@@ -103,10 +103,7 @@
         overflow-wrap: break-word;
 
         transition: box-shadow 0.15s ease, opacity 0.15s ease;
-        background-color: papayawhip;
         color: black;
-
-
 
         &:active {
             cursor: grabbing;
@@ -117,16 +114,8 @@
             box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.4);
         }
 
-        &.yellow {
-            background: #fff9a6;
-        }
-
-        &.green {
-            background: #caffbf;
-        }
-
-        &.pink {
-            background: #ffadad;
+        &.prioridad1 {
+            background: #0d6efd;
         }
     }
 
@@ -146,6 +135,22 @@
 
     .espectador {
         border: 3px solid #6c757d;
+    }
+
+    .red{
+        background-color: #f1aeb5;
+    }
+
+    .cyan{
+        background-color: #cff4fc;
+    }
+
+    .green {
+        background-color: #c5e1a5;
+    }
+
+    .yellow{
+        background-color: #ffe69c
     }
 
     .calendario-bloqueado {
@@ -231,11 +236,19 @@
 
                 <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
-                    <div class="postit mt-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
+                        <div class="postit mt-3" 
+                        [ngClass]="{
+                            'red': tarea.prioridad === 1,
+                            'yellow': tarea.prioridad === 2,
+                            'green': tarea.prioridad === 3,                            
+                            'cyan': tarea.prioridad === 4
+                        }" 
+                        type="button" data-bs-toggle="offcanvas" data-bs-target="#post-it-info"
                         aria-controls="post-it-info" [draggable]="!esEspectador"
                         (dragstart)="!esEspectador && onDragStart($event, tarea.idTarea)"
                         (dragend)="!esEspectador && onDragEnd($event)" (click)="seleccionarTarea(tarea)"
                         [style.cursor]="esEspectador ? 'pointer' : 'grab'">
+                        
                         @if (tarea.asignaciones && tarea.asignaciones.length > 0) {
                         <div class="mb-3">
                             <div class="postit-usuarios">
@@ -257,6 +270,7 @@
                                 }
                             </div>
                         </div>
+                        
                         }
                         <p class="fw-bold float-start largoNombreTarea">{{tarea.nombre}}</p>
 

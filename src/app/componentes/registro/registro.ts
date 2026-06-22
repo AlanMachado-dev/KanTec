@@ -19,7 +19,6 @@ export class Registro {
   @ViewChild('modalCodigo') modalRef!: ElementRef;
 
   imagenSeleccionada!: File;
-  imagenPreview: string | ArrayBuffer | null = null;
   extPermitidas = ['image/jpg', 'image/jpeg', 'image/png'];
   formBuilder = inject(FormBuilder);
   private router = inject(Router);

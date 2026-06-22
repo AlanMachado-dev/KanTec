@@ -67,30 +67,3 @@
         }
     </div>
 }
-<!--div class="modal fade" id="cropperModal" tabindex="-1">
-
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    Recortar imagen
-                </h5>
-            </div>
-
-            <div class="modal-body">
-                @if(imageChangedEvent){
-                <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true"
-                    [aspectRatio]="aspectRatio" (imageCropped)="onImageCropper($event)">
-                </image-cropper>
-                }
-            </div>
-
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="cancelarRecorte()">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)="aplicarRecorte()">Aplicar recorte </button>
-    </div>
-
-</div> -->

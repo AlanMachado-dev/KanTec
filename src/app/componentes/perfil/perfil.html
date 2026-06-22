@@ -92,32 +92,15 @@
                     </div>
                     }
                 </div>
-                <!-- <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo" (dragenter)="onDragEnter($event)"
-                    (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)"
-                    (click)="fileInput.click()" style="cursor: pointer;">
-                
-                    @if (!imagenPreview) {
-                    <p class="mb-0 text-center text-muted">Arrastra tu foto de perfil aquí o haz clic para seleccionar</p>
-                    } @else {
-                    <div class="text-center">
-                        <img [src]="imagenPreview" alt="Previsualización" class="img-thumbnail mb-2"
-                            style="max-height: 120px; object-fit: cover;" />
-                        <p class="mb-0 text-success small fw-bold">¡Imagen cargada con éxito!</p>
-                        <p class="text-muted small mb-0">(Haz clic o arrastra otra para cambiarla)</p>
-                    </div>
-                    }
-                
-                    <input id="imagen" type="file" #fileInput hidden (change)="onFileSelected($event)"
-                        accept="image/png, image/jpeg, image/jpg" />
-                </div>
-                @if(mostrarError){
-                <div class="alert alert-danger m-2 p-2 text-center" role="alert">
-                    {{errorMessage}}
-                </div>
-                } -->
+                @if(usuario && usuario.imagen != 'usuarios/default.jpg'){
                 <app-imagenes-cropper [aspectRatio]="1" (imagenRecortada)="onImagenPerfil($event)"
                 [mensajeImagen]="'Arrastra tu foto de perfil aquí o haz clic para seleccionar'" [esPerfil]="true"
-                [preview]="imagenUsu"/>
+                [previewInicial]="imagenUsu"/>
+                }@else {
+                    <app-imagenes-cropper [aspectRatio]="1" (imagenRecortada)="onImagenPerfil($event)"
+                        [mensajeImagen]="'Arrastra tu foto de perfil aquí o haz clic para seleccionar'" [esPerfil]="true"
+                        />
+                }
             </div>
             <div class="p-3 border-top mt-auto">
                 <div class="row">

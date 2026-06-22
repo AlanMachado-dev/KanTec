@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges , OnChanges} from '@angular/core';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 
 @Component({
@@ -7,8 +7,9 @@ import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
   imports: [CommonModule, ImageCropperComponent],
   templateUrl: './imagenes-cropper.html',
   styles: '',
+  standalone: true
 })
-export class ImagenesCropper {
+export class ImagenesCropper implements OnChanges{
 
   @Input() aspectRatio = 1;
 
@@ -16,7 +17,15 @@ export class ImagenesCropper {
 
   @Input() esPerfil: boolean = false;
 
-  @Input() preview: string | ArrayBuffer | null = null;
+  @Input() previewInicial: string | ArrayBuffer | null = null;
+  preview: string | ArrayBuffer | null = null;
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('ngOnChanges', changes);
+    if (changes['previewInicial']) {
+      this.preview = this.previewInicial;
+    }
+  }
 
   @Output() imagenRecortada = new EventEmitter<File>();
 
@@ -133,13 +142,11 @@ export class ImagenesCropper {
   }
 
   cancelarRecorte() {
-    this.archivoRecortado = null;
-    this.imageChangedEvent = null;
-    this.preview = null;
+    this.reset();
   }
 
   reset(){
-    this.preview = null;
+    this.preview = this.previewInicial;
     this.imageChangedEvent = null;
     this.archivoRecortado = null;
     this.error = null;

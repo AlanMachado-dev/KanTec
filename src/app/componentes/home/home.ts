@@ -244,6 +244,7 @@ export class Home {
 
   seleccionarTablero(tablero: TableroInterfaz, desdeOffCanvas: boolean): void{
     this.cropper.reset();
+    this.formularioTablero.markAsPristine();
     this.tableroSeleccionado = tablero;
     if(desdeOffCanvas){
       this.formularioTablero.patchValue({
@@ -252,11 +253,6 @@ export class Home {
         color: tablero.color
       });
       this.archivoSeleccionado = null;
-      if(tablero.imagen){
-        this.imagenPreview = this.rutaImagenes + tablero.imagen;
-      }else{
-        this.imagenPreview = null;
-      }
       this.cdr.detectChanges();
     }else{
       this.http.getColaboradoresDeTablero(tablero.id)
@@ -271,10 +267,10 @@ export class Home {
   }
 
   archivoSeleccionado: File | null = null;
-  imagenPreview: string | ArrayBuffer | null = null;
   
   onImagenTablero(file: File){
     this.archivoSeleccionado = file;
+    this.formularioTablero.markAsDirty();
   }
 
   guardarCambiosTablero(): void {

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Http } from '../../services/http';
 import { Usuario } from '../../interfaces/usuario';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,6 +16,9 @@ import { ImagenesCropper } from '../imagenes-cropper/imagenes-cropper';
   styles: [':host { display: block; width: 100%; }'],
 })
 export class Perfil implements OnInit, OnDestroy {
+
+  @ViewChild(ImagenesCropper)
+  cropper!: ImagenesCropper;
 
   usuario: Usuario | null = null;
   imagenUsu: string | null = null;
@@ -71,7 +74,6 @@ export class Perfil implements OnInit, OnDestroy {
           this.usuario = response;
           this.imagenUsu = this.http.getRutaBaseImg() + this.usuario.imagen;
 
-          this.imagenPreview = this.usuario.imagen ? this.http.getRutaBaseImg() + this.usuario.imagen : null;
           if (this.http.getAliasDelToken() === alias) {
             this.usuPropio = true;
           }
@@ -128,6 +130,7 @@ export class Perfil implements OnInit, OnDestroy {
 
   onImagenPerfil(file: File) {
     this.imagenSeleccionada = file;
+    this.formularioUsuario.markAsDirty();
   }
 
   formularioUsuario = this.formBuilder.group({
@@ -146,11 +149,13 @@ export class Perfil implements OnInit, OnDestroy {
     }]
 
   })
-  imagenPreview: string | ArrayBuffer | null = null;
  
 
   editarPerfil(): void{
     this.fpInstance?.setDate(this.formularioUsuario.value.fecNac, false);
+    this.formularioUsuario.markAsPristine();
+    this.cropper.reset();
+    
   }
 
   onSubmit() {

@@ -129,24 +129,6 @@
             <div class="row">
                 <div class="col-2"></div>
                 <div class="col-8">
-                    <!-- <div id="divImagen" class="divImagen mb-2" [class.divImagen--drag-active]="dragActivo"
-                        (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
-                        (drop)="onDrop($event)" (click)="fileInput.click()" style="cursor: pointer;">
-
-                        @if (!imagenPreview) {
-                        <p class="mb-0 text-center text-muted">Arrastra tu foto de perfil aquí o haz clic para seleccionar</p>
-                        } @else {
-                        <div class="text-center">
-                            <img [src]="imagenPreview" alt="Previsualización" class="img-thumbnail mb-2"
-                                style="max-height: 120px; object-fit: cover;" />
-                            <p class="mb-0 text-success small fw-bold">¡Imagen cargada con éxito!</p>
-                            <p class="text-muted small mb-0">(Haz clic o arrastra otra para cambiarla)</p>
-                        </div>
-                        }
-
-                        <input id="imagen" type="file" #fileInput hidden (change)="onFileSelected($event)"
-                            accept="image/png, image/jpeg, image/jpg" />
-                    </div> -->
                     <app-imagenes-cropper [aspectRatio]="1" (imagenRecortada)="onImagenPerfil($event)"
                      [mensajeImagen]="'Arrastra tu foto de perfil aquí o haz clic para seleccionar'" [esPerfil]="true"/>
                 </div>

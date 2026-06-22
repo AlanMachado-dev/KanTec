@@ -49,6 +49,12 @@ class imagenesAPI
 
         $nombreUnico = uniqid() . '.' . $extension;
 
+        $directorio = "./imagenes/" . $carpeta;
+
+        if(!is_dir($directorio)){
+            mkdir($directorio, 0755 , true);
+        }
+
         $ruta = "./imagenes/" . $carpeta . "/" . $nombreUnico;
 
         move_uploaded_file($archivo['tmp_name'], $ruta);

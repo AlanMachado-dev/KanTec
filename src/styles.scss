@@ -191,6 +191,7 @@ with (
 .imagenTablero {
   height: 300px;
   object-fit: cover;
+  aspect-ratio: 16 / 9;
 }
 
 .colorFondoTablero {
@@ -228,23 +229,6 @@ with (
 .descripcionModal {
   white-space: pre-wrap;
   overflow-wrap: break-word;
-}
-
-.divImagen {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-  border: 1px dashed #7daee6;
-  border-radius: 10px;
-  padding-block: 24px;
-  transition: all 0.2s ease;
-}
-
-.divImagen--drag-active {
-  border: 1px dashed #0056b3;
-  background-color: #cce5ff;
-  opacity: 0.5;
 }
 
 //PERFIL// CODIGO REPETIDO

@@ -251,6 +251,16 @@ export class Http {
     return this.http.get<{ tieneNuevas: boolean }>(this.url+"colaboradores/notificaciones",{headers});
   }
 
+  notificarInvitacionMail(body: any, idTablero: string): Observable<any> {
+    return this.http.post<any>(this.url + "colaboradores/mail/tablero", 
+      {
+        'aliasInvitado': body.aliasUsuario,
+        'idTablero': idTablero,
+        'tipoRelacion': body.tipoRelacion
+      }
+    );
+  }
+
   marcarComoVistas(): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': 'Bearer ' + this.getToken()

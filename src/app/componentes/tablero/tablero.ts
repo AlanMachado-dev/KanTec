@@ -341,6 +341,9 @@ export class Tablero implements OnInit, AfterViewInit {
             this.cdr.detectChanges();
             const btnCerrar = document.getElementById('btnCerrarModal');
             btnCerrar?.click();
+            if(!this.idTablero)return;
+            console.log(body)
+            this.http.notificarInvitacionMail(body, this.idTablero).subscribe();
           },
           error: (err) => {
             if (err.status === 404) {

@@ -163,7 +163,20 @@ class mailAPI {
     }
 
     //Esta va a ser una funcion que llamara tableroAPI en agregarColaborador
-    public function enviarInvitacion(string $email, string $aliasInvitador, string $tituloTablero, int $tipoRelacion): bool{
+    public function enviarInvitacion(): bool{
+        $body = json_decode(file_get_contents("php://input"), true);
+        $aliasInvitado = $body['aliasInvitado']; 
+        $idTablero = $body['idTablero'];
+        $tipoRelacion = $body['tipoRelacion'];
+    
+        $stmt = $this->db->prepare("SELECT email FROM perfil WHERE alias = ? ");
+        $stmt->execute([$aliasInvitado]);
+        $email = $stmt->fetchColumn();
+
+        $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
+        $stmt->execute([$idTablero]);
+        $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
+
         $rol = match($tipoRelacion){
             1 => 'Contribuidor',
             2 => 'Espectador',
@@ -176,9 +189,9 @@ class mailAPI {
         <div style='font-family: Arial, sans-serif; max-width: 500px; margin: auto;'>
             <h2>Has recibido una invitación</h2>
 
-            <p><strong>{$aliasInvitador}</strong> te invitó al tablero:</p>
+            <p><strong>{$tablero['aliasCreador']}</strong> te invitó al tablero:</p>
 
-            <h3>{$tituloTablero}</h3>
+            <h3>{$tablero['titulo']}</h3>
 
             <p>Rol asignado: <strong>{$rol}</strong></p>
 

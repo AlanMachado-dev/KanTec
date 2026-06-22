@@ -131,6 +131,8 @@ match(true) {
         && $method === 'POST' => $mail->enviarCodigo(),
     $partes[1] === 'usuarios' && $partes[2] === 'codigo' && $partes[3] === 'verificar' && !isset($partes[4]) 
         && $method === 'POST' => $mail->verificarCodigo(),
+    $partes[1] === 'colaboradores' && $partes[2] === 'mail' && $partes[3] === 'tablero' && !isset($partes[4]) 
+        && $method === 'POST' => $mail->enviarInvitacion(),
 
     default => respond(404, ["error" => "Ruta no encontrada"])
 };

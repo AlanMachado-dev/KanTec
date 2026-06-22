@@ -57,7 +57,7 @@
 
                 <div class="postits-container" #postitsContainer>
                     @for (tarea of col.tareas; track tarea.idTarea) {
-                    <div class="postit mt-3" [ngClass]="{
+                    <div class="postit mt-3 animate__animated animate__fadeIn" [ngClass]="{
                             'red': tarea.prioridad === 1,
                             'yellow': tarea.prioridad === 2,
                             'green': tarea.prioridad === 3,                            

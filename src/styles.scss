@@ -119,7 +119,6 @@ with (
   overflow-wrap: break-word;
 
   transition: box-shadow 0.15s ease, opacity 0.15s ease;
-  background-color: papayawhip;
   color: black;
 
   &:active {
@@ -131,6 +130,9 @@ with (
     box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.4);
   }
 
+  &.prioridad1 {
+    background: #0d6efd;
+  }
 }
 
 .avatar-contenedor {
@@ -149,6 +151,22 @@ with (
 
 .espectador {
   border: 3px solid #6c757d;
+}
+
+.red {
+  background-color: #f1aeb5;
+}
+
+.cyan {
+  background-color: #cff4fc;
+}
+
+.green {
+  background-color: #c5e1a5;
+}
+
+.yellow {
+  background-color: #ffe69c
 }
 
 .calendario-bloqueado {

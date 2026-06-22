@@ -7,10 +7,11 @@ import Swal from 'sweetalert2';
 import { DatePipe } from '@angular/common';
 import flatpickr from 'flatpickr';
 import { Spanish } from 'flatpickr/dist/l10n/es';
+import { ImagenesCropper } from '../imagenes-cropper/imagenes-cropper';
 
 @Component({
   selector: 'app-perfil',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, ImagenesCropper],
   templateUrl: './perfil.html',
   styles: [':host { display: block; width: 100%; }'],
 })
@@ -125,6 +126,9 @@ export class Perfil implements OnInit, OnDestroy {
 
   hoyStr = new Date().toISOString().split('T')[0]; 
 
+  onImagenPerfil(file: File) {
+    this.imagenSeleccionada = file;
+  }
 
   formularioUsuario = this.formBuilder.group({
     nombre: ['', {
@@ -143,63 +147,7 @@ export class Perfil implements OnInit, OnDestroy {
 
   })
   imagenPreview: string | ArrayBuffer | null = null;
-  dragActivo = false;
-
-  onDragEnter(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = true;
-  }
-
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = true;
-  }
-
-  onDragLeave(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = false;
-  }
-
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = false;
-
-    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-      this.procesarImagen(event.dataTransfer.files[0]);
-    }
-  }
-
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if(file){
-      this.procesarImagen(file);
-    }
-  }
-
-  procesarImagen(file: File): void {
-    this.imagenSeleccionada = file;
-
-    if (!this.extPermitidas.includes(file.type)) {
-      this.errorMessage = "Tipo de imagen no permitida!"
-      this.mostrarError = true;
-      this.imagenPreview = null;
-      this._cdr.detectChanges();
-      return;
-    }
-
-    this.mostrarError = false;
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      this.imagenPreview = reader.result;
-      this.formularioUsuario.markAsTouched();
-      this.formularioUsuario.markAsDirty();
-      this._cdr.detectChanges();
-    };
-
-    reader.readAsDataURL(file);
-  }
+ 
 
   editarPerfil(): void{
     this.fpInstance?.setDate(this.formularioUsuario.value.fecNac, false);

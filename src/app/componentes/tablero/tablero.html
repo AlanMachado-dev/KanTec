@@ -461,12 +461,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" id="btnCerrarModal"></button>
             </div>
             <div class="modal-body">
+                
+                
                 <form [formGroup]="formularioMiembro">
                     <div class="mb-3">
                         <label for="aliasUsuario" class="form-label">Alias</label>
                         <input type="text" class="form-control" [readOnly]="modoModal === 'editar'"
                             formControlName="aliasUsuario" [class.is-invalid]="formularioMiembro.get('aliasUsuario')?.invalid 
-                        && formularioMiembro.get('aliasUsuario')?.touched">
+                        && formularioMiembro.get('aliasUsuario')?.touched" [disabled]="cargandoInvitacion">
                         @if(formularioMiembro.get('aliasUsuario')?.invalid &&
                         formularioMiembro.get('aliasUsuario')?.touched){
                         <div class="invalid-feedback">
@@ -493,13 +495,21 @@
                 </form>
             </div>
             <div class="modal-footer">
+                @if(!cargandoInvitacion){
                 <button class="btn btn-secondary" data-bs-dismiss="modal">
                     Cancelar
                 </button>
                 <button class="btn btn-primary" [disabled]="formularioMiembro.invalid"
                     (click)="modoModal === 'agregar' ? agregarColaborador() : modificarPermisos()">
                     {{ modoModal === 'agregar' ? 'Agregar' : 'Guardar cambios'}}</button>
+                }@else {
+                <button class="btn btn-secondary text-center mt-1 w-100 fw-bold" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status">Cargando...</span>
+                </button>
+                }
             </div>
+            
         </div>
     </div>
 

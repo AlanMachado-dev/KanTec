@@ -3,11 +3,12 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Va
 import { Router, RouterLink } from "@angular/router";
 import { Http } from '../../services/http';
 import Swal from 'sweetalert2';
+import { ImagenesCropper } from '../imagenes-cropper/imagenes-cropper';
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-registro',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, ImagenesCropper],
   templateUrl: './registro.html',
   styles: [''],
 })
@@ -58,7 +59,7 @@ export class Registro {
     nombre: ['', {
       validators: [
         Validators.required,
-        Validators.pattern('[a-zA-Zñ ]*'),
+        Validators.pattern('[a-zA-Zñ ÑáéíóúÁÉÍÓÚ]*'),
         Validators.maxLength(50)
       ]
     }],
@@ -73,59 +74,9 @@ export class Registro {
       }
     });
   }
-  dragActivo = false;
-
-  onDragEnter(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = true;
-  }
-
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = true;
-  }
-
-  onDragLeave(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = false;
-  }
-
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = false;
-
-    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-      this.processFileSelected(event.dataTransfer.files[0]);
-    }
-  }
-
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.processFileSelected(file);
-    }
-  }
-
-  processFileSelected(file: File) {
+  
+  onImagenPerfil(file: File){
     this.imagenSeleccionada = file;
-    console.log(this.imagenSeleccionada.type);
-    if (!this.extPermitidas.includes(this.imagenSeleccionada.type)) {
-      this.errorMessage = "Tipo de imagen no permitida!"
-      this.mostrarError = true;
-      this.imagenPreview = null;
-      this._cdr.detectChanges();
-    } else {
-      this.mostrarError = false;
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagenPreview = reader.result;
-        this._cdr.detectChanges(); 
-      };
-      reader.readAsDataURL(this.imagenSeleccionada);
-
-      this._cdr.detectChanges();
-    }
   }
 
   afterAlias(aliasTemp: string) {

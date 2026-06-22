@@ -38,6 +38,7 @@ export class Tablero implements OnInit, AfterViewInit {
   private intervaloColaboradores: any;
   usuarioSeleccionado: Colaborador | null = null;
   modoModal: 'agregar' | 'editar' = 'agregar';
+  cargandoInvitacion: boolean = false;
 
   private fpInstance: any;
 
@@ -328,6 +329,7 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
       return;
     }else{
       if(this.idTablero){
+        this.cargandoInvitacion = true;
         this.http.invitarColaborador(this.idTablero,body).subscribe({
           next: () => {
             Swal.fire({
@@ -335,6 +337,8 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
               title: 'Usuario invitado',
               text: 'Invitacion enviada con exito'
             });
+            this.cargandoInvitacion = false;
+            this.cdr.detectChanges();
             const btnCerrar = document.getElementById('btnCerrarModal');
             btnCerrar?.click();
           },
@@ -368,7 +372,8 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
                 icon: "error"
               });
             }
-            
+            this.cargandoInvitacion = false;
+            this.cdr.detectChanges();
           }
         });
       }

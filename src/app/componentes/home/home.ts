@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, ViewChild } from '@angular/core';
 import { Http } from '../../services/http';
 import { Router, RouterLink } from '@angular/router';
 import { TableroInterfaz } from '../../interfaces/tablero';
@@ -6,14 +6,18 @@ import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Colaborador } from '../../interfaces/colaborador';
 import Swal from 'sweetalert2';
+import { ImagenesCropper } from '../imagenes-cropper/imagenes-cropper';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, ImagenesCropper],
   templateUrl: './home.html',
   styles: ``,
 })
 export class Home {
+
+  @ViewChild(ImagenesCropper)
+  cropper!: ImagenesCropper;
 
   private fb = inject(FormBuilder);
   extPermitidas = ['image/jpg', 'image/jpeg', 'image/png'];
@@ -239,6 +243,7 @@ export class Home {
   colaboradoresTablero: Colaborador[] = [];
 
   seleccionarTablero(tablero: TableroInterfaz, desdeOffCanvas: boolean): void{
+    this.cropper.reset();
     this.tableroSeleccionado = tablero;
     if(desdeOffCanvas){
       this.formularioTablero.patchValue({
@@ -267,60 +272,9 @@ export class Home {
 
   archivoSeleccionado: File | null = null;
   imagenPreview: string | ArrayBuffer | null = null;
-  dragActivo = false;
-
-  onDragEnter(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = true;
-  }
-
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = true;
-  }
-
-  onDragLeave(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = false;
-  }
-
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    this.dragActivo = false;
-
-    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-      this.procesarImagen(event.dataTransfer.files[0]);
-    }
-  }
-
-  onImagenSeleccionada(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if(input.files?.length){
-      this.procesarImagen(input.files[0]);  
-    }
-  }
-
-  procesarImagen(file :File): void {
+  
+  onImagenTablero(file: File){
     this.archivoSeleccionado = file;
-
-    if(!this.extPermitidas.includes(file.type)){
-      this.mostrarError = true;
-      this.imagenPreview = null;
-      this.cdr.detectChanges();
-      return;
-    }
-
-    this.mostrarError = false;
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      this.imagenPreview = reader.result;
-      this.cdr.detectChanges();
-    };
-
-    reader.readAsDataURL(file);
   }
 
   guardarCambiosTablero(): void {

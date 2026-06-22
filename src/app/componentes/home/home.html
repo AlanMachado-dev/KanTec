@@ -14,6 +14,7 @@
     .imagenTablero {
         height: 300px;
         object-fit: cover;
+        aspect-ratio: 16 / 9;
     }
 
     .colorFondoTablero {
@@ -49,22 +50,6 @@
     .descripcionModal{
         white-space: pre-wrap;
         overflow-wrap: break-word;
-    }
-    .divImagen {
-        display: flex;
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
-        border: 1px dashed #7daee6;
-        border-radius: 10px;
-        padding-block: 24px;
-        transition: all 0.2s ease;
-    }
-
-    .divImagen--drag-active {
-        border: 1px dashed #0056b3;
-        background-color: #cce5ff;
-        opacity: 0.5;
     }
 </style>
 
@@ -190,7 +175,7 @@
                 }
             </div>
 
-            <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo"
+            <!-- <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo"
             (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
             (drop)="onDrop($event)" (click)="fileInput.click()" style="cursor: pointer;">
                 @if(!imagenPreview) {
@@ -208,7 +193,17 @@
             <div class="alert alert-danger m-2 p-2 text-center" role="alert">
                 Tipo de imagen no permitida!
             </div>
+            } -->
+            @if(tableroSeleccionado && tableroSeleccionado.imagen){
+            <app-imagenes-cropper [aspectRatio]="16 / 9" (imagenRecortada)="onImagenTablero($event)"
+                [mensajeImagen]="'Arrastra una imagen para tu tablero aquí o haz clic para seleccionar'" 
+                [preview]="rutaImagenes + tableroSeleccionado.imagen"/>
+            }@else {
+                <app-imagenes-cropper [aspectRatio]="16 / 9" (imagenRecortada)="onImagenTablero($event)"
+                    [mensajeImagen]="'Arrastra una imagen para tu tablero aquí o haz clic para seleccionar'"
+                />
             }
+
             <br style="clear: both;">
             <div class=" me-5">
                 <p>Color de Fondo:</p>

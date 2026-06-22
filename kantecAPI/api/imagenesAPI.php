@@ -33,6 +33,11 @@ class imagenesAPI
         if ($archivo['error'] !== UPLOAD_ERR_OK) {
             respond(400, ['error' => 'Error al subir el archivo']);
         }
+        $maximo = 5 * 1024 * 1024; //10MB
+
+        if($archivo['size'] > $maximo){
+            respond(400, ['error' => 'La imagen supera los 5 MB']);
+        }
 
         $tiposPermitidos = ['image/png', 'image/jpeg'];
 

@@ -59,7 +59,7 @@ class asignacionAPI
         $idTablero = $body['idTablero'];
         $idTarea =  $body['idTarea'];
         $alias = $body['alias'];
-        $stmt = $this->db->prepare("DELETE FROM asignacion a NATURAL JOIN usuario u WHERE a.idTablero = ? AND a.idTarea = ? AND a.alias = ? AND u.activo = true");
+        $stmt = $this->db->prepare("DELETE a FROM asignacion AS a NATURAL JOIN usuario AS u WHERE a.idTablero = ? AND a.idTarea = ? AND a.alias = ? AND u.activo = true");
         $stmt->execute([$idTablero, $idTarea, $alias]);
     }
 }

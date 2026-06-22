@@ -13,7 +13,7 @@ import { NgClass } from "@angular/common";
 
 @Component({
   selector: 'app-tablero',
-  imports: [ ReactiveFormsModule, NgClass],
+  imports: [ReactiveFormsModule, NgClass],
   templateUrl: './tablero.html',
   styles: ``,
 })
@@ -33,7 +33,7 @@ export class Tablero implements OnInit, AfterViewInit {
   rutaImagenes !: string;
   miTablero: TableroInterfaz | null = null;
   esEspectador: boolean = false;
-  private avisoEspectadorMostrado : boolean = false;
+  private avisoEspectadorMostrado: boolean = false;
   maxColaboradoresVisibles: number = 8;
   private intervaloColaboradores: any;
   usuarioSeleccionado: Colaborador | null = null;
@@ -70,15 +70,15 @@ export class Tablero implements OnInit, AfterViewInit {
   ngOnInit(): void {
     let detener = false;
     this.http.verificarToken().subscribe({
-      next: () => {},
+      next: () => { },
       error: (err) => {
         console.log(err);
         this.http.cerrarSesion();
-        this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
+        this.router.navigate(['/ingreso'], { state: { expirado: "true" } });
         detener = true;
       }
     })
-    if(detener) return;
+    if (detener) return;
 
     this.http.sesionActiva$.subscribe(logueado => {
       if (logueado) {
@@ -87,7 +87,7 @@ export class Tablero implements OnInit, AfterViewInit {
         this.cargarTareas();
         this.cdr.detectChanges();
         this.http.notificarInvitacion().subscribe(resp => {
-          if(resp.tieneNuevas){
+          if (resp.tieneNuevas) {
             Swal.mixin({
               toast: true,
               position: 'bottom-end',
@@ -108,8 +108,8 @@ export class Tablero implements OnInit, AfterViewInit {
         })
         this.intervaloTareas = setInterval(() => {
           this.cargarTareas();
-        },5000);
-        if(this.idTablero){
+        }, 5000);
+        if (this.idTablero) {
           this.http.getTablero(this.idTablero)
             .subscribe(tablero => {
               this.miTablero = tablero;
@@ -123,9 +123,9 @@ export class Tablero implements OnInit, AfterViewInit {
           }, 5000);
 
           this.rutaImagenes = this.http.getRutaBaseImg();
-          }
+        }
       } else {
-        this.router.navigate(['/ingreso'], {state: {expirado: 'true'}});
+        this.router.navigate(['/ingreso'], { state: { expirado: 'true' } });
       }
     });
   }
@@ -133,17 +133,17 @@ export class Tablero implements OnInit, AfterViewInit {
   ngOnDestroy(): void {
     clearInterval(this.intervaloColaboradores);
     clearInterval(this.intervaloTareas);
-  }  
+  }
 
   ngAfterViewInit(): void {
     this.fpInstance = flatpickr("#calendario-siempre-abierto", {
-      inline: true, 
+      inline: true,
       locale: Spanish,
       altInput: true,
       altFormat: "j \\d\\e F Y",
-      dateFormat: "Y-m-d", 
-      mode: "range", 
-    
+      dateFormat: "Y-m-d",
+      mode: "range",
+
       onChange: (selectedDates, dateStr, instance) => {
         this.formularioTarea.patchValue({
           fechaInicio: selectedDates[0]
@@ -157,24 +157,24 @@ export class Tablero implements OnInit, AfterViewInit {
     });
   }
 
-  posicionFinalColumna(columna: number): number{
+  posicionFinalColumna(columna: number): number {
     const sourceColumn = this.columnas.find(c => c.id === columna);
     if (!sourceColumn) return -1;
- 
+
     return sourceColumn.tareas.length;
   }
 
   ////// PERSISTENCIA //////
 
-  crearTarea(columna: number): void{
+  crearTarea(columna: number): void {
     if (this.esEspectador) {
       return;
     }
-    if(!this.idTablero){return console.log("error pendejo");}
+    if (!this.idTablero) { return console.log("error pendejo"); }
     this.http.crearTarea(this.idTablero, columna, this.posicionFinalColumna(columna)).subscribe({
       next: () => {
-        if(!this.idTablero){return console.log("error pendejo");}
-        this.http.getTareasTableroColumna(this.idTablero,columna).subscribe({
+        if (!this.idTablero) { return console.log("error pendejo"); }
+        this.http.getTareasTableroColumna(this.idTablero, columna).subscribe({
           next: (response) => {
             this.columnas[columna].tareas = response;
             this.cdr.detectChanges();
@@ -185,15 +185,15 @@ export class Tablero implements OnInit, AfterViewInit {
   }
 
 
-  cargarTareas(): void{
-    for(let i = 0; i < this.columnas.length; i++){
-      if(!this.idTablero){return console.log("error pendejo");}
+  cargarTareas(): void {
+    for (let i = 0; i < this.columnas.length; i++) {
+      if (!this.idTablero) { return console.log("error pendejo"); }
 
-      this.http.getTareasTableroColumna(this.idTablero,i).subscribe({
+      this.http.getTareasTableroColumna(this.idTablero, i).subscribe({
         next: (response) => {
           this.columnas[i].tareas = response;
-          for(const tarea of this.columnas[i].tareas){
-            if(tarea.prioridad == null){
+          for (const tarea of this.columnas[i].tareas) {
+            if (tarea.prioridad == null) {
               tarea.prioridad = 0;
             }
           }
@@ -202,12 +202,12 @@ export class Tablero implements OnInit, AfterViewInit {
     }
   }
 
-  guardarTareas(): void{
-    for(let i = 0; i < this.columnas.length; i++){
-      if(!this.idTablero){return console.log("error pendejo");}
+  guardarTareas(): void {
+    for (let i = 0; i < this.columnas.length; i++) {
+      if (!this.idTablero) { return console.log("error pendejo"); }
 
       let j: number = 1;
-      for(const tarea of this.columnas[i].tareas){
+      for (const tarea of this.columnas[i].tareas) {
         this.http.actualizarPosicionTarea(this.idTablero, tarea.idTarea, i, j).subscribe({
           next: () => {
 
@@ -221,48 +221,48 @@ export class Tablero implements OnInit, AfterViewInit {
 
   ////// DRAG AND DROP //////
 
-  onDragStart(event: DragEvent, tareaID: number): void{
+  onDragStart(event: DragEvent, tareaID: number): void {
     this.draggingId = tareaID; // guarda que se esta arrastrando
     event.dataTransfer?.setData('text/plain', tareaID.toString()); // lo mete en el "portapapeles" del drag
     (event.target as HTMLElement).classList.add('dragging'); // añade clase visual cuando se haga drag (opcional para mas tarde) 
   }
 
-  onDragEnd(event: DragEvent): void{
+  onDragEnd(event: DragEvent): void {
     (event.target as HTMLElement).classList.remove('dragging'); // mismo que arriba
-    this.draggingId = null; 
+    this.draggingId = null;
   }
 
-onDragOver(event: DragEvent, container: HTMLElement): void {
-  event.preventDefault();
+  onDragOver(event: DragEvent, container: HTMLElement): void {
+    event.preventDefault();
 
-  const rect = container.getBoundingClientRect();
+    const rect = container.getBoundingClientRect();
 
-  const zonaScroll = 80;
+    const zonaScroll = 80;
 
-  const distanciaArriba = event.clientY - rect.top;
-  const distanciaAbajo = rect.bottom - event.clientY;
+    const distanciaArriba = event.clientY - rect.top;
+    const distanciaAbajo = rect.bottom - event.clientY;
 
-  if (distanciaArriba < zonaScroll) {
-    container.scrollTop -= (zonaScroll - distanciaArriba) / 2;
+    if (distanciaArriba < zonaScroll) {
+      container.scrollTop -= (zonaScroll - distanciaArriba) / 2;
+    }
+
+    if (distanciaAbajo < zonaScroll) {
+      container.scrollTop += (zonaScroll - distanciaAbajo) / 2;
+    }
   }
 
-  if (distanciaAbajo < zonaScroll) {
-    container.scrollTop += (zonaScroll - distanciaAbajo) / 2;
-  }
-}
-
-  onDrop(event: DragEvent, columnaFinalID: number): void{
+  onDrop(event: DragEvent, columnaFinalID: number): void {
     if (this.esEspectador) {
       return;
     }
     event.preventDefault();
 
     const id = Number(event.dataTransfer?.getData('text/plain')) ?? this.draggingId;
-    if(!id) return;
+    if (!id) return;
 
     // encuentra la columna original de la tarea
     const columnaInicial = this.columnas.find(c => c.tareas.some(p => p.idTarea === id));
-    if(!columnaInicial) return;
+    if (!columnaInicial) return;
 
     // saca esa tarea de la columna
     const tareaIndex = columnaInicial.tareas.findIndex(p => p.idTarea === id);
@@ -279,29 +279,29 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
   }
 
   // se usa para calcular en que posicion va guardado
-  private getInsertIndex(event: DragEvent, columnaFinalID: number): number{
+  private getInsertIndex(event: DragEvent, columnaFinalID: number): number {
     const colIndex = this.columnas.findIndex(c => c.id === columnaFinalID);
     const colEl = this.columnElements.toArray()[colIndex]?.nativeElement;
-    if(!colEl) return this.columnas[colIndex].tareas.length;
+    if (!colEl) return this.columnas[colIndex].tareas.length;
 
     const tareaEls = Array.from(
       colEl.querySelectorAll<HTMLElement>('.postit:not(.dragging)')
     );
 
-    for (let i=0; i < tareaEls.length; i++){
+    for (let i = 0; i < tareaEls.length; i++) {
       const box = tareaEls[i].getBoundingClientRect();
-      const midY = box.top + box.height/2;
-      if(event.clientY < midY){
+      const midY = box.top + box.height / 2;
+      if (event.clientY < midY) {
         return i;
       }
     }
     return this.columnas[colIndex].tareas.length;
   }
- 
+
   ////// COLABORADORES //////
 
   formularioMiembro: FormGroup = this.fb.group({
-    aliasUsuario: ['',{
+    aliasUsuario: ['', {
       validators: [
         Validators.required,
         Validators.maxLength(50)
@@ -309,7 +309,7 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     }],
     tipoRelacion: ['1']
   })
-  agregarColaborador(){
+  agregarColaborador() {
 
     this.formularioMiembro.markAllAsTouched();
 
@@ -320,17 +320,17 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
 
     const body = this.formularioMiembro.value;
 
-    if (body.aliasUsuario === this.aliasLogueado){
+    if (body.aliasUsuario === this.aliasLogueado) {
       Swal.fire({
         icon: 'warning',
         title: 'Acción no permitida',
         text: 'No puedes invitarte a ti mismo'
       });
       return;
-    }else{
-      if(this.idTablero){
+    } else {
+      if (this.idTablero) {
         this.cargandoInvitacion = true;
-        this.http.invitarColaborador(this.idTablero,body).subscribe({
+        this.http.invitarColaborador(this.idTablero, body).subscribe({
           next: () => {
             Swal.fire({
               icon: 'success',
@@ -378,14 +378,14 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
         });
       }
     }
-    
+
   }
   verPerfil(alias: string): void {
     this.router.navigate(['/perfil', alias]);
   }
 
-  getRol(tipo: number): string{
-    switch(tipo){
+  getRol(tipo: number): string {
+    switch (tipo) {
       case 0:
         return 'Creador';
       case 1:
@@ -397,49 +397,50 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     }
   }
   recargarColaboradores(): void {
-    if(this.idTablero){
+    if (this.idTablero) {
       this.http.getColaboradoresDeTablero(this.idTablero)
-        .subscribe({ next: (colaboradores) => {
-          this.colaboradoresTablero = colaboradores;
-          if (this.colaboradoresTablero) {
-            const miColaboracion = this.colaboradoresTablero.find(
-              c => c.aliasUsuario === this.aliasLogueado);
-            this.esEspectador = miColaboracion?.tipoRelacion === 2;
-            this.cdr.detectChanges();
-            if (this.esEspectador && !this.avisoEspectadorMostrado) {
-              this.avisoEspectadorMostrado = true;
+        .subscribe({
+          next: (colaboradores) => {
+            this.colaboradoresTablero = colaboradores;
+            if (this.colaboradoresTablero) {
+              const miColaboracion = this.colaboradoresTablero.find(
+                c => c.aliasUsuario === this.aliasLogueado);
+              this.esEspectador = miColaboracion?.tipoRelacion === 2;
+              this.cdr.detectChanges();
+              if (this.esEspectador && !this.avisoEspectadorMostrado) {
+                this.avisoEspectadorMostrado = true;
+                Swal.fire({
+                  toast: true,
+                  position: 'bottom-end',
+                  icon: 'info',
+                  title: 'Viendo el tablero como espectador',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true
+                });
+              }
+            }
+          }, error: (err) => {
+            if (err.status === 403) {
+              this.router.navigate(['/home']);
+
               Swal.fire({
                 toast: true,
-                position: 'bottom-end',
+                position: 'top-end',
                 icon: 'info',
-                title: 'Viendo el tablero como espectador',
+                title: 'Ya no tienes acceso a este tablero',
                 showConfirmButton: false,
                 timer: 3000,
                 timerProgressBar: true
               });
             }
           }
-        }, error: (err) => {
-          if(err.status === 403) {
-            this.router.navigate(['/home']);
+        })
 
-            Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'info',
-              title: 'Ya no tienes acceso a este tablero',
-              showConfirmButton: false,
-              timer: 3000,
-              timerProgressBar: true
-            });
-          }
-        }
-      })
-        
     }
   }
 
-  abrirModalAgregar(){
+  abrirModalAgregar() {
     this.modoModal = 'agregar';
 
     this.formularioMiembro.reset({
@@ -449,8 +450,8 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     this.formularioMiembro.get('aliasUsuario')?.enable();
   }
 
-  abrirModalEditar(){
-    if(!this.usuarioSeleccionado) {
+  abrirModalEditar() {
+    if (!this.usuarioSeleccionado) {
       return;
     }
     this.modoModal = 'editar';
@@ -465,9 +466,9 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     this.formularioMiembro.markAsPristine();
     this.formularioMiembro.markAsUntouched();
   }
-  modificarPermisos(){
+  modificarPermisos() {
     const relacion = this.formularioMiembro.get('tipoRelacion')?.value;
-    if(this.idTablero && this.usuarioSeleccionado){
+    if (this.idTablero && this.usuarioSeleccionado) {
       this.http.modificarPermisos(this.idTablero, this.usuarioSeleccionado?.aliasUsuario, relacion).subscribe({
         next: () => {
           this.recargarColaboradores();
@@ -502,52 +503,52 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
       })
     }
   }
-  eliminarMiembro(){
+  eliminarMiembro() {
     if (!this.usuarioSeleccionado) {
       return;
     }
     Swal.fire({
-          title: "¿Estás seguro/a?",
-          text: `Se eliminará a ${this.usuarioSeleccionado.aliasUsuario} del tablero`,
-          icon: "warning",
-          showCancelButton: true,
-          cancelButtonColor: "#3085d6",
-          confirmButtonColor: "#d33",
-          confirmButtonText: "Sí, borrar.",
-          cancelButtonText: "No, cancelar."
-        }).then((result) => {
-          if(result.isConfirmed && this.usuarioSeleccionado && this.idTablero) {
-            this.http.eliminarMiembro(this.idTablero,this.usuarioSeleccionado.aliasUsuario).subscribe({
-              next: () => {
-                Swal.fire({
-                  title: "¡Miembro eliminado!",
-                  text: "El miembro ha sido eliminado del tablero exitosamente.",
-                  icon: "success"
-                });
-                this.recargarColaboradores();
-                this.usuarioSeleccionado = null;
-              },
-              error: (err) => {
-                if (err.status === 404) {
-                  Swal.fire({
-                    title: 'Miembro no encontrado',
-                    icon: 'error'
-                  });
-                } else {
-                  Swal.fire({
-                    title: 'Error',
-                    text: 'No se pudo eliminar al miembro. Inténtalo de nuevo.',
-                    icon: 'error'
-                  });
-              }
+      title: "¿Estás seguro/a?",
+      text: `Se eliminará a ${this.usuarioSeleccionado.aliasUsuario} del tablero`,
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Sí, borrar.",
+      cancelButtonText: "No, cancelar."
+    }).then((result) => {
+      if (result.isConfirmed && this.usuarioSeleccionado && this.idTablero) {
+        this.http.eliminarMiembro(this.idTablero, this.usuarioSeleccionado.aliasUsuario).subscribe({
+          next: () => {
+            Swal.fire({
+              title: "¡Miembro eliminado!",
+              text: "El miembro ha sido eliminado del tablero exitosamente.",
+              icon: "success"
+            });
+            this.recargarColaboradores();
+            this.usuarioSeleccionado = null;
+          },
+          error: (err) => {
+            if (err.status === 404) {
+              Swal.fire({
+                title: 'Miembro no encontrado',
+                icon: 'error'
+              });
+            } else {
+              Swal.fire({
+                title: 'Error',
+                text: 'No se pudo eliminar al miembro. Inténtalo de nuevo.',
+                icon: 'error'
+              });
             }
-          });
           }
         });
+      }
+    });
   }
 
-  abrirMenuUsuario(colaborador: Colaborador){
-    if(this.aliasLogueado != this.miTablero?.aliasCreador || this.aliasLogueado == colaborador.aliasUsuario){
+  abrirMenuUsuario(colaborador: Colaborador) {
+    if (this.aliasLogueado != this.miTablero?.aliasCreador || this.aliasLogueado == colaborador.aliasUsuario) {
       this.verPerfil(colaborador.aliasUsuario);
       return;
     }
@@ -601,7 +602,7 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
   });
 
   tareaSelecionada: Tarea | null = null;
-  seleccionarTarea(tarea: Tarea): void{
+  seleccionarTarea(tarea: Tarea): void {
     this.tareaSelecionada = tarea;
     this.tareaSelecionada.asignaciones;
     this.formularioTarea.patchValue({
@@ -615,24 +616,24 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     });
 
     const fechasTarea: string[] = [];
-    if(this.formularioTarea.value.fechaInicio) fechasTarea.push(this.formularioTarea.value.fechaInicio);
-    if(this.formularioTarea.value.fechaFinal) fechasTarea.push(this.formularioTarea.value.fechaFinal);
+    if (this.formularioTarea.value.fechaInicio) fechasTarea.push(this.formularioTarea.value.fechaInicio);
+    if (this.formularioTarea.value.fechaFinal) fechasTarea.push(this.formularioTarea.value.fechaFinal);
 
     this.fpInstance?.setDate(fechasTarea, false);
   }
 
-  guardarCambiosTarea(){
+  guardarCambiosTarea() {
     this.formularioTarea.get('nombre')?.updateValueAndValidity();
     this.formularioTarea.get('descripcion')?.updateValueAndValidity();
-    
-    if(this.esEspectador){
+
+    if (this.esEspectador) {
       return;
     }
-    if(this.formularioTarea.invalid) return;
+    if (this.formularioTarea.invalid) return;
 
     const body = this.formularioTarea.value;
 
-    if(!this.idTablero){return;}
+    if (!this.idTablero) { return; }
     this.http.actualizarTarea(this.idTablero, this.formularioTarea.value.idTarea, body).subscribe({
       next: () => {
         this.cargarTareas();
@@ -644,7 +645,7 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
     })
   }
 
-  confirmarBorrarTarea(){
+  confirmarBorrarTarea() {
     if (this.esEspectador) {
       return;
     }
@@ -658,8 +659,8 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
       confirmButtonText: "Sí, borrar.",
       cancelButtonText: "No, cancelar."
     }).then((result) => {
-      if(result.isConfirmed) {
-        if(!this.idTablero){return;}
+      if (result.isConfirmed) {
+        if (!this.idTablero) { return; }
         this.http.borrarTarea(this.idTablero, this.formularioTarea.value.idTarea).subscribe({
           next: () => {
             Swal.fire({
@@ -686,11 +687,11 @@ onDragOver(event: DragEvent, container: HTMLElement): void {
 
   ////// CÁLCULO DE VENCIMIENTO //////
 
-calcularDiasRestantes(fechaFinal: any): number | null {
+  calcularDiasRestantes(fechaFinal: any): number | null {
     if (!fechaFinal) return null;
 
     const fechaLimpia = fechaFinal.substring(0, 10); //esto porque la fecha viene con la hora me quedo solo con AAAA-MM-DD
-    
+
     const partes = fechaLimpia.split('-');
     if (partes.length !== 3) return null;
 
@@ -712,17 +713,17 @@ calcularDiasRestantes(fechaFinal: any): number | null {
 
   obtenerTextoVencimiento(fechaFinal: string): string {
     const dias = this.calcularDiasRestantes(fechaFinal);
-    
-    if (dias === null){
+
+    if (dias === null) {
       return 'Sin fecha Asignada';
     }
-    if (dias < 0){
+    if (dias < 0) {
       return `Vencida hace ${Math.abs(dias)} ${Math.abs(dias) === 1 ? 'día' : 'días'}`;
     }
-    if (dias === 0){
+    if (dias === 0) {
       return 'Vence hoy';
     }
-    if (dias === 1){
+    if (dias === 1) {
       return 'Vence mañana';
     }
     return `Quedan ${dias} días`;
@@ -730,14 +731,14 @@ calcularDiasRestantes(fechaFinal: any): number | null {
 
   obtenerClaseVencimiento(fechaFinal: string): string {
     const dias = this.calcularDiasRestantes(fechaFinal);
-    
-    if (dias === null){
+
+    if (dias === null) {
       return 'text-muted';
     }
-    if (dias < 0){
+    if (dias < 0) {
       return 'text-danger fw-bold bg-danger-subtle';
     }
-    if (dias === 0 || dias === 1){
+    if (dias === 0 || dias === 1) {
       return 'text-warning fw-bold bg-warning-subtle';
     }
     return 'text-success fw-semibold bg-success-subtle';
@@ -745,7 +746,7 @@ calcularDiasRestantes(fechaFinal: any): number | null {
 
 
   /////EDITAR ASIGNACION /////
-    abrirMenuAsignacion(colaborador: Colaborador){
+  abrirMenuAsignacion(colaborador: Colaborador) {
     /*
     if(this.aliasLogueado != this.miTablero?.aliasCreador || this.aliasLogueado == colaborador.aliasUsuario){
       this.verPerfil(colaborador.aliasUsuario);
@@ -765,36 +766,31 @@ calcularDiasRestantes(fechaFinal: any): number | null {
           setTimeout(() => {
             this.cargarTareas();
           }, 0);
+          if(this.tareaSelecionada){
+            if (!this.tareaSelecionada.asignaciones) {
+              this.tareaSelecionada.asignaciones = [];
+            }
+            this.tareaSelecionada.asignaciones.push(alias);
+          }
         }
       });
   }
 
   deleteAsignacion(alias: string) {
-  const tablero = this.idTablero || "";
-  
-  this.http.deleteAsignacion(tablero, this.formularioTarea.value.idTarea, alias)
-    .subscribe({
-      next: (respuesta) => {
-        setTimeout(() => {
-          this.cargarTareas();
-        }, 0);
-      }
-    });
-  }
-/*
-  cargarColaboradoresDeTarea(tarea: Tarea) {
     const tablero = this.idTablero || "";
-    
-    this.http.getColaboradoresPorTarea(tablero, tarea.idTarea).subscribe({
-      next: (aliasAsignados: string[]) => {
-        // 1. Asignamos directamente el arreglo de strings (los alias) a la tarea
-        tarea.asignaciones = aliasAsignados;
-        
-        console.log("ALGO PASO, Alias asignados: " + aliasAsignados.join(', '));
-      },
-      error: (err) => console.error(err)
-    });
+
+    this.http.deleteAsignacion(tablero, this.formularioTarea.value.idTarea, alias)
+      .subscribe({
+        next: (respuesta) => {
+          setTimeout(() => {
+            this.cargarTareas();
+          }, 0);
+          if (this.tareaSelecionada && this.tareaSelecionada.asignaciones) {
+          this.tareaSelecionada.asignaciones = this.tareaSelecionada.asignaciones
+            .filter((a: string) => a !== alias);
+          }
+        }
+      });
   }
-*/
-  
+
 }

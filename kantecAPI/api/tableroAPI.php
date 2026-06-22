@@ -11,15 +11,8 @@ class tableroAPI
     {
         $this->db = (new Database())->getConnection();
         $this->db->query("SET sql_mode=''");    
-       // $this->mailer = new mailAPI();
+        $this->mailer = new mailAPI();
     }
-
-    // // GET http://localhost/kantecAPI/api/tableros
-    // public function getAll(): void
-    // {
-    //     $stmt = $this->db->query("SELECT * FROM tablero");
-    //     respond(200, $stmt->fetchAll());
-    // }
 
     // GET http://localhost/kantecAPI/api/tableros/usuario/Luqui86
     public function getTableros(string $alias): void

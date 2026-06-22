@@ -11,8 +11,9 @@
 npm-debug.log
 yarn-error.log
 
-# Composer
+# API
 /kantecAPI/vendor/
+/kantecAPI/config/mailConfig.php
 
 # IDEs and editors
 .idea/

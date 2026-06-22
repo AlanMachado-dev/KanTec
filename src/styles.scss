@@ -1,13 +1,252 @@
-@use "bootstrap/scss/bootstrap" 
+@use "bootstrap/scss/bootstrap"
 /*
 with (
     
 )
 */
 ;
+
 .carousel-item {
   img {
     filter: brightness(50%);
     transition: filter 0.3s ease;
   }
 }
+
+//TABLERO//
+
+.postit-usuarios {
+  position: absolute;
+  top: -16px;
+  left: 10px;
+
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+
+  z-index: 2;
+}
+
+.postit-usuario {
+  background: wheat;
+  /*No deberia tener fondo mas adelante, solo la foto del usuario*/
+  padding: 0 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0d6efd;
+  border-radius: 4px;
+}
+
+.board-wrapper {
+  min-height: 80lvh;
+  padding: 2rem;
+  background: #c69c6d;
+  background-image: radial-gradient(#b88a5a 1px, transparent 1px);
+  background-size: 10px 10px;
+  font-family: 'Segoe UI', sans-serif;
+  box-sizing: border-box;
+}
+
+.board {
+  height: 76vh;
+  background: #d2a679;
+  border: 10px solid #8b5a2b;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.columns-row {
+  display: flex;
+  gap: 12px;
+  height: 100%;
+  overflow-x: auto;
+}
+
+.column {
+  flex: 1 0 300px;
+  min-width: 300px;
+  min-height: 350px;
+  padding: 10px;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  flex-shrink: 0;
+}
+
+.column-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #4a2f1a;
+}
+
+.postits-container {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+
+  scrollbar-gutter: stable;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: stretch;
+  gap: 8px;
+
+  padding-right: 4px;
+  scrollbar-color: #c69c6d papayawhip;
+}
+
+.postit {
+  width: 100%;
+  box-sizing: border-box;
+
+  flex-shrink: 0;
+
+  min-height: 100px;
+  padding: 10px;
+  font-size: 14px;
+  cursor: grab;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+  position: relative;
+  user-select: none;
+  overflow: visible;
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  transition: box-shadow 0.15s ease, opacity 0.15s ease;
+  background-color: papayawhip;
+  color: black;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.dragging {
+    opacity: 0.45;
+    box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.4);
+  }
+
+}
+
+.avatar-contenedor {
+  border-radius: 50%;
+  display: inline-block;
+  padding: 2px;
+}
+
+.creador {
+  border: 3px solid #0d6efd;
+}
+
+.contribuidor {
+  border: 3px solid #198754;
+}
+
+.espectador {
+  border: 3px solid #6c757d;
+}
+
+.calendario-bloqueado {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.largoNombreTarea {
+  width: 65%;
+}
+
+.avatar-extra {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #495057;
+  border: 2px solid #adb5bd;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+//HOME//
+
+.crear-tablero {
+  height: 100%;
+  min-height: 470px;
+  border: 3px dashed #999;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.crear-tablero:hover {
+  transform: scale(1.02);
+}
+
+.imagenTablero {
+  height: 300px;
+  object-fit: cover;
+}
+
+.colorFondoTablero {
+  height: 300px;
+  object-fit: cover;
+}
+
+.tamanioTarjeta {
+  height: 470px;
+  transition: transform 0.3s ease;
+}
+
+.tamanioTarjeta:hover {
+  transform: scale(1.02);
+}
+
+.descripcionTarjeta {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 50px;
+}
+
+.descripcionTarjetaLarga {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 100px;
+}
+
+.descripcionModal {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.divImagen {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  border: 1px dashed #7daee6;
+  border-radius: 10px;
+  padding-block: 24px;
+  transition: all 0.2s ease;
+}
+
+.divImagen--drag-active {
+  border: 1px dashed #0056b3;
+  background-color: #cce5ff;
+  opacity: 0.5;
+}
+
+//PERFIL// CODIGO REPETIDO
+
+//REGISTRO// CODIGO REPETIDO

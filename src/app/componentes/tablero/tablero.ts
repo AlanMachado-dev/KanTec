@@ -385,6 +385,8 @@ export class Tablero implements OnInit, AfterViewInit {
 
   }
   verPerfil(alias: string): void {
+    const btnCerrar = document.getElementById('btnCerrarOffcanvas');
+    btnCerrar?.click();
     this.router.navigate(['/perfil', alias]);
   }
 
@@ -644,7 +646,7 @@ export class Tablero implements OnInit, AfterViewInit {
     this.http.actualizarTarea(this.idTablero, this.formularioTarea.value.idTarea, body).subscribe({
       next: () => {
         this.cargarTareas();
-        this.cdr.detectChanges();
+        //this.cdr.detectChanges();
         const btnCerrar = document.getElementById('btnCerrarOffcanvas');
         btnCerrar?.click();
       },
@@ -760,7 +762,7 @@ export class Tablero implements OnInit, AfterViewInit {
       return;
     }
     */
-    if(this.esEspectador){
+    if(this.esEspectador && colaborador.aliasUsuario){
       this.verPerfil(colaborador.aliasUsuario);
       return;
     }

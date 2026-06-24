@@ -232,14 +232,7 @@ export class Home {
   crearTablero(): void{
     this.http.crearTablero(this.aliasUsuario).subscribe({
       next: () => {
-        
-
-        this.http.getTablerosAlias(this.aliasUsuario)
-          .subscribe(tableros => {
-           
-            this.tableros = tableros;
-            this.cdr.detectChanges();
-          }); 
+        this.cargarTableros();
       }, error: (err) => {
         if (err.status === 401) {
           this.http.cerrarSesion();

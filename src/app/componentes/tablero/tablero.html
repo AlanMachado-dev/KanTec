@@ -268,9 +268,9 @@
                         <img [src]="rutaImagenes + asignado.imagen" [alt]="asignado.aliasUsuario"
                             [title]="asignado.aliasUsuario + ' - ' + getRol(asignado.tipoRelacion)" type="button"
                             (click)="abrirMenuAsignacion(asignado)" class="rounded-circle dropdown-toggle" width="32"
-                            height="32" data-bs-toggle="dropdown" data-bs-target="#menuUsuario">
+                            height="32" data-bs-toggle="dropdown" data-bs-target="#menuAsignados">
                         @if(!esEspectador){
-                        <div class="dropdown-menu" style="position: fixed;" id="menuUsuario">
+                        <div class="dropdown-menu" style="position: fixed;" id="menuAsignados">
                             <li><button class="dropdown-item" (click)="verPerfil(usuarioSeleccionado!.aliasUsuario)">Ver
                                     Perfil</button></li>
                             

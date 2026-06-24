@@ -465,6 +465,14 @@ export class Tablero implements OnInit, AfterViewInit {
     }
   }
 
+  tieneAsignacionesVisibles(tarea: any): boolean {
+  if (!tarea.asignaciones) return false;
+  // Retorna true solo si al menos un alias asignado existe en colaboradoresTablero
+  return tarea.asignaciones.some((alias: string) => 
+    this.colaboradoresTablero.some(colab => colab.aliasUsuario === alias)
+  );
+}
+
   abrirModalAgregar() {
     this.modoModal = 'agregar';
 

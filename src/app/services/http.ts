@@ -261,6 +261,16 @@ export class Http {
     );
   }
 
+  notificarAsignacionMail(aliasAsignado: string, idTablero: string, idTarea: number): Observable<any> {
+    return this.http.post<any>(this.url + "colaboradores/mail/tarea",
+      {
+        'aliasAsignado': aliasAsignado,
+        'idTablero': idTablero,
+        'idTarea': idTarea
+      }
+    )
+  }
+
   marcarComoVistas(): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': 'Bearer ' + this.getToken()

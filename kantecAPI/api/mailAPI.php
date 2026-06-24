@@ -201,6 +201,64 @@ class mailAPI {
 
         return $this->send($email,$subject,$body);
     }
+
+    public function avisarAsignacion(): bool{
+        $body = json_decode(file_get_contents("php://input"), true);
+
+        $aliasAsignado = $body['aliasAsignado']; 
+        $idTablero = $body['idTablero'];
+        $idTarea = $body['idTarea'];
+
+        $stmt = $this->db->prepare("SELECT email FROM perfil WHERE alias = ? ");
+        $stmt->execute([$aliasAsignado]);
+        $email = $stmt->fetchColumn();
+
+        $stmt = $this->db->prepare("SELECT * FROM tablero WHERE id = ?");
+        $stmt->execute([$idTablero]);
+        $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = $this->db->prepare("SELECT * FROM tarea WHERE idTablero = ? and idTarea = ?");
+        $stmt->execute([$idTablero, $idTarea]);
+        $tarea = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $fechaInicio = $tarea['fechaInicio'];
+        $fechaFinal = $tarea['fechaFinal'];
+
+        if($fechaInicio != "" && $fechaInicio !== $fechaFinal){ // no funciona correctamente el control
+            $fecha = "<strong>{$fechaInicio}</strong> a <strong>{$fechaFinal}</strong>";
+        }else if($fechaInicio === $fechaFinal){
+            $fecha = "<strong>{$fechaInicio}</strong>";
+        }else{
+            $fecha = "<i>Sin fecha asignada</i>";
+        }
+
+        if($tarea['descripcion'] != NULL){
+            $descripcion = $tarea['descripcion'];
+        }else{
+            $descripcion = "";
+        }
+
+        $subject = 'Nueva asignación a Tarea - Kantec';
+        $body = "
+        <div style='font-family: Arial, sans-serif; max-width: 500px; margin: auto;'>
+            <h2>Nueva asignación de tarea</h2>
+
+            <p>Te han asignado a una tarea en <strong>{$tablero['titulo']}</strong>:</p>
+
+            <h3>{$tarea['nombre']}</h3>
+
+            <p><i>{$descripcion}</i></p>
+
+            <hr>
+
+            <p>Fecha asignada para terminar tarea: {$fecha}</p>
+
+            <p>Ingresa a KanTec para ver la tarea.</p>
+        </div>
+        ";
+
+        return $this->send($email,$subject,$body);
+    }
 }
 
 ?>

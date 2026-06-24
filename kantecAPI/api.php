@@ -133,6 +133,8 @@ match(true) {
         && $method === 'POST' => $mail->verificarCodigo(),
     $partes[1] === 'colaboradores' && $partes[2] === 'mail' && $partes[3] === 'tablero' && !isset($partes[4]) 
         && $method === 'POST' => $mail->enviarInvitacion(),
+    $partes[1] === 'colaboradores' && $partes[2] === 'mail' && $partes[3] === 'tarea' && !isset($partes[4]) 
+        && $method === 'POST' => $mail->avisarAsignacion(),
 
     default => respond(404, ["error" => "Ruta no encontrada"])
 };

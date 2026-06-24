@@ -200,6 +200,7 @@ export class Tablero implements OnInit, AfterViewInit {
         }
       })
     }
+    this.cdr.detectChanges();
   }
 
   guardarTareas(): void {
@@ -775,6 +776,7 @@ export class Tablero implements OnInit, AfterViewInit {
             }
             this.tareaSelecionada.asignaciones.push(alias);
           }
+          this.http.notificarAsignacionMail(alias, tablero, this.formularioTarea.value.idTarea).subscribe();
         }
       });
   }

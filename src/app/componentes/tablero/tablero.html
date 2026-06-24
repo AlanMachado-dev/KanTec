@@ -126,7 +126,7 @@
 
                         @if (col.id !== 3) {
                         <div class="d-flex mt-2">
-                            <div class="ms-auto p-2 rounded-5" [ngClass]="obtenerClaseVencimiento(tarea.fechaFinal)">
+                            <div class="ms-auto px-2 rounded-5" [ngClass]="obtenerClaseVencimiento(tarea.fechaFinal)">
                                 <span style="font-size: 11px;">
                                     {{ obtenerTextoVencimiento(tarea.fechaFinal) }}
                                 </span>
@@ -137,28 +137,28 @@
 
                             @switch (tarea.prioridad) {
                             @case (1) {
-                            <div class="ms-auto p-2 rounded-5 bg-danger-subtle text-danger">
+                            <div class="ms-auto px-2 rounded-5 bg-danger-subtle text-danger">
                                 <span style="font-size: 11px;">
                                     <i>Tarea Realizada</i>
                                 </span>
                             </div>
                             }
                             @case (2) {
-                            <div class="ms-auto p-2 rounded-5 bg-warning-subtle text-warning">
+                            <div class="ms-auto px-2 rounded-5 bg-warning-subtle text-warning">
                                 <span style="font-size: 11px;">
                                     <i>Tarea Realizada</i>
                                 </span>
                             </div>
                             }
                             @case (3) {
-                            <div class="ms-auto p-2 rounded-5 bg-success-subtle text-success">
+                            <div class="ms-auto px-2 rounded-5 bg-success-subtle text-success">
                                 <span style="font-size: 11px;">
                                     <i>Tarea Realizada</i>
                                 </span>
                             </div>
                             }
                             @case (4) {
-                            <div class="ms-auto p-2 rounded-5 bg-light text-info">
+                            <div class="ms-auto px-2 rounded-5 bg-light text-info">
                                 <span style="font-size: 11px;">
                                     <i>Tarea Realizada</i>
                                 </span>

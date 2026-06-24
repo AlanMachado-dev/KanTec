@@ -97,7 +97,7 @@ class tareaAPI
         date_default_timezone_set('America/Montevideo');
         $fechaActual = date('Y-m-d H:i:s');
 
-        $stmt = $this->db->prepare("SELECT COUNT(*)+1 FROM tarea where idTablero = ?");
+        $stmt = $this->db->prepare("SELECT MAX(idTarea)+1 FROM tarea where idTablero = ?");
         $stmt->execute([$body['idTablero']]);
         $idTarea = $stmt->fetchColumn();
         

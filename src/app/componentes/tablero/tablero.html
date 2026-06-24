@@ -349,7 +349,7 @@
                         <label for="aliasUsuario" class="form-label">Alias</label>
                         <input type="text" class="form-control" [readOnly]="modoModal === 'editar'"
                             formControlName="aliasUsuario" [class.is-invalid]="formularioMiembro.get('aliasUsuario')?.invalid 
-                        && formularioMiembro.get('aliasUsuario')?.touched" [disabled]="cargandoInvitacion">
+                        && formularioMiembro.get('aliasUsuario')?.touched">
                         @if(formularioMiembro.get('aliasUsuario')?.invalid &&
                         formularioMiembro.get('aliasUsuario')?.touched){
                         <div class="invalid-feedback">

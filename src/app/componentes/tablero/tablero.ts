@@ -336,7 +336,7 @@ export class Tablero implements OnInit, AfterViewInit {
     }
 
 
-    const body = this.formularioMiembro.value;
+    const body = this.formularioMiembro.getRawValue();
 
     if (body.aliasUsuario === this.aliasLogueado) {
       Swal.fire({
@@ -348,6 +348,7 @@ export class Tablero implements OnInit, AfterViewInit {
     } else {
       if (this.idTablero) {
         this.cargandoInvitacion = true;
+        this.formularioMiembro.get('aliasUsuario')?.disable;
         this.http.invitarColaborador(this.idTablero, body).subscribe({
           next: () => {
             Swal.fire({
@@ -356,6 +357,7 @@ export class Tablero implements OnInit, AfterViewInit {
               text: 'Invitacion enviada con exito'
             });
             this.cargandoInvitacion = false;
+            this.formularioMiembro.get('aliasUsuario')?.enable;
             this.cdr.detectChanges();
             const btnCerrar = document.getElementById('btnCerrarModal');
             btnCerrar?.click();
@@ -393,6 +395,7 @@ export class Tablero implements OnInit, AfterViewInit {
               });
             }
             this.cargandoInvitacion = false;
+            this.formularioMiembro.get('aliasUsuario')?.enable;
             this.cdr.detectChanges();
           }
         });

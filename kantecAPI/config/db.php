@@ -22,7 +22,7 @@ class Database{
             $connSinBD = new PDO("mysql:host={$this->host}", $this->user, $this->pass);
             $connSinBD->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
             $connSinBD->exec("CREATE DATABASE IF NOT EXISTS `{$this->db}` 
-                              CHARACTER SET utf8 COLLATE utf8_general_ci");
+                              CHARACTER SET utf8 COLLATE utf8_bin");
 
             //crea la conexion con la base de datos
             $this->conn = new PDO(
@@ -51,7 +51,7 @@ class Database{
                 password    VARCHAR(100) NOT NULL,   
                 verificado  BOOLEAN      NOT NULL,
                 activo BOOLEAN NOT NULL DEFAULT TRUE
-            )
+            ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS perfil (
@@ -62,7 +62,7 @@ class Database{
             fecNac   DATE        NULL,
             fecReg   DATE        NULL,
             bio      VARCHAR(100)NULL    
-            )
+            ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS tablero (
@@ -73,7 +73,7 @@ class Database{
                 imagen          VARCHAR(40) NULL,
                 color           VARCHAR(7),
                 aliasCreador    VARCHAR(30), FOREIGN KEY (aliasCreador) REFERENCES usuario(alias)
-            )
+            ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS pertenece (
@@ -83,7 +83,7 @@ class Database{
                 FOREIGN KEY (aliasUsuario) REFERENCES usuario(alias),
                 FOREIGN KEY (idTablero) REFERENCES tablero(id),
                 PRIMARY KEY (idTablero,aliasUsuario)
-            )
+            ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS tarea (
@@ -99,7 +99,7 @@ class Database{
                 prioridad   INTEGER,
                 FOREIGN KEY (idTablero) REFERENCES tablero(id),
                 PRIMARY KEY (idTablero, idTarea)
-            )
+            ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS invitacion (
@@ -114,7 +114,7 @@ class Database{
                 FOREIGN KEY (idTablero) REFERENCES tablero(id),
                 
                 PRIMARY KEY (idTablero,aliasInvitado)
-            )
+            ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS asignacion (
@@ -127,7 +127,7 @@ class Database{
                 FOREIGN KEY (alias)             REFERENCES usuario(alias),
 
                 PRIMARY KEY(idTarea,idTablero,alias)
-            )
+            ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS verificacion (
@@ -135,7 +135,7 @@ class Database{
                 email       VARCHAR(60) NOT NULL,
                 codigo      INTEGER     NOT NULL,
                 expiracion  DATETIME    NOT NULL
-            )
+            ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
     }
 }

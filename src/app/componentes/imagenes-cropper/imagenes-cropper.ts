@@ -21,7 +21,6 @@ export class ImagenesCropper implements OnChanges{
   preview: string | ArrayBuffer | null = null;
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('ngOnChanges', changes);
     if (changes['previewInicial']) {
       this.preview = this.previewInicial;
     }

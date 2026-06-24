@@ -22,6 +22,8 @@ export class Home {
   private fb = inject(FormBuilder);
   extPermitidas = ['image/jpg', 'image/jpeg', 'image/png'];
   mostrarError = false;
+  cargaronTableros = false;
+  cargaronTablerosColaborados = false;
 
   formularioTablero: FormGroup = this.fb.group({
     titulo: ['', {
@@ -127,6 +129,7 @@ export class Home {
         next: (tableros) => {
           this.tableros = tableros;
           //console.log(tableros)
+          this.cargaronTableros = true;
           this.cdr.detectChanges();
         },
         error: (err) => {
@@ -141,6 +144,7 @@ export class Home {
     this.http.getTablerosColaborados(this.aliasUsuario)
       .subscribe(tableros => {
         this.tablerosColaborados = tableros;
+        this.cargaronTablerosColaborados = true;
         this.cdr.detectChanges();
       })
   }

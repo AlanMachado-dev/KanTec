@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { Tarea } from '../../interfaces/tarea';
 import { Colaborador } from '../../interfaces/colaborador';
 import { NgClass } from "@angular/common";
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-tablero',
@@ -39,6 +40,7 @@ export class Tablero implements OnInit, AfterViewInit {
   usuarioSeleccionado: Colaborador | null = null;
   modoModal: 'agregar' | 'editar' = 'agregar';
   cargandoInvitacion: boolean = false;
+  cargandoTarea = false;
 
   private fpInstance: any;
 
@@ -72,7 +74,6 @@ export class Tablero implements OnInit, AfterViewInit {
     this.http.verificarToken().subscribe({
       next: () => { },
       error: (err) => {
-        console.log(err);
         this.http.cerrarSesion();
         this.router.navigate(['/ingreso'], { state: { expirado: "true" } });
         detener = true;
@@ -108,7 +109,7 @@ export class Tablero implements OnInit, AfterViewInit {
         })
         this.intervaloTareas = setInterval(() => {
           this.cargarTareas();
-        }, 5000);
+        }, 2000);
         if (this.idTablero) {
           this.http.getTablero(this.idTablero)
             .subscribe(tablero => {
@@ -118,7 +119,7 @@ export class Tablero implements OnInit, AfterViewInit {
 
           this.recargarColaboradores();
           this.actualizarLimiteColaboradores();
-          this.intervaloColaboradores = setInterval(() => { //pueden hacer algo parecido para recargar tareas supongo
+          this.intervaloColaboradores = setInterval(() => { 
             this.recargarColaboradores();
           }, 5000);
 
@@ -170,10 +171,10 @@ export class Tablero implements OnInit, AfterViewInit {
     if (this.esEspectador) {
       return;
     }
-    if (!this.idTablero) { return console.log("error pendejo"); }
+    if (!this.idTablero) { return; }
     this.http.crearTarea(this.idTablero, columna, this.posicionFinalColumna(columna)).subscribe({
       next: () => {
-        if (!this.idTablero) { return console.log("error pendejo"); }
+        if (!this.idTablero) { return; }
         this.http.getTareasTableroColumna(this.idTablero, columna).subscribe({
           next: (response) => {
             this.columnas[columna].tareas = response;
@@ -187,7 +188,7 @@ export class Tablero implements OnInit, AfterViewInit {
 
   cargarTareas(): void {
     for (let i = 0; i < this.columnas.length; i++) {
-      if (!this.idTablero) { return console.log("error pendejo"); }
+      if (!this.idTablero) { return; }
 
       this.http.getTareasTableroColumna(this.idTablero, i).subscribe({
         next: (response) => {
@@ -203,9 +204,25 @@ export class Tablero implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
   }
 
+  cargarTareasColumna(col: number): void {
+    if (!this.idTablero) { return; }
+
+    this.http.getTareasTableroColumna(this.idTablero, col).subscribe({
+      next: (response) => {
+        this.columnas[col].tareas = response;
+        for (const tarea of this.columnas[col].tareas) {
+          if (tarea.prioridad == null) {
+            tarea.prioridad = 0;
+          }
+        }
+      }
+    })
+    this.cdr.detectChanges();
+  }
+
   guardarTareas(): void {
     for (let i = 0; i < this.columnas.length; i++) {
-      if (!this.idTablero) { return console.log("error pendejo"); }
+      if (!this.idTablero) { return; }
 
       let j: number = 1;
       for (const tarea of this.columnas[i].tareas) {
@@ -343,7 +360,6 @@ export class Tablero implements OnInit, AfterViewInit {
             const btnCerrar = document.getElementById('btnCerrarModal');
             btnCerrar?.click();
             if(!this.idTablero)return;
-            console.log(body)
             this.http.notificarInvitacionMail(body, this.idTablero).subscribe();
           },
           error: (err) => {
@@ -611,8 +627,10 @@ export class Tablero implements OnInit, AfterViewInit {
   });
 
   tareaSelecionada: Tarea | null = null;
-  seleccionarTarea(tarea: Tarea): void {
+  columnaTareaSeleccionada: number | null = null;
+  seleccionarTarea(tarea: Tarea, columnaID: number): void {
     this.tareaSelecionada = tarea;
+    this.columnaTareaSeleccionada = columnaID;
     this.tareaSelecionada.asignaciones;
     this.formularioTarea.patchValue({
       idTarea: tarea.idTarea,
@@ -634,24 +652,28 @@ export class Tablero implements OnInit, AfterViewInit {
   guardarCambiosTarea() {
     this.formularioTarea.get('nombre')?.updateValueAndValidity();
     this.formularioTarea.get('descripcion')?.updateValueAndValidity();
+    this.cargandoTarea = true;
 
-    if (this.esEspectador) {
-      return;
-    }
-    if (this.formularioTarea.invalid) return;
+    if (this.esEspectador || this.formularioTarea.invalid || !this.idTablero) return;
 
     const body = this.formularioTarea.value;
+    const col = this.columnaTareaSeleccionada;
+    if (col == null) return;
 
-    if (!this.idTablero) { return; }
-    this.http.actualizarTarea(this.idTablero, this.formularioTarea.value.idTarea, body).subscribe({
-      next: () => {
-        this.cargarTareas();
-        //this.cdr.detectChanges();
-        const btnCerrar = document.getElementById('btnCerrarOffcanvas');
-        btnCerrar?.click();
+    this.http.actualizarTarea(this.idTablero, body.idTarea, body).pipe(
+      switchMap(() => this.http.getTareasTableroColumna(this.idTablero!, col))
+    ).subscribe({
+      next: (response) => {
+        this.columnas[col].tareas = response;
+        for (const tarea of this.columnas[col].tareas) {
+          if (tarea.prioridad == null) tarea.prioridad = 0;
+        }
+        this.cargandoTarea = false;
+        this.cdr.detectChanges();
+        document.getElementById('btnCerrarOffcanvas')?.click();
       },
       error: (err) => console.log(err)
-    })
+    });
   }
 
   confirmarBorrarTarea() {
@@ -687,7 +709,6 @@ export class Tablero implements OnInit, AfterViewInit {
               text: "No se pudo borrar la tarea. Inténtalo de nuevo.",
               icon: "error"
             });
-            console.log(error);
           }
         });
       }
@@ -756,19 +777,11 @@ export class Tablero implements OnInit, AfterViewInit {
 
   /////EDITAR ASIGNACION /////
   abrirMenuAsignacion(colaborador: Colaborador) {
-    /*
-    if(this.aliasLogueado != this.miTablero?.aliasCreador || this.aliasLogueado == colaborador.aliasUsuario){
-      this.verPerfil(colaborador.aliasUsuario);
-      return;
-    }
-    */
     if(this.esEspectador && colaborador.aliasUsuario){
       this.verPerfil(colaborador.aliasUsuario);
       return;
     }
-    //console.log(colaborador);
     this.usuarioSeleccionado = colaborador;
-    //console.log(this.usuarioSeleccionado);
   }
 
   postAsignacion(alias: string) {

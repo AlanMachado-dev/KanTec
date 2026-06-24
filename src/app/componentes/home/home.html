@@ -14,7 +14,6 @@
                     <img [src]="rutaImagenes + tablero.imagen" class="card-img-top imagenTablero" alt="..." (error)="tablero.imagen = null">
                 }@else {
                 <div [style.background-color]="tablero.color" class="colorFondoTablero">
-                    <!-- {{tablero.titulo}} -->
                 </div>
                 }
             </a>
@@ -24,8 +23,6 @@
                 @if(tablero.descripcion){
                 <p class="card-text descripcionTarjeta">{{tablero.descripcion}}</p>
                 }
-
-                <!-- <p class="card-text">[usuario1] [usuario2] [usuario3]</p> -->
             </div>
             <div class="card-footer">
                 <div class="row ">
@@ -102,7 +99,6 @@
     <form [formGroup]="formularioTablero" class="d-flex flex-column h-100">
         <div class="offcanvas-header">
             <input type="text" formControlName="titulo" class="form-control" [class.is-invalid]="formularioTablero.get('titulo')?.invalid && formularioTablero.get('titulo')?.touched">
-            <!-- <h5 class="offcanvas-title" id="[id Tablero]">[Nombre Tarea]</h5> -->
              @if(formularioTablero.get('titulo')?.invalid && formularioTablero.get('titulo')?.touched){
                 <div class="invalid-feedback">
                     @if(formularioTablero.get('titulo')?.errors?.['required']) {
@@ -238,7 +234,6 @@
                 (error)="tablero.imagen = null">
             }@else {
             <div [style.background-color]="tablero.color" class="colorFondoTablero">
-                <!-- {{tablero.titulo}} -->
             </div>
             }
         </a>
@@ -250,7 +245,6 @@
             <p class="card-text descripcionTarjetaLarga">{{tablero.descripcion}}</p>
             }
 
-            <!-- <p class="card-text">[usuario1] [usuario2] [usuario3]</p> -->
         </div>
         
     </div>
@@ -301,10 +295,3 @@
     </div>
 </div>
 }
-<!-- <div class="container">
-    <div class="row">
-        <div class="col mt-4 text-center">
-            <h3>De momento no te han agregado a ningun tablero!</h3>
-        </div>
-    </div>
-</div> -->

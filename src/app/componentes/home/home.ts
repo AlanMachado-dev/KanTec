@@ -59,7 +59,6 @@ export class Home {
     this.http.verificarToken().subscribe({
       next: () => {},
       error: (err) => {
-        // console.log(err);
         this.http.cerrarSesion();
         this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
         detener = true;
@@ -128,12 +127,10 @@ export class Home {
       .subscribe({
         next: (tableros) => {
           this.tableros = tableros;
-          //console.log(tableros)
           this.cargaronTableros = true;
           this.cdr.detectChanges();
         },
         error: (err) => {
-          // console.log(err);
           this.http.cerrarSesion();
           this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
           return;
@@ -329,10 +326,7 @@ export class Home {
           }
         }
       });
-    }
-
-    //console.log(body);
-    
+    }    
   }
 
   confirmarBorrarTablero(){
@@ -364,7 +358,6 @@ export class Home {
               text: "No se pudo borrar el tablero. Inténtalo de nuevo.",
               icon: "error"
             });
-            console.log(error);
           }
         });
       }

@@ -24,15 +24,7 @@ export class Navbar implements OnInit, OnDestroy{
   constructor(private http: Http, private _cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void { //el codigo dentro corre cuando se crea el componente
-    // this.http.verificarToken().subscribe({
-    //   next: () => {},
-    //   error: (err) => {
-    //     // console.log(err);
-    //     this.http.cerrarSesion();
-    //     this._cdr.detectChanges();
-    //   }
-    // })
-    
+  
     this.subLogueado = this.http.sesionActiva$.subscribe(logueado => { 
       //se suscribe al Observable, cada vez que cambie la variable de sesionActiva se ejecuta el codigo
       this.estaLogueado = logueado;
@@ -47,7 +39,6 @@ export class Navbar implements OnInit, OnDestroy{
 
     this.subPerfilMod = this.http.perfilModificado$.subscribe(() => {
       this.cargarUsuario();
-      // this._cdr.detectChanges();
     })
   }
 
@@ -66,9 +57,7 @@ export class Navbar implements OnInit, OnDestroy{
         this._cdr.detectChanges();
       },
       error: (err) => {
-        console.log(err)
         this.http.cerrarSesion();
-        // this._cdr.detectChanges();
         this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
       }
     })
@@ -83,7 +72,7 @@ export class Navbar implements OnInit, OnDestroy{
     this.http.crearTablero(aliasUsuario).subscribe({
       next: () => {
           this.http.notificarTableroCreado();
-          this.router.navigate(['/home']); //Lo mando a home o lo mando dentro del componente tablero con ese id?
+          this.router.navigate(['/home']); 
       }
     });
   }

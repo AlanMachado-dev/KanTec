@@ -75,19 +75,11 @@ export class Http {
 
   //usuarios//
   getUsuario(alias: string): Observable<Usuario> {
-    // const headers = new HttpHeaders({
-    //   'Authorization': 'Bearer ' + this.getToken()
-    // });
-    // return this.http.get<Usuario>(`${this.url}usuarios/${alias}`, { headers });
     return this.http.get<Usuario>(`${this.url}usuarios/${alias}`);
   }
 
   registrarUsuario(usuario: Usuario): Observable<any> {
-    return this.http.post<Usuario>(this.url + "usuarios", usuario).pipe(
-      switchMap(() => this.inicioSesion(usuario)));
-
-    // return this.http.post<Usuario>(this.url + "usuarios", usuario);
-      // al añadir verificacion por mail cambiar por este
+    return this.http.post<Usuario>(this.url + "usuarios", usuario);
   }
 
   existeUsuario(alias: string): Observable<any> {
@@ -158,7 +150,6 @@ export class Http {
       'Authorization': 'Bearer ' + this.getToken()
     });
     return this.http.get<TableroInterfaz[]>(`${this.url}tableros/usuario/${alias}`, { headers });
-    // return this.http.get<TableroInterfaz[]>(`http://localhost/kantecAPI/api/tableros/usuario/${alias}`);
 
   }
 

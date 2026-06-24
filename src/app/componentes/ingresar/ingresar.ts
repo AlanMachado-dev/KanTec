@@ -34,10 +34,6 @@ export class Ingresar implements OnInit{
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
-        // didOpen: (toast) => {
-        //   toast.onmouseenter = Swal.stopTimer;
-        //   toast.onmouseleave = Swal.resumeTimer;
-        // }
       }).fire({
         icon: "warning",
         title: "¡Sesión inválida!"
@@ -88,8 +84,6 @@ export class Ingresar implements OnInit{
           }
         },
         error: (err) => {
-          console.log(err);
-          console.log("Usuario o contraseña incorrecta!");
           switch(err.error.codigo){
             case "INACTIVO":
               this.errorMessage = "Usuario inactivo!";
@@ -101,7 +95,6 @@ export class Ingresar implements OnInit{
           this.mostrarError = true;
           this.loading = false;
           this._cdr.detectChanges();
-          //Deberia salir un error de que el usuario esta inactivo en vez de este mismo error en todos los casos CULPA DE MATTHEW FREIRE RODRIGUEZ
         }
       })
     }
@@ -135,8 +128,6 @@ export class Ingresar implements OnInit{
 
             const modal = bootstrap.Modal.getInstance(this.modalRef.nativeElement);
             modal.hide();
-            // const btnCerrar = document.getElementById('cerrarVerificacion');
-            // btnCerrar?.click();
             
             this.router.navigate(['/home']);
           },
@@ -148,7 +139,6 @@ export class Ingresar implements OnInit{
         this.errorMessageVerificar = "Código inválido o expirado";
         this.mostrarErrorVerificar = true;
         this._cdr.detectChanges();
-        console.log(err);
       } 
     })
   }

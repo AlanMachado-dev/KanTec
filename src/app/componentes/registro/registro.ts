@@ -156,7 +156,6 @@ export class Registro {
 
   private manejarErrorGlobal(err: any) {
     Swal.fire({ title: "Error", text: "Ha ocurrido un error inesperado.", icon: "error" });
-    console.log(err);
     this.loading = false;
     this._cdr.detectChanges();
   }
@@ -219,7 +218,6 @@ export class Registro {
         this.loadingVerificar = false;
         this.errorMessageVerificar = "Código inválido o expirado";
         this.mostrarErrorVerificar = true;
-        console.log(err);
       } 
     })
   }

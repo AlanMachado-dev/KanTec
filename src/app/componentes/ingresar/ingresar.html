@@ -15,7 +15,6 @@
                 @if(!loading){
                     <button type="submit" [disabled]="!usuarioForm.valid" class="btn btn-primary mt-3 w-100 h-25 fw-bold">Iniciar Sesion</button>
                 }@else{
-                    <!-- <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" disabled>Cargando...</button> -->
                     <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" type="button" disabled>
                         <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                         <span role="status">Cargando...</span>
@@ -33,8 +32,6 @@
             <a routerLink="/registro" class="btn btn-outline-primary w-100 h-25 fw-bold">Registrate</a>
         </form>
     </div>
-    <!-- <button class="btn btn-danger" type="button" data-bs-toggle="modal" 
-        data-bs-target="#modalCodigo">prueba codigo</button> -->
 </div>
 
 <div class="modal fade" #modalCodigo id="modalCodigo" tabindex="-1" aria-labelledby="modalCodigoLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -42,7 +39,6 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="modalCodigoLabel">Verificar Usuario</h1>
-        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cerrarVerificacion" ></button> -->
       </div>
       <div class="modal-body">
         <form [formGroup]="codigoForm">

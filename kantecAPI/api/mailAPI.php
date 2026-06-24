@@ -77,11 +77,9 @@ class mailAPI {
             // --- ENVÍO ---
 
             $mail->send();
-            return true; // Si llegó acá, salió todo bien
+            return true;
 
         } catch (Exception $e) {
-            // Si algo falló, lo guardamos en el log de PHP
-            // y devolvemos false para manejarlo en la API
             error_log("Error enviando mail: {$mail->ErrorInfo}");
             return false;
         }

@@ -121,8 +121,6 @@ match(true) {
         $method === 'POST' => $asignacion->create(),    
     $partes[1] === 'asignacion' &&
         $method === 'DELETE' => $asignacion->delete(),        
-//    $partes[1] === 'asignacion' &&
-//        $method === 'GET' => $asignacion->getAsignacionesPorAlias($partes[2], $partes[3]),
     $partes[1] === 'asignacion' &&
         $method === 'GET' => $asignacion->getAsignacionesPorTarea($partes[2], $partes[3]),
 

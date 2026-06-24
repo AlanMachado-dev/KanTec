@@ -152,7 +152,6 @@
                         <button type="submit" [disabled]="!registroForm.valid || mostrarError"
                             class="btn btn-outline-primary btn-lg text-center mt-1 w-100 h-25 fw-bold">Registrate</button>
                         }@else {
-                        <!-- <button class="btn btn-secondary text-center mt-3 w-100 h-25 fw-bold" disabled>Cargando...</button> -->
                         <button class="btn btn-secondary btn-lg text-center mt-1 w-100 h-25 fw-bold" type="button" disabled>
                             <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                             <span role="status"> Cargando...</span>
@@ -166,53 +165,13 @@
                 <div class="col-10">
                     <hr>
                     <div class="form-text p-2">¿Ya tienes cuenta?</div>
-                    <!-- <a routerLink="/ingreso" class="btn btn-primary w-100 h-25 fw-bold">Iniciar Sesion</a> -->
                     <button class="btn btn-primary w-100 fw-bold" routerLink="/ingreso">Iniciar Sesion</button>
                 </div>
                 <div class="col-1"></div>
             </div>
-            
-            <!-- <div class="mb-3">
-                <label for="email" class="form-label">Correo electronico</label>
-                <input type="email" #emailInput (blur)="afterEmail(emailInput.value)" formControlName="email"
-                    class="form-control" id="email"
-                    [class.is-invalid]="registroForm.get('email')?.invalid && registroForm.get('email')?.touched">
-                @if(registroForm.get('email')?.invalid && registroForm.get('email')?.touched){
-                <div class="invalid-feedback">
-                    @if(registroForm.get('email')?.errors?.['required']) {
-                    El email es obligatorio.
-                    }
-                    @if(registroForm.get('email')?.errors?.['email']) {
-                    Debe ingresar un email válido.
-                    }
-                    @if(registroForm.get('email')?.errors?.['maxlength']) {
-                    Máximo de caracteres debe ser 60.
-                    }
-                </div>
-                }
-            </div> -->
-        
-            <!-- <div id="divImagen" class="divImagen" [class.divImagen--drag-active]="dragActivo"
-                (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
-                (drop)="onDrop($event)" (click)="">
-                <p>Arrastra tus archivos aquí o haz clic para seleccionar</p>
-                <input id="imagen" type="file" hidden (change)="onFileSelected($event)" />
-            </div> -->
-
-
-            <!-- <div class="mb-3 divImagen" id="divImagen">
-                <label for="imagen" class="form-label">Imagen de Perfil</label>
-                <input type="file" style="display: none;" (change)="onFileSelected($event)" [class.divImagen--drag-active]="dragActivo"
-                    (dragenter)="onDragEnter($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
-                    (drop)="onDrop($event)" formControlName="imagen" class="form-control bg-secondary" id="imagen"
-                    accept="image/*">
-            </div> -->
-            
         </form>
     </div>
     <div class="col-3"></div>
-    <!-- <button class="btn btn-danger" type="button" data-bs-toggle="modal" 
-        data-bs-target="#modalCodigo">prueba codigo</button> -->
 </div>
 
 <div class="modal fade" #modalCodigo id="modalCodigo" tabindex="-1" aria-labelledby="modalCodigoLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -220,7 +179,6 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="modalCodigoLabel">Verificar Usuario</h1>
-        <!-- <button type="button" class="btn-close" data-bs-backdrop="static" aria-label="Close" id="cerrarVerificacion" hidden></button> -->
       </div>
       <div class="modal-body">
         <form [formGroup]="codigoForm">

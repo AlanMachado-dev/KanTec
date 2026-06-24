@@ -1,6 +1,5 @@
 <?php
 use Firebase\JWT\JWT;
-// use Firebase\JWT\Key;
 
 class usuarioAPI {
     private PDO $db;
@@ -36,7 +35,7 @@ class usuarioAPI {
 
         $payload = [
             'alias' => $user['alias'],
-            'exp' => time() + (60 * 60) //tiempo que dura el token (1h)
+            'exp' => time() + (60 * 60 * 8) //tiempo que dura el token (1h)
         ];
 
         $token = JWT::encode($payload, JWT_SECRET, 'HS256');
@@ -71,7 +70,7 @@ class usuarioAPI {
     public function create(): void {
         $body = json_decode(file_get_contents("php://input"), true);
 
-        if (empty($body['alias']) || empty($body['nombre']) || empty($body['password']) || empty($body['email']) ) { //|| empty($body['imagen'])
+        if (empty($body['alias']) || empty($body['nombre']) || empty($body['password']) || empty($body['email']) ) {
             respond(400, ["error" => "Todos los campos son requeridos"]);
         }
 
@@ -79,7 +78,7 @@ class usuarioAPI {
 
         $stmt = $this->db->prepare(
             "INSERT INTO usuario (alias, password, verificado) VALUES (?, ?, 0)"
-        ); //cuando se añada verifiacion de mail el 1 pasa a ser 0
+        );
         $stmt->execute([$body['alias'], $passhash]);
 
                 $stmt = $this->db->prepare(
@@ -120,9 +119,8 @@ class usuarioAPI {
 
     }
 
-    // DELETE http://localhost/kantecAPI/api/usuarios/ElPro123
+    // DELETE http://localhost/kantecAPI/api/usuarios/{alias}
     public function delete(string $alias): void {
-    //$tokenData = verificarToken();
 
     $stmt = $this->db->prepare("SELECT * FROM usuario NATURAL JOIN perfil WHERE usuario.alias = ? AND usuario.activo = true");
     $stmt->execute([$alias]);

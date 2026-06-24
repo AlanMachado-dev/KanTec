@@ -33,7 +33,6 @@ export class Perfil implements OnInit, OnDestroy {
     this.http.verificarToken().subscribe({
       next: () => { },
       error: (err) => {
-        console.log(err);
         this.http.cerrarSesion();
         this.router.navigate(['/ingreso'], { state: { expirado: "true" } });
         detener = true;
@@ -44,7 +43,6 @@ export class Perfil implements OnInit, OnDestroy {
     if (!this.http.estaLogueado()) {
       this.router.navigate(['/ingreso']);
     } else {
-      // const alias = this.http.getAliasDelToken();
       const alias = this.ruta.snapshot.paramMap.get('alias');
       if (!alias) return;
       this.http.notificarInvitacion().subscribe(resp => {
@@ -86,9 +84,6 @@ export class Perfil implements OnInit, OnDestroy {
           this._cdr.detectChanges();
         },
         error: (err) => {
-          // console.log(err);
-          // this.http.cerrarSesion();
-          // this.router.navigate(['/ingreso'], {state: {expirado: "true"}});
         }
       })
     }

@@ -108,8 +108,6 @@ class tableroAPI
         $stmt = $this->db->prepare("INSERT INTO pertenece VALUES (?,?,0)");
         $stmt->execute([$uuid, $body["alias"]]);
 
-        //Probablemente podria hacerlo con un trigger pero me parece una mountain
-
         respond(201, [
             "mensaje" => "Tablero creado"
         ]);

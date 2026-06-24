@@ -28,19 +28,7 @@ class asignacionAPI
         );
         $stmt->execute([$idTablero, $idTarea, $alias]);
     }
-/*
-    public function getAsignacionesPorAlias(string $idTablero, string $alias): void{
-        $stmt = $this->db->prepare(
-            "SELECT idTarea FROM asignacion WHERE alias = ? AND idTablero = ?"
-        );
-        $stmt->execute([$alias,$idTablero]);
-        $asignaciones = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($asignaciones === false || empty($asignaciones)) {
-            respond(404, ["error" => "SIN ASIGNACIONES"]);
-        }
-        respond(200, $asignaciones);
-    }
-*/
+    
     public function getAsignacionesPorTarea(string $idTablero, string $idTarea): void {
         $stmt = $this->db->prepare(
             "SELECT alias FROM asignacion a NATURAL JOIN usuario u WHERE a.idTarea = ? AND a.idTablero = ? AND u.activo = true"

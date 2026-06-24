@@ -52,7 +52,7 @@ class tareaAPI
         // Recuperamos los datos
         $tareas = $stmt->fetchAll();
 
-        // Opcional: Decodificar el JSON en PHP para que sea un array nativo y no un string
+        // decodifica el JSON en PHP para que sea un array nativo y no un string
         foreach ($tareas as &$tarea) {
             if (isset($tarea['asignaciones'])) {
                 $tarea['asignaciones'] = json_decode($tarea['asignaciones'], true);

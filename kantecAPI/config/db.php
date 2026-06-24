@@ -18,7 +18,7 @@ class Database{
         if ($this->conn) return $this->conn;
             
         try{
-            //prueba si existe la base de datos (uso PDO porque es mas facil conectarse a la BD)
+            //prueba si existe la base de datos
             $connSinBD = new PDO("mysql:host={$this->host}", $this->user, $this->pass);
             $connSinBD->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
             $connSinBD->exec("CREATE DATABASE IF NOT EXISTS `{$this->db}` 
@@ -92,8 +92,8 @@ class Database{
                 nombre      VARCHAR(50) NOT NULL,
                 descripcion VARCHAR(300),
                 fechaCreacion DATETIME NOT NULL,
-                fechaInicio DATETIME, 
-                fechaFinal  DATETIME,
+                fechaInicio DATE, 
+                fechaFinal  DATE,
                 posicion    INTEGER NOT NULL,
                 columna     INTEGER NOT NULL,
                 prioridad   INTEGER,

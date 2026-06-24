@@ -437,6 +437,9 @@ export class Tablero implements OnInit, AfterViewInit {
                 timer: 3000,
                 timerProgressBar: true
               });
+            } else if (err.status === 401){
+              this.http.cerrarSesion();
+              this.router.navigate(['/ingreso'], { state: { expirado: "true" } });
             }
           }
         })
@@ -757,12 +760,19 @@ export class Tablero implements OnInit, AfterViewInit {
       return;
     }
     */
-    console.log(colaborador);
+    if(this.esEspectador){
+      this.verPerfil(colaborador.aliasUsuario);
+      return;
+    }
+    //console.log(colaborador);
     this.usuarioSeleccionado = colaborador;
-    console.log(this.usuarioSeleccionado);
+    //console.log(this.usuarioSeleccionado);
   }
 
   postAsignacion(alias: string) {
+    if(this.esEspectador){
+      return;
+    }
     const tablero = this.idTablero || "";
     this.http.postAsignacion(tablero, this.formularioTarea.value.idTarea, alias)
       .subscribe({
@@ -782,6 +792,9 @@ export class Tablero implements OnInit, AfterViewInit {
   }
 
   deleteAsignacion(alias: string) {
+    if (this.esEspectador) {
+      return;
+    }
     const tablero = this.idTablero || "";
 
     this.http.deleteAsignacion(tablero, this.formularioTarea.value.idTarea, alias)

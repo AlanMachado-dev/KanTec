@@ -240,6 +240,11 @@ export class Home {
             this.tableros = tableros;
             this.cdr.detectChanges();
           }); 
+      }, error: (err) => {
+        if (err.status === 401) {
+          this.http.cerrarSesion();
+          this.router.navigate(['/ingreso'], { state: { expirado: "true" } });
+        }
       }
     });
   }
@@ -305,6 +310,12 @@ export class Home {
               this.cargarTableros();
               const btnCerrar = document.getElementById('btnCerrarOffcanvas');
               btnCerrar?.click();
+            },
+            error: (err) => {
+              if(err.status === 401){
+                this.http.cerrarSesion();
+                this.router.navigate(['/ingreso'], { state: { expirado: "true" } });
+              }
             }
           });
         })
@@ -317,6 +328,12 @@ export class Home {
           this.cargarTableros();
           const btnCerrar = document.getElementById('btnCerrarOffcanvas');
           btnCerrar?.click();
+        },
+        error: (err) => {
+          if (err.status === 401) {
+            this.http.cerrarSesion();
+            this.router.navigate(['/ingreso'], { state: { expirado: "true" } });
+          }
         }
       });
     }

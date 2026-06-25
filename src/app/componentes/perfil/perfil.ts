@@ -102,6 +102,7 @@ export class Perfil implements OnInit, OnDestroy {
       altFormat: "j \\d\\e F Y",
       dateFormat: "Y-m-d", 
       maxDate: "today",
+      minDate: "1900-01",
     
       onChange: (selectedDates, dateStr, instance) => {
         this.formularioUsuario.patchValue({

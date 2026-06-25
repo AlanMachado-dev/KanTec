@@ -144,6 +144,8 @@ export class Tablero implements OnInit, AfterViewInit {
       altFormat: "j \\d\\e F Y",
       dateFormat: "Y-m-d",
       mode: "range",
+      minDate: "1970-01",
+      maxDate: "2100-01",
 
       onChange: (selectedDates, dateStr, instance) => {
         this.formularioTarea.patchValue({

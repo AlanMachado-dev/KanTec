@@ -12,8 +12,6 @@ require_once 'api/asignacionAPI.php';
 require_once 'api/mailAPI.php';
 
 
-
-
 $method = $_SERVER['REQUEST_METHOD'];
 
 //agarra el path del endpoint llamado

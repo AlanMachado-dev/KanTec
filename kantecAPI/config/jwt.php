@@ -2,7 +2,7 @@
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-define('JWT_SECRET', 'pero_madre_mia_willy_que_haces_aqui');
+define('JWT_SECRET', 'm5iqtGcHRZtZEvqx0uz2N4Y87K4fgUoM2ZSI5vF3Dic='); //deberia ser archivo config aparte
 
 function verificarToken(): array {
     $headers = getallheaders();

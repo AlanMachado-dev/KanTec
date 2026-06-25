@@ -55,13 +55,14 @@ class Database{
         ");
         $this->conn->exec("
             CREATE TABLE IF NOT EXISTS perfil (
-            alias    VARCHAR(30) PRIMARY KEY REFERENCES usuario(alias),
+            alias    VARCHAR(30) PRIMARY KEY,
             email    VARCHAR(60) NOT NULL,
             nombre   VARCHAR(50) NOT NULL,
             imagen   VARCHAR(40) NULL,
             fecNac   DATE        NULL,
             fecReg   DATE        NULL,
-            bio      VARCHAR(100)NULL    
+            bio      VARCHAR(100)NULL,
+            FOREIGN KEY (alias) REFERENCES usuario(alias)    
             ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
         $this->conn->exec("
@@ -134,7 +135,8 @@ class Database{
                 alias       VARCHAR(30) NOT NULL,
                 email       VARCHAR(60) NOT NULL,
                 codigo      INTEGER     NOT NULL,
-                expiracion  DATETIME    NOT NULL
+                expiracion  DATETIME    NOT NULL,
+                FOREIGN KEY (alias) REFERENCES perfil(alias)
             ) CHARACTER SET utf8 COLLATE utf8_bin
         ");
     }

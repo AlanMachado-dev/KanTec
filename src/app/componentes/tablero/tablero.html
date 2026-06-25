@@ -128,7 +128,7 @@
                         <div class="d-flex mt-2">
                             <div class="ms-auto px-2 rounded-5" [ngClass]="obtenerClaseVencimiento(tarea.fechaFinal)">
                                 <span style="font-size: 11px;">
-                                    {{ obtenerTextoVencimiento(tarea.fechaFinal) }}
+                                    {{ obtenerTextoVencimiento(tarea.fechaFinal, tarea.fechaInicio) }}
                                 </span>
                             </div>
                         </div>

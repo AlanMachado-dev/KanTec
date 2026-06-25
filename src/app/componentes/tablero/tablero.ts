@@ -752,22 +752,62 @@ export class Tablero implements OnInit, AfterViewInit {
     return Math.round(diferenciaTiempo / (1000 * 60 * 60 * 24));
   }
 
-  obtenerTextoVencimiento(fechaFinal: string): string {
-    const dias = this.calcularDiasRestantes(fechaFinal);
+    calcularDiasRestantesInicio(fechaInicio: any): number | null {
+    if (!fechaInicio) return null;
 
-    if (dias === null) {
+    const fechaLimpia = fechaInicio.substring(0, 10); //esto porque la fecha viene con la hora me quedo solo con AAAA-MM-DD
+
+    const partes = fechaLimpia.split('-');
+    if (partes.length !== 3) return null;
+
+    const anio = Number(partes[0]);
+    const mes = Number(partes[1]);
+    const dia = Number(partes[2]);
+
+    if (isNaN(anio) || isNaN(mes) || isNaN(dia)) return null;
+
+    const inicio = new Date(anio, mes - 1, dia);
+    inicio.setHours(0, 0, 0, 0);
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const diferenciaTiempo = inicio.getTime() - hoy.getTime();
+    return Math.round(diferenciaTiempo / (1000 * 60 * 60 * 24));
+  }
+
+  obtenerTextoVencimiento(fechaFinal: string, fechaInical: string): string {
+    const diasFin = this.calcularDiasRestantes(fechaFinal);
+    const diasInicio = this.calcularDiasRestantesInicio(fechaInical);
+
+    if (diasFin === null) {
       return 'Sin fecha Asignada';
     }
-    if (dias < 0) {
-      return `Vencida hace ${Math.abs(dias)} ${Math.abs(dias) === 1 ? 'día' : 'días'}`;
+    if (diasInicio === null) {
+      return 'Sin fecha Asignada';
     }
-    if (dias === 0) {
+    if (diasInicio > 0 && (diasFin !== 1 && diasInicio !== 1) && (diasFin !== diasInicio)) {
+      return `Inicia en ${Math.abs(diasInicio)} ${Math.abs(diasInicio) === 1 ? 'día' : 'días'}, vence en ${Math.abs(diasFin)} ${Math.abs(diasFin) === 1 ? 'día' : 'días'}`;
+    }
+    if (diasFin < 0) {
+      return `Vencida hace ${Math.abs(diasFin)} ${Math.abs(diasFin) === 1 ? 'día' : 'días'}`;
+    }
+    if (diasFin === 0 && diasInicio === 0) {
+      return `Inicia y vence hoy`;
+    }
+    if (diasFin === 0) {
       return 'Vence hoy';
     }
-    if (dias === 1) {
+    if (diasFin === 1 && diasInicio === 1) {
+      return `Inicia y vence mañana`;
+    }
+    if (diasFin === 1) {
       return 'Vence mañana';
     }
-    return `Quedan ${dias} días`;
+    if (diasInicio === diasFin) {
+      return `Inicia y vence en ${Math.abs(diasFin)} ${Math.abs(diasFin) === 1 ? 'día' : 'días'}`;
+    }
+    return `Quedan ${diasFin} días`;
   }
 
   obtenerClaseVencimiento(fechaFinal: string): string {

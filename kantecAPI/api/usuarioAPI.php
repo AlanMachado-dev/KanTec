@@ -47,12 +47,6 @@ class usuarioAPI {
             ]);
     }
 
-    // GET http://localhost/kantecAPI/api/usuarios
-    public function getAll(): void {
-        $stmt = $this->db->query("SELECT * FROM usuario");
-        respond(200, $stmt->fetchAll());
-    }
-
     // GET http://localhost/kantecAPI/api/usuarios/itsmafiu
     public function getOne(string $alias): void {
         $stmt = $this->db->prepare("SELECT * FROM usuario NATURAL JOIN perfil WHERE usuario.alias = ? AND usuario.activo = true");

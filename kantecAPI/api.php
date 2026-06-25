@@ -4,6 +4,7 @@ require_once 'config/db.php';
 require_once 'config/jwt.php';
 require_once 'api/usuarioAPI.php'; //se incluye el controlador de cada tabla a usar
 require_once 'api/tableroAPI.php';
+require_once 'api/colaboracionesAPI.php';
 require_once 'api/tareaAPI.php';
 require_once 'api/imagenesAPI.php';
 require_once 'api/utilidadesAPI.php';
@@ -27,6 +28,8 @@ $usuario = new usuarioAPI();
 
 $tablero = new tableroAPI();
 
+$colaboraciones = new colaboracionesAPI();
+
 $tarea = new tareaAPI();
 
 $imagenes = new imagenesAPI();
@@ -45,8 +48,6 @@ match(true) {
         && $method === 'PUT' => $usuario->update($partes[2]), 
     $partes[1] === 'usuarios' && isset($partes[2]) && !isset($partes[3]) 
         && $method === 'DELETE' => $usuario->delete($partes[2]), 
-    $partes[1] === 'usuarios' && !isset($partes[2]) 
-        && $method === 'GET' => $usuario->getAll(),
     $partes[1] === 'usuarios' && !isset($partes[2]) 
         && $method === 'POST' => $usuario->create(),
     $partes[1] === 'usuarios' && $partes[2] === 'login' && !isset($partes[3]) 
@@ -71,23 +72,23 @@ match(true) {
 
     //ruta colaboraciones
     $partes[1] === 'colaboradores' && $partes[2] === 'invitar' && !isset($partes[3])
-        && $method === 'POST' => $tablero->agregarColaborador(),
+        && $method === 'POST' => $colaboraciones->agregarColaborador(),
     $partes[1] === 'colaboradores' && $partes[2] === 'miembro' && !isset($partes[3])
-        && $method === 'DELETE' => $tablero->eliminarMiembro(),
+        && $method === 'DELETE' => $colaboraciones->eliminarMiembro(),
     $partes[1] === 'colaboradores' && $partes[2] === 'permisos' && !isset($partes[3])
-        && $method === 'PUT' => $tablero->actualizarPermisosMiembro(),
+        && $method === 'PUT' => $colaboraciones->actualizarPermisosMiembro(),
     $partes[1] === 'colaboradores' && $partes[2] === 'misColaboraciones' && isset($partes[3]) && !isset($partes[4])
-        && $method === 'GET' => $tablero->misColaboraciones($partes[3]),
+        && $method === 'GET' => $colaboraciones->misColaboraciones($partes[3]),
     $partes[1] === 'colaboradores' && $partes[2] === 'tablero' && isset($partes[3]) && !isset($partes[4])
-        && $method === 'GET' => $tablero->colaboradoresTablero($partes[3]),
+        && $method === 'GET' => $colaboraciones->colaboradoresTablero($partes[3]),
     $partes[1] === 'colaboradores' && $partes[2] === 'invitaciones' && isset($partes[3]) && !isset($partes[4])
-        && $method === 'GET' => $tablero->getInvitaciones($partes[3]),
+        && $method === 'GET' => $colaboraciones->getInvitaciones($partes[3]),
     $partes[1] === 'colaboradores' && $partes[2] === 'invitacion' && !isset($partes[3])
-        && $method === 'PUT' => $tablero->aceptarInvitacion(),
+        && $method === 'PUT' => $colaboraciones->aceptarInvitacion(),
     $partes[1] === 'colaboradores' && $partes[2] === 'notificaciones' && !isset($partes[3])
-        && $method === 'GET' => $tablero->mostrarNotificacionPendiente(),
+        && $method === 'GET' => $colaboraciones->mostrarNotificacionPendiente(),
     $partes[1] === 'colaboradores' && $partes[2] === 'notificaciones' && !isset($partes[3]) 
-        && $method === 'PUT' => $tablero->marcarNotificado(),
+        && $method === 'PUT' => $colaboraciones->marcarNotificado(),
 
     //ruta tareas
 

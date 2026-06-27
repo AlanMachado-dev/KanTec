@@ -68,3 +68,8 @@ Finalmente para entrar a la página web accedemos al índice de la app (ej: [htt
 
 En nuestro caso instalamos todo en un servidor gestionado por CyberPanel, donde configuramos que tenga como dominio “***kantec.tec.seis***”.  
 Además para poder entrar directamente a KanTec sin la necesidad de indicar en la URL “index.html” quitamos el archivo “index.php” que venía por defecto en el servidor, para luego cambiarle el nombre del archivo de la app web “index.html” a “index.php”.
+
+Por último nosotros tuvimos que configurar los host para poder entrar al servidor desde computadoras que estén en la misma red modificando el archivo **hosts** que se encuentra en:
+
+* C:\\Windows\\System32\\drivers\\etc\\hosts (Windows)  
+* /etc/hosts (Linux)

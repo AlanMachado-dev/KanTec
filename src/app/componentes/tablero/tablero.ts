@@ -112,14 +112,32 @@ export class Tablero implements OnInit, AfterViewInit {
         }, 2000);
         if (this.idTablero) {
           this.http.getTablero(this.idTablero)
-            .subscribe(tablero => {
-              this.miTablero = tablero;
-              this.cdr.detectChanges();
-            });
+            .subscribe({
+              next: (tablero) => {
+                this.miTablero = tablero;
+                this.cdr.detectChanges();
+              },
+              error: (error) => {
+                if (error.status === 404) {
+                  this.router.navigate(['/home']);
+                  Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'info',
+                    title: 'Tablero no encontrado',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                  });
+                } else {
+                  this.router.navigate(['/home']);
+                }
+              }
+            })
 
           this.recargarColaboradores();
           this.actualizarLimiteColaboradores();
-          this.intervaloColaboradores = setInterval(() => { 
+          this.intervaloColaboradores = setInterval(() => {
             this.recargarColaboradores();
           }, 5000);
 
@@ -363,7 +381,7 @@ export class Tablero implements OnInit, AfterViewInit {
             this.cdr.detectChanges();
             const btnCerrar = document.getElementById('btnCerrarModal');
             btnCerrar?.click();
-            if(!this.idTablero)return;
+            if (!this.idTablero) return;
             this.http.notificarInvitacionMail(body, this.idTablero).subscribe();
           },
           error: (err) => {
@@ -460,9 +478,20 @@ export class Tablero implements OnInit, AfterViewInit {
                 timer: 3000,
                 timerProgressBar: true
               });
-            } else if (err.status === 401){
+            } else if (err.status === 401) {
               this.http.cerrarSesion();
               this.router.navigate(['/ingreso'], { state: { expirado: "true" } });
+            } else if (err.status === 404) {
+              this.router.navigate(['/home']);
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'info',
+                title: 'Tablero no encontrado',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+              });
             }
           }
         })
@@ -471,12 +500,12 @@ export class Tablero implements OnInit, AfterViewInit {
   }
 
   tieneAsignacionesVisibles(tarea: any): boolean {
-  if (!tarea.asignaciones) return false;
-  // Retorna true solo si al menos un alias asignado existe en colaboradoresTablero
-  return tarea.asignaciones.some((alias: string) => 
-    this.colaboradoresTablero.some(colab => colab.aliasUsuario === alias)
-  );
-}
+    if (!tarea.asignaciones) return false;
+    // Retorna true solo si al menos un alias asignado existe en colaboradoresTablero
+    return tarea.asignaciones.some((alias: string) =>
+      this.colaboradoresTablero.some(colab => colab.aliasUsuario === alias)
+    );
+  }
 
   abrirModalAgregar() {
     this.modoModal = 'agregar';
@@ -754,7 +783,7 @@ export class Tablero implements OnInit, AfterViewInit {
     return Math.round(diferenciaTiempo / (1000 * 60 * 60 * 24));
   }
 
-    calcularDiasRestantesInicio(fechaInicio: any): number | null {
+  calcularDiasRestantesInicio(fechaInicio: any): number | null {
     if (!fechaInicio) return null;
 
     const fechaLimpia = fechaInicio.substring(0, 10); //esto porque la fecha viene con la hora me quedo solo con AAAA-MM-DD
@@ -830,7 +859,7 @@ export class Tablero implements OnInit, AfterViewInit {
 
   /////EDITAR ASIGNACION /////
   abrirMenuAsignacion(colaborador: Colaborador) {
-    if(this.esEspectador && colaborador.aliasUsuario){
+    if (this.esEspectador && colaborador.aliasUsuario) {
       this.verPerfil(colaborador.aliasUsuario);
       return;
     }
@@ -838,7 +867,7 @@ export class Tablero implements OnInit, AfterViewInit {
   }
 
   postAsignacion(alias: string) {
-    if(this.esEspectador){
+    if (this.esEspectador) {
       return;
     }
     const tablero = this.idTablero || "";
@@ -848,7 +877,7 @@ export class Tablero implements OnInit, AfterViewInit {
           setTimeout(() => {
             this.cargarTareas();
           }, 0);
-          if(this.tareaSelecionada){
+          if (this.tareaSelecionada) {
             if (!this.tareaSelecionada.asignaciones) {
               this.tareaSelecionada.asignaciones = [];
             }
@@ -872,8 +901,8 @@ export class Tablero implements OnInit, AfterViewInit {
             this.cargarTareas();
           }, 0);
           if (this.tareaSelecionada && this.tareaSelecionada.asignaciones) {
-          this.tareaSelecionada.asignaciones = this.tareaSelecionada.asignaciones
-            .filter((a: string) => a !== alias);
+            this.tareaSelecionada.asignaciones = this.tareaSelecionada.asignaciones
+              .filter((a: string) => a !== alias);
           }
         }
       });

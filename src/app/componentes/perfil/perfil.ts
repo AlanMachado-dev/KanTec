@@ -84,6 +84,20 @@ export class Perfil implements OnInit, OnDestroy {
           this._cdr.detectChanges();
         },
         error: (err) => {
+          if (err.status === 404) {
+            this.router.navigate(['/home']);
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'info',
+              title: 'Usuario no encontrado',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true
+            });
+          } else {
+            this.router.navigate(['/home']);
+          }
         }
       })
     }

@@ -16,8 +16,8 @@ class utilidadesAPI {
         BEGIN
             DELETE FROM pertenece WHERE idTablero = OLD.id;
             DELETE FROM invitacion WHERE idTablero = OLD.id;
-            DELETE FROM tarea WHERE idTablero = OLD.id;
             DELETE FROM asignacion WHERE idTablero = OLD.id;
+            DELETE FROM tarea WHERE idTablero = OLD.id;
         END
     ");
         respond(201, ['mensaje' => 'Triggers creados con exito']);

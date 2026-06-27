@@ -176,8 +176,8 @@ class mailAPI {
         $tablero = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $rol = match($tipoRelacion){
-            1 => 'Contribuidor',
-            2 => 'Espectador',
+            "1" => 'Contribuidor',
+            "2" => 'Espectador',
             default => 'Colaborador'
         };
 

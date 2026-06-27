@@ -64,6 +64,8 @@ Copiamos la carpeta kantecAPI a la carpeta www/htdocs de la instalación PHP, y 
 
 En la carpeta raíz ejecutamos “*ng build*”. Esto nos generará una carpeta llamada “dist” donde copiaremos el contenido dentro de *KanTec/browser* en la carpeta raíz, junto al kantecAPI. **La API y la app web deben estar en la misma ubicación o no funcionará**.
 
+Se debe llamar al endpoint de “Agregar Triggers” desde un cliente externo como Postman o desde el navegador, sin estos triggers pueden salir errores al borrar objetos en la base de datos.
+
 Finalmente para entrar a la página web accedemos al índice de la app (ej: [http://localhost/index.html](http://localhost/index.html)). 
 
 En nuestro caso instalamos todo en un servidor gestionado por CyberPanel, donde configuramos que tenga como dominio “***kantec.tec.seis***”.  

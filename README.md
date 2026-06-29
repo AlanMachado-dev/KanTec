@@ -58,7 +58,7 @@ Dentro de kantecAPI, en el archivo config/db.php se debe setear el usuario y con
 También debemos crear el archivo **mailConfig.php** dentro de kantecAPI/config para la configuración relacionada al envío de emails. Debe contener la siguiente información:  
 <img width="917" height="289" alt="image17" src="https://github.com/user-attachments/assets/a35031c8-8907-4cc1-a1b4-6bbb17e56a64" /> 
 
-Se debe generar una contraseña de aplicación desde una cuenta de Gmail y colocarlas allí.
+Se debe generar una [contraseña de aplicación](https://support.google.com/accounts/answer/185833?hl=es-419) desde una cuenta de Gmail y colocarlas allí.
 
 Copiamos la carpeta kantecAPI a la carpeta www/htdocs de la instalación PHP, y nos aseguramos que quede corriendo Apache (y MySQL).
 

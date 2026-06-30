@@ -187,7 +187,10 @@ class tareaAPI
 
     // DELETE http://localhost/kantecAPI/api/tareas/idTablero/idTarea
     public function delete(string $idTablero, string $idTarea): void
-    {
+    {  
+        $stmt = $this->db->prepare("DELETE FROM asignacion WHERE idTablero = ? AND idTarea = ?");
+        $stmt->execute([$idTablero, $idTarea]);
+        
         $stmt = $this->db->prepare("DELETE FROM tarea WHERE idTablero = ? AND idTarea = ?");
         $stmt->execute([$idTablero, $idTarea]);
 
